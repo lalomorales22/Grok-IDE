@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grok IDE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: #1e1e1e;
+            color: white;
+        }
+
+        .button {
+            padding: 0.5rem 1rem;
+            background-color: #007acc;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 3px;
+            margin-left: 0.5rem;
+        }
+
+        .button:hover {
+            background-color: #005999;
+        }
+
+        .button.disabled {
+            background-color: #4a4a4a;
+            cursor: not-allowed;
+        }
+
+        .path-display {
+            padding: 0.25rem 1rem;
+            background-color: #252526;
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            background-color: #1e1e1e;
+            color: #cccccc;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #252526;
+            border-right: none;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #383838;
+        }
+
+        .file-explorer {
+            flex: 1;
+            padding: 0.5rem;
+            overflow: auto;
+        }
+
+        .folder {
+            margin-bottom: 0.25rem;
+        }
+
+        .folder-name {
+            padding: 0.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .folder-name:hover {
+            background-color: #2a2d2e;
+        }
+
+        .folder-icon {
+            margin-right: 0.5rem;
+        }
+
+        .files {
+            margin-left: 1.5rem;
+        }
+
+        .file {
+            padding: 0.25rem;
+            padding-left: 1.5rem;
+            cursor: pointer;
+        }
+
+        .file:hover {
+            background-color: #2a2d2e;
+        }
+
+        .editor {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tabs {
+            display: flex;
+            background-color: #2d2d2d;
+            border-bottom: 1px solid #383838;
+        }
+
+        .tab {
+            padding: 0.5rem 1rem;
+            background-color: #2d2d2d;
+            border: none;
+            color: #cccccc;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab.active {
+            background-color: #1e1e1e;
+        }
+
+        .tab:hover {
+            background-color: #333333;
+        }
+
+        .editor-content {
+            flex: 1;
+            padding: 1rem;
+        }
+
+        #editor {
+            width: 100%;
+            height: 100%;
+            background-color: #1e1e1e;
+            color: #cccccc;
+            border: none;
+            resize: none;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 0.5rem;
+        }
+
+        #editor:focus {
+            outline: none;
+        }
+
+        .loading {
+            padding: 1rem;
+            color: #cccccc;
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 2rem;
+            color: #cccccc;
+        }
+
+        .ai-column {
+            width: 300px;
+            background-color: #252526;
+            border-left: none;
+            display: flex;
+            flex-direction: column;
+            max-height: 100%;
+            overflow: hidden;
+        }
+
+        .ai-header {
+            padding: 0.5rem 1rem;
+            background-color: #2d2d2d;
+            border-bottom: 1px solid #383838;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            scrollbar-width: thin;
+            scrollbar-color: #666 #2d2d2d;
+        }
+
+        .ai-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .ai-content::-webkit-scrollbar-track {
+            background: #2d2d2d;
+        }
+
+        .ai-content::-webkit-scrollbar-thumb {
+            background-color: #666;
+            border-radius: 4px;
+        }
+
+        .ai-content::-webkit-scrollbar-thumb:hover {
+            background-color: #888;
+        }
+
+        .ai-input-area {
+            padding: 0.5rem;
+            background-color: #3c3c3c;
+            border-top: 1px solid #383838;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .ai-input-area textarea {
+            width: 100%;
+            background-color: #1e1e1e;
+            color: #cccccc;
+            border: 1px solid #383838;
+            padding: 0.5rem;
+            resize: none;
+            font-family: 'Consolas', 'Courier New', monospace;
+            min-height: 60px;
+        }
+
+        .ai-input-area button {
+            width: 100%;
+        }
+
+        .ai-message {
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .ai-message pre {
+            position: relative;
+            background: #1a1a1a;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+            border: 1px solid #383838;
+        }
+
+        .ai-message code {
+            font-family: 'Consolas', 'Courier New', monospace;
+            white-space: pre-wrap;
+        }
+
+        .code-actions {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .code-action-btn {
+            padding: 0.25rem 0.5rem;
+            background: #2d2d2d;
+            border: 1px solid #383838;
+            color: #cccccc;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .code-action-btn:hover {
+            opacity: 1;
+            background: #383838;
+        }
+
+        .resize-handle {
+            width: 4px;
+            background-color: #383838;
+            cursor: col-resize;
+            transition: background-color 0.2s;
+        }
+
+        .resize-handle:hover, .resize-handle.active {
+            background-color: #007acc;
+        }
+
+        .sidebar, .ai-column {
+            min-width: 200px;
+            max-width: 800px;
+        }
+
+        .context-menu {
+            position: fixed;
+            background: #2d2d2d;
+            border: 1px solid #383838;
+            border-radius: 3px;
+            padding: 4px 0;
+            min-width: 150px;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .context-menu-item {
+            padding: 6px 12px;
+            cursor: pointer;
+            color: #cccccc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .context-menu-item:hover {
+            background: #383838;
+        }
+
+        .context-menu-separator {
+            height: 1px;
+            background: #383838;
+            margin: 4px 0;
+        }
+
+        .new-item-input {
+            position: relative;
+            padding: 2px 4px;
+            background: #1e1e1e;
+            border: 1px solid #007acc;
+        }
+
+        .new-item-input input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #cccccc;
+            font-size: 13px;
+            outline: none;
+            padding: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div>Xai Grok IDE</div>
+        <div>
+            <button id="openFolderBtn" class="button">Open Folder</button>
+            <button id="saveBtn" class="button disabled" onclick="saveCurrentFile()" disabled>Save</button>
+            <button id="askAIBtn" class="button disabled" onclick="askAI()" disabled>Ask AI</button>
+        </div>
+    </div>
+
+    <div id="currentPath" class="path-display">No folder opened</div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                EXPLORER
+                <span id="refreshBtn" onclick="refreshFileExplorer()" style="cursor: pointer; opacity: 0.5;" title="Refresh">🔄</span>
+            </div>
+            <div id="fileExplorer" class="file-explorer">
+                <div class="welcome-message">
+                    Click "Open Folder" to start
+                </div>
+            </div>
+        </div>
+        <div class="resize-handle" id="leftResizeHandle"></div>
+
+        <div class="editor">
+            <div id="tabs" class="tabs"></div>
+            <div class="editor-content">
+                <textarea id="editor" disabled></textarea>
+            </div>
+        </div>
+
+        <div class="resize-handle" id="rightResizeHandle"></div>
+        <div class="ai-column">
+            <div class="ai-header">
+                GROK ASSISTANT
+                <button id="clearAIBtn" onclick="clearAIChat()" class="button">Clear Chat</button>
+            </div>
+            <div id="aiContent" class="ai-content"></div>
+            <div class="ai-input-area">
+                <textarea 
+                    id="aiPrompt" 
+                    placeholder="Ask about your code..."
+                    rows="3"
+                ></textarea>
+                <button onclick="sendPrompt()" class="button">Send to Grok</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPath = '';
+        const openFiles = new Map();
+        let currentDirectoryHandle = null;
+
+        // Initialize UI elements
+        const saveBtn = document.getElementById('saveBtn');
+        const openFolderBtn = document.getElementById('openFolderBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const editor = document.getElementById('editor');
+
+        async function initializeFileExplorer() {
+            try {
+                if (!('showDirectoryPicker' in window)) {
+                    showError('This browser does not support the File System API');
+                    return;
+                }
+                const handle = await window.showDirectoryPicker();
+                currentDirectoryHandle = handle;
+                currentPath = handle.name;
+                document.getElementById('currentPath').textContent = currentPath;
+                await loadFileStructure(handle);
+                
+                // Enable UI elements
+                saveBtn.classList.remove('disabled');
+                saveBtn.disabled = false;
+                refreshBtn.style.opacity = '1';
+                editor.disabled = false;
+                
+                // Enable AI button
+                document.getElementById('askAIBtn').classList.remove('disabled');
+                document.getElementById('askAIBtn').disabled = false;
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    showError('Error initializing file explorer: ' + error.message);
+                }
+            }
+        }
+
+        async function loadFileStructure(directoryHandle) {
+            try {
+                const fileExplorer = document.getElementById('fileExplorer');
+                fileExplorer.innerHTML = '<div class="loading">Loading...</div>';
+                const files = await listFiles(directoryHandle);
+                renderFileStructure(files);
+            } catch (error) {
+                showError('Error loading file structure: ' + error.message);
+            }
+        }
+
+        async function listFiles(directoryHandle) {
+            const files = [];
+            for await (const entry of directoryHandle.values()) {
+                if (entry.kind === 'directory') {
+                    files.push({
+                        type: 'directory',
+                        name: entry.name,
+                        handle: entry,
+                        children: await listFiles(entry)
+                    });
+                } else if (entry.kind === 'file') {
+                    files.push({ 
+                        type: 'file', 
+                        name: entry.name,
+                        handle: entry 
+                    });
+                }
+            }
+            return files.sort((a, b) => {
+                if (a.type === b.type) return a.name.localeCompare(b.name);
+                return a.type === 'directory' ? -1 : 1;
+            });
+        }
+
+        function renderFileStructure(files, parentElement = document.getElementById('fileExplorer'), parentHandle = currentDirectoryHandle) {
+            parentElement.innerHTML = '';
+            
+            // Add context menu event listener to the parent element
+            parentElement.oncontextmenu = (e) => showContextMenu(e, parentHandle);
+            
+            files.forEach(item => {
+                if (item.type === 'directory') {
+                    const folderDiv = document.createElement('div');
+                    folderDiv.className = 'folder';
+                    
+                    const folderName = document.createElement('div');
+                    folderName.className = 'folder-name';
+                    folderName.innerHTML = `<span class="folder-icon">📁</span>${item.name}`;
+                    
+                    const filesDiv = document.createElement('div');
+                    filesDiv.className = 'files';
+                    filesDiv.style.display = 'none';
+                    
+                    // Add context menu to folder
+                    folderName.oncontextmenu = (e) => {
+                        e.stopPropagation();
+                        showContextMenu(e, item.handle);
+                    };
+                    
+                    folderName.onclick = () => {
+                        filesDiv.style.display = filesDiv.style.display === 'none' ? 'block' : 'none';
+                    };
+                    
+                    if (item.children && item.children.length > 0) {
+                        renderFileStructure(item.children, filesDiv, item.handle);
+                    }
+                    
+                    folderDiv.appendChild(folderName);
+                    folderDiv.appendChild(filesDiv);
+                    parentElement.appendChild(folderDiv);
+                } else {
+                    const fileDiv = document.createElement('div');
+                    fileDiv.className = 'file';
+                    fileDiv.textContent = item.name;
+                    fileDiv.onclick = () => openFile(item.name, item.handle);
+                    parentElement.appendChild(fileDiv);
+                }
+            });
+        }
+
+        async function openFile(fileName, fileHandle) {
+            try {
+                const file = await fileHandle.getFile();
+                const content = await file.text();
+                openFiles.set(fileName, { content, handle: fileHandle });
+                createOrActivateTab(fileName);
+                document.getElementById('editor').value = content;
+            } catch (error) {
+                showError('Error opening file: ' + error.message);
+            }
+        }
+
+        function createOrActivateTab(fileName) {
+            const tabs = document.getElementById('tabs');
+            let tab = document.querySelector(`.tab[data-filename="${fileName}"]`);
+            
+            if (!tab) {
+                tab = document.createElement('div');
+                tab.className = 'tab';
+                tab.setAttribute('data-filename', fileName);
+                tab.innerHTML = `
+                    ${fileName}
+                    <span onclick="closeTab('${fileName}')" style="margin-left: 8px;">×</span>
+                `;
+                tabs.appendChild(tab);
+            }
+            
+            activateTab(fileName);
+        }
+
+        function activateTab(fileName) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            const tab = document.querySelector(`.tab[data-filename="${fileName}"]`);
+            if (tab) {
+                tab.classList.add('active');
+                const fileData = openFiles.get(fileName);
+                if (fileData) {
+                    document.getElementById('editor').value = fileData.content;
+                }
+            }
+        }
+
+        function closeTab(fileName) {
+            const tab = document.querySelector(`.tab[data-filename="${fileName}"]`);
+            if (tab) {
+                if (tab.classList.contains('active')) {
+                    const nextTab = tab.nextElementSibling || tab.previousElementSibling;
+                    if (nextTab) {
+                        activateTab(nextTab.getAttribute('data-filename'));
+                    } else {
+                        document.getElementById('editor').value = '';
+                    }
+                }
+                tab.remove();
+                openFiles.delete(fileName);
+            }
+        }
+
+        async function saveCurrentFile() {
+            const activeTab = document.querySelector('.tab.active');
+            if (!activeTab) {
+                alert('No file is currently open');
+                return;
+            }
+            
+            try {
+                const fileName = activeTab.getAttribute('data-filename');
+                const fileData = openFiles.get(fileName);
+                if (!fileData || !fileData.handle) {
+                    throw new Error('File handle not found');
+                }
+                
+                const content = document.getElementById('editor').value;
+                const writable = await fileData.handle.createWritable();
+                await writable.write(content);
+                await writable.close();
+                
+                // Update the stored content
+                openFiles.set(fileName, { 
+                    content: content, 
+                    handle: fileData.handle 
+                });
+                
+                alert(`File ${fileName} saved successfully!`);
+            } catch (error) {
+                showError('Error saving file: ' + error.message);
+            }
+        }
+
+        function showError(message) {
+            console.error(message);
+            alert(message);
+        }
+
+        function refreshFileExplorer() {
+            if (currentDirectoryHandle) {
+                loadFileStructure(currentDirectoryHandle);
+            }
+        }
+
+        async function askAI() {
+            const activeTab = document.querySelector('.tab.active');
+            if (!activeTab) {
+                alert('No file is currently open');
+                return;
+            }
+
+            const fileName = activeTab.getAttribute('data-filename');
+            document.getElementById('aiPrompt').value = 
+                `Please review this ${fileName} file and provide suggestions for improvement:\n`;
+            document.getElementById('aiPrompt').focus();
+        }
+
+        function formatMarkdown(text) {
+            // Basic markdown formatting
+            const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
+            
+            return text.replace(codeBlockRegex, (match, language, code) => {
+                const langClass = language ? ` class="language-${language}"` : '';
+                return `<pre><div class="code-actions">
+                    <button class="code-action-btn" onclick="copyCode(this)">Copy</button>
+                    <button class="code-action-btn" onclick="insertCode(this)">Insert</button>
+                </div><code${langClass}>${escapeHtml(code.trim())}</code></pre>`;
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function copyCode(button) {
+            const codeElement = button.closest('pre').querySelector('code');
+            navigator.clipboard.writeText(codeElement.textContent)
+                .then(() => {
+                    const originalText = button.textContent;
+                    button.textContent = 'Copied!';
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                    }, 1500);
+                })
+                .catch(err => showError('Failed to copy code: ' + err.message));
+        }
+
+        function insertCode(button) {
+            const codeElement = button.closest('pre').querySelector('code');
+            const editor = document.getElementById('editor');
+            const cursorPos = editor.selectionStart;
+            const textBefore = editor.value.substring(0, cursorPos);
+            const textAfter = editor.value.substring(cursorPos);
+            
+            editor.value = textBefore + codeElement.textContent + textAfter;
+            editor.focus();
+            
+            // Update the stored content for the current file
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab) {
+                const fileName = activeTab.getAttribute('data-filename');
+                const fileData = openFiles.get(fileName);
+                if (fileData) {
+                    openFiles.set(fileName, {
+                        ...fileData,
+                        content: editor.value
+                    });
+                }
+            }
+        }
+
+        async function sendPrompt() {
+            const prompt = document.getElementById('aiPrompt').value;
+            const content = document.getElementById('editor').value;
+            const aiContent = document.getElementById('aiContent');
+            const sendButton = document.querySelector('.ai-input-area button');
+
+            try {
+                sendButton.disabled = true;
+                sendButton.textContent = 'Sending...';
+
+                const response = await fetch('/api/completion', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        messages: [
+                            {
+                                role: "system",
+                                content: "You are a helpful programming assistant. When providing code examples, always wrap them in markdown code blocks with the appropriate language identifier. For example: ```javascript\ncode here\n```"
+                            },
+                            {
+                                role: "user",
+                                content: `${prompt}\n\nCode:\n${content}`
+                            }
+                        ]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to get AI response');
+                }
+
+                const data = await response.json();
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'ai-message';
+                messageDiv.innerHTML = `
+                    <div><strong>Q:</strong> ${escapeHtml(prompt)}</div>
+                    <div><strong>A:</strong> ${formatMarkdown(data.choices[0].message.content)}</div>
+                    <hr style="border: none; border-top: 1px solid #383838; margin: 1rem 0;">
+                `;
+                
+                aiContent.appendChild(messageDiv);
+                aiContent.scrollTop = aiContent.scrollHeight;
+                document.getElementById('aiPrompt').value = '';
+            } catch (error) {
+                showError('Error getting AI response: ' + error.message);
+            } finally {
+                sendButton.disabled = false;
+                sendButton.textContent = 'Send to Grok';
+            }
+        }
+
+        function clearAIChat() {
+            document.getElementById('aiContent').textContent = '';
+        }
+
+        function initializeResizeHandles() {
+            const leftHandle = document.getElementById('leftResizeHandle');
+            const rightHandle = document.getElementById('rightResizeHandle');
+            const sidebar = document.querySelector('.sidebar');
+            const aiColumn = document.querySelector('.ai-column');
+
+            function initializeResize(handle, element, isLeft) {
+                let startX, startWidth;
+
+                function startResize(e) {
+                    startX = e.clientX;
+                    startWidth = parseInt(getComputedStyle(element).width, 10);
+                    handle.classList.add('active');
+                    document.addEventListener('mousemove', resize);
+                    document.addEventListener('mouseup', stopResize);
+                    // Prevent text selection while resizing
+                    document.body.style.userSelect = 'none';
+                }
+
+                function resize(e) {
+                    const diff = e.clientX - startX;
+                    let newWidth = isLeft ? startWidth + diff : startWidth - diff;
+                    
+                    // Enforce min and max widths
+                    newWidth = Math.max(200, Math.min(800, newWidth));
+                    element.style.width = `${newWidth}px`;
+                }
+
+                function stopResize() {
+                    handle.classList.remove('active');
+                    document.removeEventListener('mousemove', resize);
+                    document.removeEventListener('mouseup', stopResize);
+                    document.body.style.userSelect = '';
+                }
+
+                handle.addEventListener('mousedown', startResize);
+            }
+
+            initializeResize(leftHandle, sidebar, true);
+            initializeResize(rightHandle, aiColumn, false);
+        }
+
+        initializeResizeHandles();
+
+        // Add click handler for the Open Folder button
+        openFolderBtn.addEventListener('click', initializeFileExplorer);
+
+        let contextMenu = null;
+        let currentContextDirectory = null;
+
+        function showContextMenu(e, directoryHandle) {
+            e.preventDefault();
+            
+            // Remove existing context menu if any
+            removeContextMenu();
+            
+            currentContextDirectory = directoryHandle;
+            
+            // Create context menu
+            contextMenu = document.createElement('div');
+            contextMenu.className = 'context-menu';
+            contextMenu.innerHTML = `
+                <div class="context-menu-item" onclick="createNewFile()">
+                    <span>📄</span> New File
+                </div>
+                <div class="context-menu-item" onclick="createNewFolder()">
+                    <span>📁</span> New Folder
+                </div>
+            `;
+            
+            // Position the menu
+            contextMenu.style.left = `${e.pageX}px`;
+            contextMenu.style.top = `${e.pageY}px`;
+            
+            // Add to document
+            document.body.appendChild(contextMenu);
+            
+            // Close menu on click outside
+            setTimeout(() => {
+                document.addEventListener('click', removeContextMenu);
+            }, 0);
+        }
+
+        function removeContextMenu() {
+            if (contextMenu) {
+                contextMenu.remove();
+                contextMenu = null;
+            }
+            document.removeEventListener('click', removeContextMenu);
+        }
+
+        async function createNewFile() {
+            removeContextMenu();
+            const parentElement = document.getElementById('fileExplorer');
+            
+            // Create input element
+            const inputContainer = document.createElement('div');
+            inputContainer.className = 'new-item-input';
+            inputContainer.innerHTML = `<input type="text" placeholder="filename.ext">`;
+            parentElement.appendChild(inputContainer);
+            
+            const input = inputContainer.querySelector('input');
+            input.focus();
+            
+            input.addEventListener('keyup', async (e) => {
+                if (e.key === 'Enter') {
+                    const filename = input.value.trim();
+                    if (filename) {
+                        try {
+                            const fileHandle = await currentContextDirectory.getFileHandle(filename, { create: true });
+                            const writable = await fileHandle.createWritable();
+                            await writable.write('');
+                            await writable.close();
+                            
+                            // Refresh the file explorer
+                            await loadFileStructure(currentDirectoryHandle);
+                        } catch (error) {
+                            showError('Error creating file: ' + error.message);
+                        }
+                    }
+                    inputContainer.remove();
+                } else if (e.key === 'Escape') {
+                    inputContainer.remove();
+                }
+            });
+        }
+
+        async function createNewFolder() {
+            removeContextMenu();
+            const parentElement = document.getElementById('fileExplorer');
+            
+            // Create input element
+            const inputContainer = document.createElement('div');
+            inputContainer.className = 'new-item-input';
+            inputContainer.innerHTML = `<input type="text" placeholder="folder name">`;
+            parentElement.appendChild(inputContainer);
+            
+            const input = inputContainer.querySelector('input');
+            input.focus();
+            
+            input.addEventListener('keyup', async (e) => {
+                if (e.key === 'Enter') {
+                    const foldername = input.value.trim();
+                    if (foldername) {
+                        try {
+                            await currentContextDirectory.getDirectoryHandle(foldername, { create: true });
+                            // Refresh the file explorer
+                            await loadFileStructure(currentDirectoryHandle);
+                        } catch (error) {
+                            showError('Error creating folder: ' + error.message);
+                        }
+                    }
+                    inputContainer.remove();
+                } else if (e.key === 'Escape') {
+                    inputContainer.remove();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Notes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: #1e1e1e;
+            color: white;
+        }
+
+        .button {
+            padding: 0.5rem 1rem;
+            background-color: #007acc;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 3px;
+            margin-left: 0.5rem;
+        }
+
+        .button:hover {
+            background-color: #005999;
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            background-color: #1e1e1e;
+            color: #cccccc;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #252526;
+            border-right: 1px solid #383838;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #383838;
+        }
+
+        .notes-list {
+            flex: 1;
+            padding: 0.5rem;
+            overflow: auto;
+        }
+
+        .note-item {
+            padding: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 3px;
+        }
+
+        .note-item:hover {
+            background-color: #2a2d2e;
+        }
+
+        .note-title {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .delete-note {
+            opacity: 0;
+            color: #ff6b6b;
+            cursor: pointer;
+            padding: 0 0.5rem;
+        }
+
+        .note-item:hover .delete-note {
+            opacity: 1;
+        }
+
+        .editor {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tabs {
+            display: flex;
+            background-color: #2d2d2d;
+            border-bottom: 1px solid #383838;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 0.5rem 1rem;
+            background-color: #2d2d2d;
+            border: none;
+            color: #cccccc;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .tab.active {
+            background-color: #1e1e1e;
+        }
+
+        .tab:hover {
+            background-color: #333333;
+        }
+
+        .editor-content {
+            flex: 1;
+            padding: 1rem;
+        }
+
+        #editor {
+            width: 100%;
+            height: 100%;
+            background-color: #1e1e1e;
+            color: #cccccc;
+            border: none;
+            resize: none;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 0.5rem;
+        }
+
+        #editor:focus {
+            outline: none;
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 2rem;
+            color: #cccccc;
+        }
+
+        .create-note-form {
+            padding: 0.5rem;
+            border-bottom: 1px solid #383838;
+        }
+
+        .create-note-form input {
+            width: 100%;
+            padding: 0.5rem;
+            background-color: #3c3c3c;
+            border: 1px solid #555;
+            color: #cccccc;
+            border-radius: 3px;
+        }
+
+        .create-note-form input:focus {
+            outline: none;
+            border-color: #007acc;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div>Dynamic Notes</div>
+        <div>
+            <button id="saveBtn" class="button" onclick="saveCurrentNote()">Save</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                NOTES
+            </div>
+            <div class="create-note-form">
+                <input type="text" id="newNoteInput" placeholder="Enter note title..." onkeypress="handleNewNote(event)">
+            </div>
+            <div id="notesList" class="notes-list"></div>
+        </div>
+
+        <div class="editor">
+            <div id="tabs" class="tabs"></div>
+            <div class="editor-content">
+                <textarea id="editor"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize storage
+        const notes = JSON.parse(localStorage.getItem('notes') || '{}');
+        const openNotes = new Set();
+        let currentNote = null;
+
+        // Initialize UI elements
+        const editor = document.getElementById('editor');
+        const notesList = document.getElementById('notesList');
+        const newNoteInput = document.getElementById('newNoteInput');
+
+        // Load notes list
+        function renderNotesList() {
+            notesList.innerHTML = '';
+            Object.keys(notes).forEach(title => {
+                const noteDiv = document.createElement('div');
+                noteDiv.className = 'note-item';
+                noteDiv.innerHTML = `
+                    <span class="note-title">${title}</span>
+                    <span class="delete-note" onclick="deleteNote('${title}')">×</span>
+                `;
+                noteDiv.onclick = (e) => {
+                    if (!e.target.classList.contains('delete-note')) {
+                        openNote(title);
+                    }
+                };
+                notesList.appendChild(noteDiv);
+            });
+        }
+
+        // Create new note
+        function handleNewNote(event) {
+            if (event.key === 'Enter') {
+                const title = newNoteInput.value.trim();
+                if (title) {
+                    if (notes[title]) {
+                        alert('A note with this title already exists!');
+                        return;
+                    }
+                    notes[title] = '';
+                    localStorage.setItem('notes', JSON.stringify(notes));
+                    renderNotesList();
+                    newNoteInput.value = '';
+                    openNote(title);
+                }
+            }
+        }
+
+        // Open note
+        function openNote(title) {
+            openNotes.add(title);
+            currentNote = title;
+            createOrActivateTab(title);
+            editor.value = notes[title];
+        }
+
+        // Delete note
+        function deleteNote(title) {
+            if (confirm(`Are you sure you want to delete "${title}"?`)) {
+                delete notes[title];
+                localStorage.setItem('notes', JSON.stringify(notes));
+                closeTab(title);
+                renderNotesList();
+            }
+        }
+
+        // Tab management
+        function createOrActivateTab(title) {
+            const tabs = document.getElementById('tabs');
+            let tab = document.querySelector(`.tab[data-title="${title}"]`);
+            
+            if (!tab) {
+                tab = document.createElement('div');
+                tab.className = 'tab';
+                tab.setAttribute('data-title', title);
+                tab.innerHTML = `
+                    ${title}
+                    <span onclick="closeTab('${title}')" style="margin-left: 8px;">×</span>
+                `;
+                tabs.appendChild(tab);
+            }
+            
+            activateTab(title);
+        }
+
+        function activateTab(title) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            const tab = document.querySelector(`.tab[data-title="${title}"]`);
+            if (tab) {
+                tab.classList.add('active');
+                currentNote = title;
+                editor.value = notes[title];
+            }
+        }
+
+        function closeTab(title) {
+            const tab = document.querySelector(`.tab[data-title="${title}"]`);
+            if (tab) {
+                if (tab.classList.contains('active')) {
+                    const nextTab = tab.nextElementSibling || tab.previousElementSibling;
+                    if (nextTab) {
+                        activateTab(nextTab.getAttribute('data-title'));
+                    } else {
+                        currentNote = null;
+                        editor.value = '';
+                    }
+                }
+                tab.remove();
+                openNotes.delete(title);
+            }
+        }
+
+        // Save note
+        function saveCurrentNote() {
+            if (!currentNote) {
+                alert('No note is currently open');
+                return;
+            }
+            
+            notes[currentNote] = editor.value;
+            localStorage.setItem('notes', JSON.stringify(notes));
+            alert('Note saved successfully!');
+        }
+
+        // Auto-save functionality
+        editor.addEventListener('input', () => {
+            if (currentNote) {
+                notes[currentNote] = editor.value;
+                localStorage.setItem('notes', JSON.stringify(notes));
+            }
+        });
+
+        // Initial render
+        renderNotesList();
+    </script>
+</body>
+</html>
