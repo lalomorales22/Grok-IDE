@@ -853,6 +853,13 @@
 
         async function createNewFile() {
             removeContextMenu();
+            
+            // Check if a project folder is open
+            if (!currentContextDirectory) {
+                showError('No project folder open. Please open a folder first before creating new files.');
+                return;
+            }
+            
             const parentElement = document.getElementById('fileExplorer');
             
             // Create input element
@@ -889,6 +896,13 @@
 
         async function createNewFolder() {
             removeContextMenu();
+            
+            // Check if a project folder is open
+            if (!currentContextDirectory) {
+                showError('No project folder open. Please open a folder first before creating new folders.');
+                return;
+            }
+            
             const parentElement = document.getElementById('fileExplorer');
             
             // Create input element
