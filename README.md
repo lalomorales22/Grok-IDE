@@ -1,4 +1,5 @@
 # GROK IDE
+<img width="1048" alt="Screenshot 2025-06-29 at 1 12 18 AM" src="https://github.com/user-attachments/assets/174e473e-692a-4c43-af74-b271eb779540" />
 
 <div align="center">
 
