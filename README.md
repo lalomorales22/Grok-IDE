@@ -1,15 +1,6 @@
 # GROK IDE
-<img width="1048" alt="Screenshot 2025-06-29 at 1 12 18 AM" src="https://github.com/user-attachments/assets/174e473e-692a-4c43-af74-b271eb779540" />
+<img width="1078" alt="Screenshot 2025-06-29 at 1 31 56 AM" src="https://github.com/user-attachments/assets/848ce7ec-e779-4921-849f-3b4b043f13e4" />
 
-<div align="center">
-
-```
-╔══════════════════════════════════════════════════════════════╗
-║                        GROK IDE                              ║
-║              Metal Gear Solid Inspired IDE                   ║
-║                 with xAI Grok Integration                     ║
-╚══════════════════════════════════════════════════════════════╝
-```
 
 *A sleek, dark-themed development environment with advanced AI capabilities*
 
