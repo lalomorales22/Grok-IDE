@@ -1,2 +1,5 @@
 node_modules/
 .env
+package-lock.json
+grok_ide_chat_history.db
+.gitignore

@@ -18,6 +18,7 @@
             flex-direction: column;
             background-color: #0a0a0a;
             color: #ffffff;
+            overflow: hidden; /* Prevent body scrolling */
         }
 
         .navbar {
@@ -46,6 +47,8 @@
             flex: 1;
             background-color: #0a0a0a;
             color: #ffffff;
+            height: calc(100vh - 80px); /* Account for navbar and status bar */
+            overflow: hidden;
         }
 
         .sidebar {
@@ -56,6 +59,8 @@
             flex-direction: column;
             min-width: 200px;
             max-width: 800px;
+            height: 100%;
+            overflow: hidden;
         }
 
         .sidebar-header {
@@ -111,7 +116,26 @@
         .file-explorer {
             flex: 1;
             padding: 0.5rem;
-            overflow: auto;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #ffffff #1a1a1a;
+        }
+
+        .file-explorer::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .file-explorer::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .file-explorer::-webkit-scrollbar-thumb {
+            background-color: #ffffff;
+            border-radius: 4px;
+        }
+
+        .file-explorer::-webkit-scrollbar-thumb:hover {
+            background-color: #cccccc;
         }
 
         .folder {
@@ -153,6 +177,8 @@
             flex: 1;
             display: flex;
             flex-direction: column;
+            height: 100%;
+            overflow: hidden;
         }
 
         .tabs {
@@ -191,6 +217,8 @@
         .editor-content {
             flex: 1;
             padding: 1rem;
+            height: 100%;
+            overflow: hidden;
         }
 
         #editor {
@@ -204,6 +232,26 @@
             font-size: 14px;
             line-height: 1.5;
             padding: 0.5rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #ffffff #1a1a1a;
+        }
+
+        #editor::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #editor::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        #editor::-webkit-scrollbar-thumb {
+            background-color: #ffffff;
+            border-radius: 4px;
+        }
+
+        #editor::-webkit-scrollbar-thumb:hover {
+            background-color: #cccccc;
         }
 
         #editor:focus {
@@ -238,7 +286,7 @@
             border-left: 1px solid #ffffff;
             display: flex;
             flex-direction: column;
-            max-height: 100%;
+            height: 100%;
             overflow: hidden;
             min-width: 200px;
             max-width: 800px;
@@ -253,21 +301,55 @@
             justify-content: space-between;
             align-items: center;
             font-weight: bold;
+            flex-shrink: 0;
         }
 
-        .ai-clear-btn {
-            padding: 0.2rem 0.4rem;
+        .ai-actions-bar {
+            padding: 0.5rem;
             background-color: #0a0a0a;
+            border-bottom: 1px solid #ffffff;
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .ai-action-btn {
+            padding: 0.3rem 0.6rem;
+            background-color: #111111;
             border: 1px solid #ffffff;
             color: #ffffff;
             cursor: pointer;
             font-size: 0.7rem;
             font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
         }
 
-        .ai-clear-btn:hover {
+        .ai-action-btn:hover {
             background-color: #ffffff;
             color: #0a0a0a;
+        }
+
+        .ai-action-btn.history {
+            background-color: #40e0d0;
+            color: #0a0a0a;
+        }
+
+        .ai-action-btn.history:hover {
+            background-color: #ffffff;
+            color: #40e0d0;
+        }
+
+        .ai-action-btn.clear {
+            background-color: #ff4444;
+            color: #ffffff;
+        }
+
+        .ai-action-btn.clear:hover {
+            background-color: #ffffff;
+            color: #ff4444;
         }
 
         .ai-content {
@@ -280,23 +362,7 @@
             white-space: pre-wrap;
             scrollbar-width: thin;
             scrollbar-color: #ffffff #1a1a1a;
-        }
-
-        .ai-content::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .ai-content::-webkit-scrollbar-track {
-            background: #1a1a1a;
-        }
-
-        .ai-content::-webkit-scrollbar-thumb {
-            background-color: #ffffff;
-            border-radius: 4px;
-        }
-
-        .ai-content::-webkit-scrollbar-thumb:hover {
-            background-color: #cccccc;
+            height: 0; /* Force flex item to respect parent height */
         }
 
         .ai-input-area {
@@ -306,6 +372,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            flex-shrink: 0; /* Prevent input area from shrinking */
         }
 
         .ai-input-controls {
@@ -348,6 +415,27 @@
             resize: none;
             font-family: 'Consolas', 'Courier New', monospace;
             min-height: 60px;
+            max-height: 120px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #ffffff #1a1a1a;
+        }
+
+        .ai-input-area textarea::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .ai-input-area textarea::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .ai-input-area textarea::-webkit-scrollbar-thumb {
+            background-color: #ffffff;
+            border-radius: 4px;
+        }
+
+        .ai-input-area textarea::-webkit-scrollbar-thumb:hover {
+            background-color: #cccccc;
         }
 
         .ai-input-area textarea:focus {
@@ -420,6 +508,209 @@
             opacity: 1;
             background: #ffffff;
             color: #0a0a0a;
+        }
+
+        .smart-insert-btn {
+            background: #40e0d0 !important;
+            color: #0a0a0a !important;
+            font-weight: bold;
+        }
+
+        .smart-insert-btn:hover {
+            background: #ffffff !important;
+            color: #40e0d0 !important;
+        }
+
+        .smart-insert-btn:disabled {
+            background: #666666 !important;
+            color: #999999 !important;
+        }
+
+        /* Code insertion preview overlay */
+        .insertion-preview {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1a1a1a;
+            border: 2px solid #40e0d0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            z-index: 10001;
+            max-width: 600px;
+            max-height: 400px;
+            overflow: auto;
+            font-family: 'Consolas', 'Courier New', monospace;
+            color: #ffffff;
+        }
+
+        .insertion-preview-header {
+            margin-bottom: 1rem;
+            font-weight: bold;
+            color: #40e0d0;
+        }
+
+        .insertion-preview-content {
+            background: #0a0a0a;
+            border: 1px solid #ffffff;
+            padding: 1rem;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .insertion-preview-actions {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .preview-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ffffff;
+            color: #ffffff;
+            cursor: pointer;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .preview-btn.confirm {
+            background: #40e0d0;
+            color: #0a0a0a;
+        }
+
+        .preview-btn.confirm:hover {
+            background: #ffffff;
+            color: #40e0d0;
+        }
+
+        .preview-btn.cancel {
+            background: #0a0a0a;
+        }
+
+        .preview-btn.cancel:hover {
+            background: #ffffff;
+            color: #0a0a0a;
+        }
+
+        /* Typing indicator animation */
+        .typing-indicator {
+            color: #40e0d0;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Terminal Footer Styles */
+        .terminal-footer {
+            position: fixed;
+            bottom: -300px;
+            left: 0;
+            right: 0;
+            height: 300px;
+            background-color: #000000;
+            border-top: 2px solid #40e0d0;
+            z-index: 1000;
+            transition: bottom 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terminal-footer.open {
+            bottom: 0;
+        }
+
+        .terminal-header {
+            padding: 0.5rem 1rem;
+            background-color: #1a1a1a;
+            border-bottom: 1px solid #40e0d0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #40e0d0;
+            font-weight: bold;
+        }
+
+        .terminal-content {
+            flex: 1;
+            padding: 0.5rem;
+            overflow-y: auto;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            color: #00ff00;
+            background-color: #000000;
+        }
+
+        .terminal-input-line {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .terminal-prompt {
+            color: #40e0d0;
+            margin-right: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .terminal-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #00ff00;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .terminal-status-btn {
+            padding: 0.2rem 0.6rem;
+            background-color: #000000;
+            border: 1px solid #40e0d0;
+            color: #40e0d0;
+            cursor: pointer;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            margin-left: 1rem;
+        }
+
+        .terminal-status-btn:hover {
+            background-color: #40e0d0;
+            color: #000000;
+        }
+
+        .terminal-status-btn.active {
+            background-color: #40e0d0;
+            color: #000000;
+        }
+
+        .terminal-output {
+            white-space: pre-wrap;
+            margin-bottom: 0.25rem;
+        }
+
+        .terminal-error {
+            color: #ff4444;
+        }
+
+        .terminal-success {
+            color: #00ff00;
+        }
+
+        .terminal-info {
+            color: #40e0d0;
         }
 
         .resize-handle {
@@ -557,6 +848,130 @@
             background-color: #ffffff;
             color: #ff0000;
         }
+
+        /* Custom Notification System */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .notification {
+            background: #111111;
+            border: 1px solid #ffffff;
+            color: #ffffff;
+            padding: 1rem 1.5rem;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            min-width: 300px;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-color: #00ff00;
+            background: linear-gradient(90deg, #111111 0%, #002200 100%);
+        }
+
+        .notification.error {
+            border-color: #ff0000;
+            background: linear-gradient(90deg, #111111 0%, #220000 100%);
+        }
+
+        .notification.info {
+            border-color: #40e0d0;
+            background: linear-gradient(90deg, #111111 0%, #002222 100%);
+        }
+
+        /* Chat History Styles */
+        .chat-history-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: #111111;
+            border-left: 1px solid #ffffff;
+            z-index: 9999;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-history-panel.open {
+            right: 0;
+        }
+
+        .chat-history-header {
+            padding: 1rem;
+            background: #1a1a1a;
+            border-bottom: 1px solid #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .chat-history-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .chat-history-item {
+            background: #0a0a0a;
+            border: 1px solid #ffffff;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .chat-history-item:hover {
+            background: #1a1a1a;
+        }
+
+        .chat-history-item-header {
+            padding: 0.5rem;
+            border-bottom: 1px solid #ffffff;
+            font-size: 12px;
+            color: #40e0d0;
+        }
+
+        .chat-history-item-preview {
+            padding: 0.5rem;
+            font-size: 13px;
+            max-height: 60px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .history-toggle-btn {
+            padding: 0.2rem 0.4rem;
+            background-color: #0a0a0a;
+            border: 1px solid #ffffff;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .history-toggle-btn:hover {
+            background-color: #ffffff;
+            color: #0a0a0a;
+        }
     </style>
 </head>
 <body>
@@ -600,7 +1015,10 @@
         <div class="ai-column">
             <div class="ai-header">
                 GROK ASSISTANT
-                <button id="clearAIBtn" onclick="clearAIChat()" class="ai-clear-btn">CLEAR</button>
+            </div>
+            <div class="ai-actions-bar">
+                <button onclick="toggleChatHistory()" class="ai-action-btn history">HISTORY</button>
+                <button id="clearAIBtn" onclick="clearAIChat()" class="ai-action-btn clear">CLEAR</button>
             </div>
             <div id="aiContent" class="ai-content"></div>
             <div class="ai-input-area">
@@ -631,6 +1049,37 @@
             <span id="fileCount">FILES: 0</span>
             <span id="openCount">OPEN: 0</span>
             <span id="modifiedCount">MODIFIED: 0</span>
+            <button class="terminal-status-btn" id="terminalStatusBtn" onclick="toggleTerminal()">TERMINAL</button>
+        </div>
+    </div>
+
+    <!-- Terminal Footer -->
+    <div class="terminal-footer" id="terminalFooter">
+        <div class="terminal-header">
+            INTEGRATED TERMINAL
+            <button onclick="toggleTerminal()" style="background: none; border: none; color: #40e0d0; cursor: pointer; font-size: 16px;">✕</button>
+        </div>
+        <div class="terminal-content" id="terminalContent">
+            <div class="terminal-output terminal-info">Grok IDE Terminal v1.0</div>
+            <div class="terminal-output terminal-info">Type 'help' for available commands</div>
+        </div>
+        <div class="terminal-input-line">
+            <span class="terminal-prompt" id="terminalPrompt">grok-ide:~$ </span>
+            <input type="text" class="terminal-input" id="terminalInput" placeholder="Enter command..." autocomplete="off">
+        </div>
+    </div>
+
+
+
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <div class="chat-history-panel" id="chatHistoryPanel">
+        <div class="chat-history-header">
+            CHAT HISTORY
+            <button class="history-toggle-btn" onclick="toggleChatHistory()">✕</button>
+        </div>
+        <div class="chat-history-content" id="chatHistoryContent">
+            <div class="loading">Loading chat history...</div>
         </div>
     </div>
 
@@ -923,14 +1372,44 @@
             document.getElementById('modifiedCount').textContent = `MODIFIED: ${modifiedFiles.size}`;
         }
 
+        // Custom notification system
+        function showNotification(message, type = 'info', duration = 500) {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            container.appendChild(notification);
+            
+            // Trigger animation
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            // Remove notification after duration
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, duration);
+        }
+
         function showError(message) {
             console.error('[IDE ERROR]', message);
-            alert(`[IDE ERROR] ${message}`);
+            showNotification(`[ERROR] ${message}`, 'error', 2000);
         }
 
         function showSuccess(message) {
             console.log('[IDE SUCCESS]', message);
-            // Could be replaced with a toast notification
+            showNotification(`[SUCCESS] ${message}`, 'success', 500);
+        }
+
+        function showInfo(message) {
+            console.log('[IDE INFO]', message);
+            showNotification(`[INFO] ${message}`, 'info', 1000);
         }
 
         function refreshFileExplorer() {
@@ -944,6 +1423,18 @@
             const file = event.target.files[0];
             if (!file) return;
 
+            // Validate file size (max 10MB to prevent API issues)
+            if (file.size > 10 * 1024 * 1024) {
+                showError('Image file too large. Please use an image smaller than 10MB.');
+                return;
+            }
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                showError('Please select a valid image file.');
+                return;
+            }
+
             const reader = new FileReader();
             reader.onload = function(e) {
                 const imageData = {
@@ -955,6 +1446,9 @@
                 
                 attachedImages.push(imageData);
                 displayImageAttachment(imageData);
+            };
+            reader.onerror = function() {
+                showError('Failed to read image file.');
             };
             reader.readAsDataURL(file);
         }
@@ -1004,7 +1498,8 @@
                 const langClass = language ? ` class="language-${language}"` : '';
                 return `<pre><div class="code-actions">
                     <button class="code-action-btn" onclick="copyCode(this)">COPY</button>
-                    <button class="code-action-btn" onclick="insertCode(this)">INSERT</button>
+                    <button class="code-action-btn smart-insert-btn" onclick="insertCode(this)">SMART INSERT</button>
+                    <button class="code-action-btn" onclick="simpleInsertCode(this)">INSERT</button>
                     <button class="code-action-btn" onclick="createFileFromCode(this, '${language || 'txt'}')">CREATE FILE</button>
                 </div><code${langClass}>${escapeHtml(code.trim())}</code></pre>`;
             });
@@ -1029,29 +1524,250 @@
                 .catch(err => showError('Failed to copy code: ' + err.message));
         }
 
-        function insertCode(button) {
+        async function insertCode(button) {
+            const codeElement = button.closest('pre').querySelector('code');
+            const codeToInsert = codeElement.textContent;
+            const language = codeElement.className.replace('language-', '') || 'text';
+            
+            const activeTab = document.querySelector('.tab.active');
+            if (!activeTab) {
+                showError('No file is currently open');
+                return;
+            }
+            
+            const fileName = activeTab.getAttribute('data-filename');
+            const editor = document.getElementById('editor');
+            const currentContent = editor.value;
+            
+            try {
+                // Show loading state
+                const originalText = button.textContent;
+                button.textContent = 'ANALYZING...';
+                button.disabled = true;
+                
+                // Ask AI to determine the best insertion strategy
+                const insertionResult = await getSmartInsertionPoint(currentContent, codeToInsert, fileName, language);
+                
+                if (insertionResult.success) {
+                    // Show preview before applying changes
+                    const confirmed = await showInsertionPreview(insertionResult, currentContent, codeToInsert);
+                    
+                    if (confirmed) {
+                        // Apply the smart insertion
+                        editor.value = insertionResult.newContent;
+                        
+                        // Highlight the inserted code
+                        if (insertionResult.insertionStart && insertionResult.insertionEnd) {
+                            editor.focus();
+                            editor.setSelectionRange(insertionResult.insertionStart, insertionResult.insertionEnd);
+                            
+                            // Scroll to the insertion point
+                            const lines = editor.value.substring(0, insertionResult.insertionStart).split('\n');
+                            const lineHeight = 21; // Approximate line height
+                            editor.scrollTop = (lines.length - 5) * lineHeight;
+                        }
+                        
+                        // Mark file as modified
+                        const fileData = openFiles.get(fileName);
+                        if (fileData) {
+                            modifiedFiles.add(fileName);
+                            activeTab.classList.add('modified');
+                            openFiles.set(fileName, {
+                                ...fileData,
+                                modified: true
+                            });
+                            updateStatusBar();
+                        }
+                        
+                        showSuccess(insertionResult.message || 'Code inserted successfully');
+                    } else {
+                        showInfo('Smart insertion cancelled');
+                    }
+                } else {
+                    // Fallback to cursor insertion
+                    const cursorPos = editor.selectionStart;
+                    const textBefore = editor.value.substring(0, cursorPos);
+                    const textAfter = editor.value.substring(cursorPos);
+                    
+                    editor.value = textBefore + '\n' + codeToInsert + '\n' + textAfter;
+                    editor.focus();
+                    
+                    showInfo('Code inserted at cursor position');
+                }
+                
+            } catch (error) {
+                console.error('Smart insertion failed:', error);
+                showError('Smart insertion failed, using basic insertion');
+                
+                // Fallback insertion
+                const cursorPos = editor.selectionStart;
+                const textBefore = editor.value.substring(0, cursorPos);
+                const textAfter = editor.value.substring(cursorPos);
+                
+                editor.value = textBefore + '\n' + codeToInsert + '\n' + textAfter;
+                editor.focus();
+                
+            } finally {
+                button.textContent = originalText;
+                button.disabled = false;
+            }
+        }
+
+        function simpleInsertCode(button) {
             const codeElement = button.closest('pre').querySelector('code');
             const editor = document.getElementById('editor');
+            const activeTab = document.querySelector('.tab.active');
+            
+            if (!activeTab) {
+                showError('No file is currently open');
+                return;
+            }
+            
             const cursorPos = editor.selectionStart;
             const textBefore = editor.value.substring(0, cursorPos);
             const textAfter = editor.value.substring(cursorPos);
             
-            editor.value = textBefore + codeElement.textContent + textAfter;
+            editor.value = textBefore + '\n' + codeElement.textContent + '\n' + textAfter;
             editor.focus();
             
-            const activeTab = document.querySelector('.tab.active');
-            if (activeTab) {
-                const fileName = activeTab.getAttribute('data-filename');
-                const fileData = openFiles.get(fileName);
-                if (fileData) {
-                    modifiedFiles.add(fileName);
-                    activeTab.classList.add('modified');
-                    openFiles.set(fileName, {
-                        ...fileData,
-                        modified: true
-                    });
-                    updateStatusBar();
+            // Mark file as modified
+            const fileName = activeTab.getAttribute('data-filename');
+            const fileData = openFiles.get(fileName);
+            if (fileData) {
+                modifiedFiles.add(fileName);
+                activeTab.classList.add('modified');
+                openFiles.set(fileName, {
+                    ...fileData,
+                    modified: true
+                });
+                updateStatusBar();
+            }
+            
+            showInfo('Code inserted at cursor position');
+        }
+
+        function showInsertionPreview(insertionResult, originalContent, codeToInsert) {
+            return new Promise((resolve) => {
+                // Create preview modal
+                const overlay = document.createElement('div');
+                overlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.8);
+                    z-index: 10000;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                `;
+                
+                const preview = document.createElement('div');
+                preview.className = 'insertion-preview';
+                
+                // Calculate context around insertion point
+                const contextLines = getInsertionContext(originalContent, insertionResult.newContent, insertionResult.insertionStart, insertionResult.insertionEnd);
+                
+                preview.innerHTML = `
+                    <div class="insertion-preview-header">
+                        Smart Insertion Preview
+                    </div>
+                    <div style="margin-bottom: 1rem; color: #40e0d0; font-size: 13px;">
+                        Strategy: ${insertionResult.strategy || 'Smart Insert'}
+                        ${insertionResult.message ? `<br>Action: ${insertionResult.message}` : ''}
+                    </div>
+                    <div class="insertion-preview-content">${escapeHtml(contextLines)}</div>
+                    <div class="insertion-preview-actions">
+                        <button class="preview-btn cancel" onclick="cancelInsertion()">CANCEL</button>
+                        <button class="preview-btn confirm" onclick="confirmInsertion()">APPLY CHANGES</button>
+                    </div>
+                `;
+                
+                overlay.appendChild(preview);
+                document.body.appendChild(overlay);
+                
+                // Global functions for button callbacks
+                window.confirmInsertion = function() {
+                    overlay.remove();
+                    delete window.confirmInsertion;
+                    delete window.cancelInsertion;
+                    resolve(true);
+                };
+                
+                window.cancelInsertion = function() {
+                    overlay.remove();
+                    delete window.confirmInsertion;
+                    delete window.cancelInsertion;
+                    resolve(false);
+                };
+                
+                // Close on escape key
+                const escapeHandler = (e) => {
+                    if (e.key === 'Escape') {
+                        window.cancelInsertion();
+                        document.removeEventListener('keydown', escapeHandler);
+                    }
+                };
+                document.addEventListener('keydown', escapeHandler);
+            });
+        }
+
+        function getInsertionContext(originalContent, newContent, insertionStart, insertionEnd) {
+            try {
+                // Get lines around the insertion point for context
+                const newLines = newContent.split('\n');
+                const originalLines = originalContent.split('\n');
+                
+                // Find the line numbers for the insertion
+                const beforeText = newContent.substring(0, insertionStart);
+                const insertedText = newContent.substring(insertionStart, insertionEnd);
+                const beforeLineCount = beforeText.split('\n').length - 1;
+                const insertedLineCount = insertedText.split('\n').length;
+                
+                // Show context: 3 lines before, the insertion, 3 lines after
+                const contextStart = Math.max(0, beforeLineCount - 3);
+                const contextEnd = Math.min(newLines.length, beforeLineCount + insertedLineCount + 3);
+                
+                let contextLines = [];
+                for (let i = contextStart; i < contextEnd; i++) {
+                    const lineNum = (i + 1).toString().padStart(3, ' ');
+                    const isInserted = i >= beforeLineCount && i < beforeLineCount + insertedLineCount;
+                    const prefix = isInserted ? '+ ' : '  ';
+                    const line = newLines[i] || '';
+                    contextLines.push(`${lineNum}${prefix}${line}`);
                 }
+                
+                return contextLines.join('\n');
+            } catch (error) {
+                console.error('Error generating insertion context:', error);
+                return `Insertion Preview:\n\n${newContent.substring(insertionStart, insertionEnd)}`;
+            }
+        }
+
+        async function getSmartInsertionPoint(currentContent, codeToInsert, fileName, language) {
+            try {
+                const response = await fetch('/api/smart-insert', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        currentContent: currentContent,
+                        codeToInsert: codeToInsert,
+                        fileName: fileName,
+                        language: language
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('Smart insertion API failed:', error);
+                return { success: false, error: error.message };
             }
         }
 
@@ -1076,22 +1792,102 @@
             };
             
             const ext = extensions[language] || 'txt';
-            const fileName = prompt(`Enter filename (without extension):`, `generated_code`);
+            
+            // Create a modal dialog for filename input to ensure user activation
+            const fileName = await showFileNameDialog(`generated_code.${ext}`);
             
             if (fileName) {
                 try {
-                    const fullFileName = `${fileName}.${ext}`;
-                    const fileHandle = await currentDirectoryHandle.getFileHandle(fullFileName, { create: true });
+                    const fileHandle = await currentDirectoryHandle.getFileHandle(fileName, { create: true });
                     const writable = await fileHandle.createWritable();
                     await writable.write(code);
                     await writable.close();
                     
                     await loadFileStructure(currentDirectoryHandle);
-                    showSuccess(`File ${fullFileName} created successfully!`);
+                    showSuccess(`File ${fileName} created successfully!`);
                 } catch (error) {
-                    showError('Error creating file: ' + error.message);
+                    if (error.name === 'NotAllowedError') {
+                        showError('Permission denied. Please ensure you have write access to the folder.');
+                    } else {
+                        showError('Error creating file: ' + error.message);
+                    }
                 }
             }
+        }
+
+        function showFileNameDialog(defaultName) {
+            return new Promise((resolve) => {
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.8);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                `;
+                
+                modal.innerHTML = `
+                    <div style="
+                        background: #111111;
+                        border: 1px solid #ffffff;
+                        padding: 2rem;
+                        border-radius: 4px;
+                        color: #ffffff;
+                        font-family: 'Consolas', 'Courier New', monospace;
+                    ">
+                        <h3 style="margin: 0 0 1rem 0;">Create File</h3>
+                        <input type="text" value="${defaultName}" style="
+                            width: 300px;
+                            padding: 0.5rem;
+                            background: #0a0a0a;
+                            border: 1px solid #ffffff;
+                            color: #ffffff;
+                            font-family: 'Consolas', 'Courier New', monospace;
+                            margin-bottom: 1rem;
+                        ">
+                        <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                            <button style="
+                                padding: 0.5rem 1rem;
+                                background: #333333;
+                                border: 1px solid #ffffff;
+                                color: #ffffff;
+                                cursor: pointer;
+                            " onclick="closeModal(null)">Cancel</button>
+                            <button style="
+                                padding: 0.5rem 1rem;
+                                background: #0a0a0a;
+                                border: 1px solid #ffffff;
+                                color: #ffffff;
+                                cursor: pointer;
+                            " onclick="closeModal(this.parentElement.parentElement.querySelector('input').value)">Create</button>
+                        </div>
+                    </div>
+                `;
+                
+                window.closeModal = function(filename) {
+                    modal.remove();
+                    delete window.closeModal;
+                    resolve(filename);
+                };
+                
+                document.body.appendChild(modal);
+                const input = modal.querySelector('input');
+                input.focus();
+                input.select();
+                
+                input.addEventListener('keyup', (e) => {
+                    if (e.key === 'Enter') {
+                        window.closeModal(input.value);
+                    } else if (e.key === 'Escape') {
+                        window.closeModal(null);
+                    }
+                });
+            });
         }
 
         async function sendPrompt() {
@@ -1119,26 +1915,28 @@
 
                 // Handle image attachments with RAG
                 if (attachedImages.length > 0) {
+                    const userContent = [];
+                    
+                    // Add text content
+                    userContent.push({
+                        type: "text",
+                        text: `${prompt}\n\nCode Context:\n${content}`
+                    });
+                    
+                    // Add images
                     for (const imageData of attachedImages) {
-                        // Convert image to base64 for API
-                        const base64Data = imageData.dataUrl.split(',')[1];
-                        
-                        messages.push({
-                            role: "user",
-                            content: [
-                                {
-                                    type: "text",
-                                    text: `${prompt}\n\nContext: I'm working on a project with the following code:\n${content}`
-                                },
-                                {
-                                    type: "image_url",
-                                    image_url: {
-                                        url: imageData.dataUrl
-                                    }
-                                }
-                            ]
+                        userContent.push({
+                            type: "image_url",
+                            image_url: {
+                                url: imageData.dataUrl
+                            }
                         });
                     }
+                    
+                    messages.push({
+                        role: "user",
+                        content: userContent
+                    });
                 } else {
                     // Text-only message
                     messages.push({
@@ -1147,24 +1945,7 @@
                     });
                 }
 
-                const response = await fetch('/api/completion', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        messages: messages,
-                        temperature: 0.7,
-                        max_tokens: 4000
-                    })
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Failed to get AI response');
-                }
-
-                const data = await response.json();
+                // Create message div first for streaming
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'ai-message';
                 
@@ -1173,14 +1954,119 @@
                     promptDisplay += ` [${attachedImages.length} image(s) attached]`;
                 }
                 
+                const responseDiv = document.createElement('div');
+                responseDiv.innerHTML = '<strong>A:</strong> <span class="typing-indicator">●</span>';
+                
                 messageDiv.innerHTML = `
                     <div><strong>Q:</strong> ${promptDisplay}</div>
-                    <div><strong>A:</strong> ${formatMarkdown(data.choices[0].message.content)}</div>
-                    <hr style="border: none; border-top: 1px solid #ffffff; margin: 1rem 0;">
                 `;
+                messageDiv.appendChild(responseDiv);
+                messageDiv.innerHTML += `<hr style="border: none; border-top: 1px solid #ffffff; margin: 1rem 0;">`;
                 
                 aiContent.appendChild(messageDiv);
                 aiContent.scrollTop = aiContent.scrollHeight;
+
+                // Start streaming request
+                const response = await fetch('/api/completion', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        messages: messages,
+                        temperature: 0.7,
+                        max_tokens: 4000,
+                        stream: false // Disable streaming for now due to xAI compatibility
+                    })
+                });
+
+                if (!response.ok) {
+                    let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorData.error || errorMessage;
+                        console.error('[AI ERROR] Response data:', errorData);
+                    } catch (e) {
+                        console.error('[AI ERROR] Failed to parse error response');
+                    }
+                    throw new Error(errorMessage);
+                }
+
+                // Check if this is a streaming response
+                const contentType = response.headers.get('content-type');
+                console.log('[AI] Response content-type:', contentType);
+                
+                if (contentType && contentType.includes('text/event-stream')) {
+                    // Handle streaming response
+                    console.log('[AI] Processing streaming response...');
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    let fullResponse = '';
+                    let buffer = '';
+
+                    try {
+                        while (true) {
+                            const { done, value } = await reader.read();
+                            if (done) {
+                                console.log('[AI] Stream completed');
+                                break;
+                            }
+
+                            buffer += decoder.decode(value, { stream: true });
+                            const lines = buffer.split('\n');
+                            buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+                            for (const line of lines) {
+                                if (line.trim() === '') continue;
+                                if (line.startsWith('data: ')) {
+                                    const data = line.slice(6);
+                                    if (data.trim() === '[DONE]') {
+                                        // Remove typing indicator and finalize
+                                        responseDiv.innerHTML = `<strong>A:</strong> ${formatMarkdown(fullResponse)}`;
+                                        
+                                        // Save to chat history
+                                        await saveChatMessage(prompt, fullResponse, attachedImages.length > 0);
+                                        return;
+                                    }
+                                    
+                                    try {
+                                        const parsed = JSON.parse(data);
+                                        if (parsed.choices && parsed.choices[0] && parsed.choices[0].delta && parsed.choices[0].delta.content) {
+                                            fullResponse += parsed.choices[0].delta.content;
+                                            responseDiv.innerHTML = `<strong>A:</strong> ${formatMarkdown(fullResponse)}<span class="typing-indicator">●</span>`;
+                                            aiContent.scrollTop = aiContent.scrollHeight;
+                                        }
+                                    } catch (e) {
+                                        console.error('[AI ERROR] Failed to parse streaming chunk:', data, e);
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // If we get here without [DONE], finalize the response
+                        if (fullResponse) {
+                            responseDiv.innerHTML = `<strong>A:</strong> ${formatMarkdown(fullResponse)}`;
+                            await saveChatMessage(prompt, fullResponse, attachedImages.length > 0);
+                        }
+                    } catch (streamError) {
+                        console.error('[AI ERROR] Streaming failed:', streamError);
+                        throw new Error('Streaming failed: ' + streamError.message);
+                    }
+                } else {
+                    // Handle non-streaming response (fallback)
+                    console.log('[AI] Processing non-streaming response...');
+                    const data = await response.json();
+                    
+                    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+                        throw new Error('Invalid response format from AI service');
+                    }
+
+                    const aiResponse = data.choices[0].message.content;
+                    responseDiv.innerHTML = `<strong>A:</strong> ${formatMarkdown(aiResponse)}`;
+                    
+                    // Save to chat history
+                    await saveChatMessage(prompt, aiResponse, attachedImages.length > 0);
+                }
                 
                 // Clear inputs
                 document.getElementById('aiPrompt').value = '';
@@ -1188,6 +2074,7 @@
                 document.getElementById('imageAttachments').innerHTML = '';
                 
             } catch (error) {
+                console.error('[AI ERROR] Full error:', error);
                 showError('AI request failed: ' + error.message);
             } finally {
                 sendButton.disabled = false;
@@ -1197,6 +2084,12 @@
 
         function clearAIChat() {
             document.getElementById('aiContent').innerHTML = '';
+            // Start a new chat session
+            currentChatSession = {
+                id: null,
+                messages: []
+            };
+            showInfo('Started new chat session');
         }
 
         function initializeResizeHandles() {
@@ -1289,37 +2182,27 @@
             }
             
             removeContextMenu();
-            const parentElement = document.getElementById('fileExplorer');
             
-            const inputContainer = document.createElement('div');
-            inputContainer.className = 'new-item-input';
-            inputContainer.innerHTML = `<input type="text" placeholder="filename.ext">`;
-            parentElement.appendChild(inputContainer);
+            const filename = await showFileNameDialog('new_file.txt');
             
-            const input = inputContainer.querySelector('input');
-            input.focus();
-            
-            input.addEventListener('keyup', async (e) => {
-                if (e.key === 'Enter') {
-                    const filename = input.value.trim();
-                    if (filename) {
-                        try {
-                            const targetDirectory = currentContextDirectory || currentDirectoryHandle;
-                            const fileHandle = await targetDirectory.getFileHandle(filename, { create: true });
-                            const writable = await fileHandle.createWritable();
-                            await writable.write('');
-                            await writable.close();
-                            
-                            await loadFileStructure(currentDirectoryHandle);
-                        } catch (error) {
-                            showError('Error creating file: ' + error.message);
-                        }
+            if (filename) {
+                try {
+                    const targetDirectory = currentContextDirectory || currentDirectoryHandle;
+                    const fileHandle = await targetDirectory.getFileHandle(filename, { create: true });
+                    const writable = await fileHandle.createWritable();
+                    await writable.write('');
+                    await writable.close();
+                    
+                    await loadFileStructure(currentDirectoryHandle);
+                    showSuccess(`File ${filename} created successfully!`);
+                } catch (error) {
+                    if (error.name === 'NotAllowedError') {
+                        showError('Permission denied. Please ensure you have write access to the folder.');
+                    } else {
+                        showError('Error creating file: ' + error.message);
                     }
-                    inputContainer.remove();
-                } else if (e.key === 'Escape') {
-                    inputContainer.remove();
                 }
-            });
+            }
         }
 
         async function createNewFolder() {
@@ -1329,34 +2212,249 @@
             }
             
             removeContextMenu();
-            const parentElement = document.getElementById('fileExplorer');
             
-            const inputContainer = document.createElement('div');
-            inputContainer.className = 'new-item-input';
-            inputContainer.innerHTML = `<input type="text" placeholder="folder name">`;
-            parentElement.appendChild(inputContainer);
+            const foldername = await showFolderNameDialog('new_folder');
             
-            const input = inputContainer.querySelector('input');
-            input.focus();
-            
-            input.addEventListener('keyup', async (e) => {
-                if (e.key === 'Enter') {
-                    const foldername = input.value.trim();
-                    if (foldername) {
-                        try {
-                            const targetDirectory = currentContextDirectory || currentDirectoryHandle;
-                            await targetDirectory.getDirectoryHandle(foldername, { create: true });
-                            await loadFileStructure(currentDirectoryHandle);
-                        } catch (error) {
-                            showError('Error creating folder: ' + error.message);
-                        }
+            if (foldername) {
+                try {
+                    const targetDirectory = currentContextDirectory || currentDirectoryHandle;
+                    await targetDirectory.getDirectoryHandle(foldername, { create: true });
+                    await loadFileStructure(currentDirectoryHandle);
+                    showSuccess(`Folder ${foldername} created successfully!`);
+                } catch (error) {
+                    if (error.name === 'NotAllowedError') {
+                        showError('Permission denied. Please ensure you have write access to the folder.');
+                    } else {
+                        showError('Error creating folder: ' + error.message);
                     }
-                    inputContainer.remove();
-                } else if (e.key === 'Escape') {
-                    inputContainer.remove();
                 }
+            }
+        }
+
+        function showFolderNameDialog(defaultName) {
+            return new Promise((resolve) => {
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.8);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                `;
+                
+                modal.innerHTML = `
+                    <div style="
+                        background: #111111;
+                        border: 1px solid #ffffff;
+                        padding: 2rem;
+                        border-radius: 4px;
+                        color: #ffffff;
+                        font-family: 'Consolas', 'Courier New', monospace;
+                    ">
+                        <h3 style="margin: 0 0 1rem 0;">Create Folder</h3>
+                        <input type="text" value="${defaultName}" style="
+                            width: 300px;
+                            padding: 0.5rem;
+                            background: #0a0a0a;
+                            border: 1px solid #ffffff;
+                            color: #ffffff;
+                            font-family: 'Consolas', 'Courier New', monospace;
+                            margin-bottom: 1rem;
+                        ">
+                        <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                            <button style="
+                                padding: 0.5rem 1rem;
+                                background: #333333;
+                                border: 1px solid #ffffff;
+                                color: #ffffff;
+                                cursor: pointer;
+                            " onclick="closeFolderModal(null)">Cancel</button>
+                            <button style="
+                                padding: 0.5rem 1rem;
+                                background: #0a0a0a;
+                                border: 1px solid #ffffff;
+                                color: #ffffff;
+                                cursor: pointer;
+                            " onclick="closeFolderModal(this.parentElement.parentElement.querySelector('input').value)">Create</button>
+                        </div>
+                    </div>
+                `;
+                
+                window.closeFolderModal = function(foldername) {
+                    modal.remove();
+                    delete window.closeFolderModal;
+                    resolve(foldername);
+                };
+                
+                document.body.appendChild(modal);
+                const input = modal.querySelector('input');
+                input.focus();
+                input.select();
+                
+                input.addEventListener('keyup', (e) => {
+                    if (e.key === 'Enter') {
+                        window.closeFolderModal(input.value);
+                    } else if (e.key === 'Escape') {
+                        window.closeFolderModal(null);
+                    }
+                });
             });
         }
+
+        // Terminal functionality
+        let terminalHistory = [];
+        let historyIndex = -1;
+        let currentWorkingDir = '.';
+
+        function toggleTerminal() {
+            const terminalFooter = document.getElementById('terminalFooter');
+            const terminalStatusBtn = document.getElementById('terminalStatusBtn');
+            
+            if (terminalFooter.classList.contains('open')) {
+                terminalFooter.classList.remove('open');
+                terminalStatusBtn.textContent = 'TERMINAL';
+                terminalStatusBtn.classList.remove('active');
+            } else {
+                terminalFooter.classList.add('open');
+                terminalStatusBtn.textContent = 'HIDE';
+                terminalStatusBtn.classList.add('active');
+                // Focus on terminal input when opened
+                setTimeout(() => {
+                    document.getElementById('terminalInput').focus();
+                }, 300);
+            }
+        }
+
+        async function executeTerminalCommand(command) {
+            const terminalContent = document.getElementById('terminalContent');
+            const terminalPrompt = document.getElementById('terminalPrompt');
+            
+            // Add command to history
+            if (command.trim() && terminalHistory[terminalHistory.length - 1] !== command) {
+                terminalHistory.push(command);
+            }
+            historyIndex = terminalHistory.length;
+            
+            // Display the command
+            const commandOutput = document.createElement('div');
+            commandOutput.className = 'terminal-output';
+            commandOutput.innerHTML = `<span style="color: #40e0d0;">${terminalPrompt.textContent}</span>${escapeHtml(command)}`;
+            terminalContent.appendChild(commandOutput);
+            
+            if (!command.trim()) {
+                terminalContent.scrollTop = terminalContent.scrollHeight;
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/terminal', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        command: command.trim(),
+                        cwd: currentWorkingDir
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Handle special actions
+                    if (result.action === 'clear') {
+                        // Clear terminal content except for initial messages
+                        terminalContent.innerHTML = `
+                            <div class="terminal-output terminal-info">Grok IDE Terminal v1.0</div>
+                            <div class="terminal-output terminal-info">Type 'help' for available commands</div>
+                        `;
+                    } else if (result.action === 'openFile' && result.filePath) {
+                        await openFileFromTerminal(result.filePath);
+                    }
+                    
+                    if (result.output) {
+                        const output = document.createElement('div');
+                        output.className = 'terminal-output terminal-success';
+                        output.textContent = result.output;
+                        terminalContent.appendChild(output);
+                    }
+                    
+                    // Update working directory if changed
+                    if (result.cwd) {
+                        currentWorkingDir = result.cwd;
+                        terminalPrompt.textContent = `grok-ide:${result.cwd === '.' ? '~' : result.cwd}$ `;
+                    }
+                } else {
+                    const errorOutput = document.createElement('div');
+                    errorOutput.className = 'terminal-output terminal-error';
+                    errorOutput.textContent = result.error || 'Command failed';
+                    terminalContent.appendChild(errorOutput);
+                }
+            } catch (error) {
+                const errorOutput = document.createElement('div');
+                errorOutput.className = 'terminal-output terminal-error';
+                errorOutput.textContent = 'Error executing command: ' + error.message;
+                terminalContent.appendChild(errorOutput);
+            }
+            
+            terminalContent.scrollTop = terminalContent.scrollHeight;
+        }
+
+        async function openFileFromTerminal(filePath) {
+            try {
+                if (!currentDirectoryHandle) {
+                    showError('No project folder is open. Use OPEN FOLDER first.');
+                    return;
+                }
+                
+                // Navigate to the file using the file path
+                const pathParts = filePath.split('/').filter(part => part && part !== '.');
+                let currentHandle = currentDirectoryHandle;
+                
+                // Navigate through directories
+                for (let i = 0; i < pathParts.length - 1; i++) {
+                    currentHandle = await currentHandle.getDirectoryHandle(pathParts[i]);
+                }
+                
+                // Get the file
+                const fileName = pathParts[pathParts.length - 1];
+                const fileHandle = await currentHandle.getFileHandle(fileName);
+                
+                await openFile(fileName, fileHandle);
+                showSuccess(`Opened ${filePath} from terminal`);
+            } catch (error) {
+                showError(`Failed to open file ${filePath}: ${error.message}`);
+            }
+        }
+
+        // Terminal input handling
+        document.getElementById('terminalInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const command = this.value;
+                this.value = '';
+                executeTerminalCommand(command);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    this.value = terminalHistory[historyIndex] || '';
+                }
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (historyIndex < terminalHistory.length - 1) {
+                    historyIndex++;
+                    this.value = terminalHistory[historyIndex] || '';
+                } else {
+                    historyIndex = terminalHistory.length;
+                    this.value = '';
+                }
+            }
+        });
 
         // Initialize status bar
         updateStatusBar();
@@ -1374,6 +2472,109 @@
                 sendPrompt();
             }
         });
+
+        // Chat History Management
+        let currentChatSession = {
+            id: null,
+            messages: []
+        };
+
+        function toggleChatHistory() {
+            const chatHistoryPanel = document.getElementById('chatHistoryPanel');
+            
+            if (chatHistoryPanel.classList.contains('open')) {
+                chatHistoryPanel.classList.remove('open');
+            } else {
+                chatHistoryPanel.classList.add('open');
+                loadChatHistory();
+            }
+        }
+
+        async function loadChatHistory() {
+            try {
+                const response = await fetch('/api/chat-history');
+                const data = await response.json();
+                
+                const historyContent = document.getElementById('chatHistoryContent');
+                
+                if (data.sessions && data.sessions.length > 0) {
+                    historyContent.innerHTML = data.sessions.map(session => `
+                        <div class="chat-history-item" onclick="loadChatSession(${session.id})">
+                            <div class="chat-history-item-header">
+                                ${new Date(session.created_at).toLocaleString()}
+                                <span style="float: right; color: #40e0d0;">${session.message_count} msgs</span>
+                            </div>
+                            <div class="chat-history-item-preview">
+                                ${session.first_message || 'Empty conversation'}
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    historyContent.innerHTML = '<div class="welcome-message">No chat history yet</div>';
+                }
+            } catch (error) {
+                console.error('Failed to load chat history:', error);
+                showError('Failed to load chat history');
+            }
+        }
+
+        async function loadChatSession(sessionId) {
+            try {
+                const response = await fetch(`/api/chat-history/${sessionId}`);
+                const data = await response.json();
+                
+                if (data.messages) {
+                    const aiContent = document.getElementById('aiContent');
+                    aiContent.innerHTML = '';
+                    
+                    data.messages.forEach(msg => {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = 'ai-message';
+                        messageDiv.innerHTML = `
+                            <div><strong>Q:</strong> ${escapeHtml(msg.user_message)}</div>
+                            <div><strong>A:</strong> ${formatMarkdown(msg.ai_response)}</div>
+                            <hr style="border: none; border-top: 1px solid #ffffff; margin: 1rem 0;">
+                        `;
+                        aiContent.appendChild(messageDiv);
+                    });
+                    
+                    aiContent.scrollTop = aiContent.scrollHeight;
+                    currentChatSession.id = sessionId;
+                    currentChatSession.messages = data.messages;
+                    
+                    toggleChatHistory(); // Close the history panel
+                    showSuccess(`Loaded chat session from ${new Date(data.created_at).toLocaleString()}`);
+                }
+            } catch (error) {
+                console.error('Failed to load chat session:', error);
+                showError('Failed to load chat session');
+            }
+        }
+
+        async function saveChatMessage(userMessage, aiResponse, hasImages = false) {
+            try {
+                const response = await fetch('/api/chat-history', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        sessionId: currentChatSession.id,
+                        userMessage: userMessage,
+                        aiResponse: aiResponse,
+                        hasImages: hasImages
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.sessionId) {
+                    currentChatSession.id = data.sessionId;
+                }
+            } catch (error) {
+                console.error('Failed to save chat message:', error);
+                // Don't show error to user as this is background operation
+            }
+        }
     </script>
 </body>
 </html>
