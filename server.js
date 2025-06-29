@@ -48,7 +48,7 @@ app.post('/api/completion', async (req, res) => {
         console.log('[TACTICAL AI] Processing completion request...');
 
         const response = await grokClient.post('/chat/completions', {
-            model: "grok-beta",
+            model: "grok-3-latest",
             messages: messages,
             temperature: temperature,
             max_tokens: max_tokens,
@@ -82,43 +82,54 @@ app.post('/api/completion', async (req, res) => {
     }
 });
 
-// Image generation endpoint (using xAI's image generation if available)
+// Image generation endpoint using xAI's actual image generation API
 app.post('/api/generate-image', async (req, res) => {
     try {
         if (!process.env.XAI_API_KEY) {
             throw new Error('XAI_API_KEY environment variable not set');
         }
 
-        const { prompt, size = "1024x1024", quality = "standard" } = req.body;
+        const { prompt, n = 1, response_format = "url" } = req.body;
 
         console.log('[TACTICAL AI] Processing image generation request...');
 
-        // Note: This endpoint might need to be updated based on xAI's actual image generation API
-        // For now, we'll use a placeholder response
-        
-        // Simulate image generation delay
-        await new Promise(resolve => setTimeout(resolve, 3000));
-
-        // In a real implementation, you would call xAI's image generation API here
-        // For now, we'll return a placeholder response
-        const imageResponse = {
-            imageUrl: `https://picsum.photos/1024/1024?random=${Date.now()}`,
+        const response = await grokClient.post('/images/generations', {
+            model: "grok-2-image",
             prompt: prompt,
-            size: size,
-            quality: quality,
-            created: Math.floor(Date.now() / 1000)
-        };
+            n: n,
+            response_format: response_format
+        });
 
         console.log('[TACTICAL AI] Image generation completed');
+        
+        // Format response to match expected structure
+        const imageResponse = {
+            imageUrl: response.data.data[0].url || response.data.data[0].b64_json,
+            prompt: prompt,
+            n: n,
+            response_format: response_format,
+            created: Math.floor(Date.now() / 1000),
+            data: response.data.data
+        };
+
         res.json(imageResponse);
 
     } catch (error) {
         console.error('[TACTICAL AI ERROR] Image generation failed:', error.message);
         
-        res.status(500).json({
-            error: 'Image generation failed',
-            message: error.message
-        });
+        if (error.response) {
+            console.error('[TACTICAL AI ERROR] Response:', error.response.data);
+            res.status(error.response.status).json({
+                error: 'Image generation failed',
+                message: error.response.data.error?.message || error.message,
+                details: error.response.data
+            });
+        } else {
+            res.status(500).json({
+                error: 'Image generation failed',
+                message: error.message
+            });
+        }
     }
 });
 
@@ -143,7 +154,7 @@ app.post('/api/analyze-code', async (req, res) => {
         Format your response with clear sections and use markdown for code blocks.`;
 
         const response = await grokClient.post('/chat/completions', {
-            model: "grok-beta",
+            model: "grok-3-latest",
             messages: [
                 {
                     role: 'system',
@@ -187,7 +198,7 @@ app.post('/api/analyze-project', async (req, res) => {
         Consider the project type: ${projectType || 'general'}.`;
 
         const response = await grokClient.post('/chat/completions', {
-            model: "grok-beta",
+            model: "grok-3-latest",
             messages: [
                 {
                     role: 'system',
