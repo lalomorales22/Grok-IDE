@@ -6,6 +6,9 @@ const sqlite3 = require('sqlite3').verbose();
 const { execSync, spawn } = require('child_process');
 const fs = require('fs');
 
+// Development server management
+let activeServers = new Map(); // Track running development servers
+
 // Load environment variables
 dotenv.config();
 
@@ -67,6 +70,9 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Serve static files from the public directory
 app.use(express.static('public'));
+
+// Serve files from current working directory for terminal browser access
+app.use('/serve', express.static('.'));
 
 // Basic route to serve the new IDE
 app.get('/', (req, res) => {
@@ -735,16 +741,30 @@ app.post('/api/terminal', (req, res) => {
                 res.json({
                     success: true,
                     output: `Available commands:
-ls          - List directory contents
-cd <dir>    - Change directory
-pwd         - Show current directory
-mkdir <dir> - Create directory
-touch <file>- Create empty file
-cat <file>  - Display file contents
-echo <text> - Echo text
-open <file> - Open file in IDE
-clear       - Clear terminal
-help        - Show this help
+ls            - List directory contents
+cd <dir>      - Change directory
+pwd           - Show current directory
+mkdir <dir>   - Create directory
+touch <file>  - Create empty file
+cat <file>    - Display file contents
+echo <text>   - Echo text
+open <file>   - Open file in IDE or run/serve based on type
+serve <file>  - Start dev server for web files (HTML/PHP)
+run <file>    - Execute script files (Python/JS/etc)
+php <file>    - Run PHP file with built-in server
+python <file> - Execute Python script
+node <file>   - Execute Node.js script
+devserver     - Start development server on port 8080
+stopserver    - Stop development server
+clear         - Clear terminal
+help          - Show this help
+
+File type behaviors:
+- .html/.htm  - Opens in browser via dev server
+- .php        - Runs with PHP built-in server
+- .py         - Executes with Python interpreter
+- .js         - Executes with Node.js (use 'node file.js')
+- Others      - Opens in IDE editor
 
 Standard Unix commands are also supported.`,
                     cwd: cwd
@@ -906,11 +926,221 @@ Standard Unix commands are also supported.`,
                     const fullPath = path.resolve(filePath);
                     
                     if (fs.existsSync(fullPath) && fs.statSync(fullPath).isFile()) {
+                        const fileExtension = path.extname(params[0]).toLowerCase();
+                        
+                        switch (fileExtension) {
+                            case '.html':
+                            case '.htm':
+                                // Start dev server and open in browser
+                                res.json({
+                                    success: true,
+                                    output: `Starting dev server and opening ${params[0]}...`,
+                                    action: 'startDevServer',
+                                    filePath: params[0],
+                                    fullPath: fullPath,
+                                    cwd: cwd
+                                });
+                                break;
+                            case '.php':
+                                // Start PHP server
+                                res.json({
+                                    success: true,
+                                    output: `Starting PHP server for ${params[0]}...`,
+                                    action: 'startPHPServer',
+                                    filePath: params[0],
+                                    fullPath: fullPath,
+                                    cwd: cwd
+                                });
+                                break;
+                            case '.py':
+                                // Execute Python script
+                                res.json({
+                                    success: true,
+                                    output: `Executing Python script ${params[0]}...`,
+                                    action: 'runPython',
+                                    filePath: params[0],
+                                    fullPath: fullPath,
+                                    cwd: cwd
+                                });
+                                break;
+                            case '.js':
+                                // Open in IDE (for Node.js use 'node filename.js')
+                                res.json({
+                                    success: true,
+                                    output: `Opening ${params[0]} in IDE (use 'node ${params[0]}' to execute)`,
+                                    action: 'openFile',
+                                    filePath: params[0],
+                                    cwd: cwd
+                                });
+                                break;
+                            default:
+                                // Open in IDE
+                                res.json({
+                                    success: true,
+                                    output: `Opening file: ${params[0]}`,
+                                    action: 'openFile',
+                                    filePath: params[0],
+                                    cwd: cwd
+                                });
+                                break;
+                        }
+                    } else {
+                        res.json({
+                            success: false,
+                            error: `File not found: ${params[0]}`
+                        });
+                    }
+                } catch (error) {
+                    res.json({
+                        success: false,
+                        error: `Cannot access file: ${error.message}`
+                    });
+                }
+                break;
+
+            case 'serve':
+                if (params.length === 0) {
+                    res.json({
+                        success: true,
+                        output: 'Starting development server on port 8080...',
+                        action: 'startDevServer',
+                        cwd: cwd
+                    });
+                    break;
+                }
+                
+                try {
+                    const filePath = path.join(cwd, params[0]);
+                    const fullPath = path.resolve(filePath);
+                    
+                    if (fs.existsSync(fullPath) && fs.statSync(fullPath).isFile()) {
+                        const fileExtension = path.extname(params[0]).toLowerCase();
+                        if (fileExtension === '.html' || fileExtension === '.htm') {
+                            res.json({
+                                success: true,
+                                output: `Starting dev server and opening ${params[0]}...`,
+                                action: 'startDevServer',
+                                filePath: params[0],
+                                fullPath: fullPath,
+                                cwd: cwd
+                            });
+                        } else if (fileExtension === '.php') {
+                            res.json({
+                                success: true,
+                                output: `Starting PHP server for ${params[0]}...`,
+                                action: 'startPHPServer',
+                                filePath: params[0],
+                                fullPath: fullPath,
+                                cwd: cwd
+                            });
+                        } else {
+                            res.json({
+                                success: false,
+                                error: `Cannot serve ${params[0]}. Supported: HTML, PHP files.`
+                            });
+                        }
+                    } else {
+                        res.json({
+                            success: false,
+                            error: `File not found: ${params[0]}`
+                        });
+                    }
+                } catch (error) {
+                    res.json({
+                        success: false,
+                        error: `Cannot access file: ${error.message}`
+                    });
+                }
+                break;
+
+            case 'run':
+                if (params.length === 0) {
+                    res.json({
+                        success: false,
+                        error: 'Usage: run <script-file>'
+                    });
+                    break;
+                }
+                
+                try {
+                    const filePath = path.join(cwd, params[0]);
+                    const fullPath = path.resolve(filePath);
+                    
+                    if (fs.existsSync(fullPath) && fs.statSync(fullPath).isFile()) {
+                        const fileExtension = path.extname(params[0]).toLowerCase();
+                        
+                        switch (fileExtension) {
+                            case '.py':
+                                res.json({
+                                    success: true,
+                                    output: `Executing Python script ${params[0]}...`,
+                                    action: 'runPython',
+                                    filePath: params[0],
+                                    fullPath: fullPath,
+                                    cwd: cwd
+                                });
+                                break;
+                            case '.js':
+                                res.json({
+                                    success: true,
+                                    output: `Executing Node.js script ${params[0]}...`,
+                                    action: 'runNode',
+                                    filePath: params[0],
+                                    fullPath: fullPath,
+                                    cwd: cwd
+                                });
+                                break;
+                            case '.php':
+                                res.json({
+                                    success: true,
+                                    output: `Starting PHP server for ${params[0]}...`,
+                                    action: 'startPHPServer',
+                                    filePath: params[0],
+                                    fullPath: fullPath,
+                                    cwd: cwd
+                                });
+                                break;
+                            default:
+                                res.json({
+                                    success: false,
+                                    error: `Cannot run ${params[0]}. Supported: .py, .js, .php files.`
+                                });
+                                break;
+                        }
+                    } else {
+                        res.json({
+                            success: false,
+                            error: `File not found: ${params[0]}`
+                        });
+                    }
+                } catch (error) {
+                    res.json({
+                        success: false,
+                        error: `Cannot access file: ${error.message}`
+                    });
+                }
+                break;
+
+            case 'python':
+                if (params.length === 0) {
+                    res.json({
+                        success: false,
+                        error: 'Usage: python <script.py>'
+                    });
+                    break;
+                }
+                
+                try {
+                    const filePath = path.join(cwd, params[0]);
+                    const fullPath = path.resolve(filePath);
+                    
+                    if (fs.existsSync(fullPath) && fs.statSync(fullPath).isFile()) {
                         res.json({
                             success: true,
-                            output: `Opening file: ${params[0]}`,
-                            action: 'openFile',
+                            output: `Executing Python script ${params[0]}...`,
+                            action: 'runPython',
                             filePath: params[0],
+                            fullPath: fullPath,
                             cwd: cwd
                         });
                     } else {
@@ -925,6 +1155,96 @@ Standard Unix commands are also supported.`,
                         error: `Cannot access file: ${error.message}`
                     });
                 }
+                break;
+
+            case 'node':
+                if (params.length === 0) {
+                    res.json({
+                        success: false,
+                        error: 'Usage: node <script.js>'
+                    });
+                    break;
+                }
+                
+                try {
+                    const filePath = path.join(cwd, params[0]);
+                    const fullPath = path.resolve(filePath);
+                    
+                    if (fs.existsSync(fullPath) && fs.statSync(fullPath).isFile()) {
+                        res.json({
+                            success: true,
+                            output: `Executing Node.js script ${params[0]}...`,
+                            action: 'runNode',
+                            filePath: params[0],
+                            fullPath: fullPath,
+                            cwd: cwd
+                        });
+                    } else {
+                        res.json({
+                            success: false,
+                            error: `File not found: ${params[0]}`
+                        });
+                    }
+                } catch (error) {
+                    res.json({
+                        success: false,
+                        error: `Cannot access file: ${error.message}`
+                    });
+                }
+                break;
+
+            case 'php':
+                if (params.length === 0) {
+                    res.json({
+                        success: false,
+                        error: 'Usage: php <script.php>'
+                    });
+                    break;
+                }
+                
+                try {
+                    const filePath = path.join(cwd, params[0]);
+                    const fullPath = path.resolve(filePath);
+                    
+                    if (fs.existsSync(fullPath) && fs.statSync(fullPath).isFile()) {
+                        res.json({
+                            success: true,
+                            output: `Starting PHP server for ${params[0]}...`,
+                            action: 'startPHPServer',
+                            filePath: params[0],
+                            fullPath: fullPath,
+                            cwd: cwd
+                        });
+                    } else {
+                        res.json({
+                            success: false,
+                            error: `File not found: ${params[0]}`
+                        });
+                    }
+                } catch (error) {
+                    res.json({
+                        success: false,
+                        error: `Cannot access file: ${error.message}`
+                    });
+                }
+                break;
+
+            case 'devserver':
+                res.json({
+                    success: true,
+                    output: 'Starting development server on port 8080...',
+                    action: 'startDevServer',
+                    cwd: cwd
+                });
+                break;
+
+            case 'stopserver':
+                res.json({
+                    success: true,
+                    output: 'Stopping development servers...',
+                    action: 'stopServers',
+                    cwd: cwd
+                });
                 break;
 
             case 'ls':
@@ -959,6 +1279,277 @@ Standard Unix commands are also supported.`,
             error: 'Terminal command failed: ' + error.message
         });
     }
+});
+
+// Development server management functions
+function startDevServer(workingDir, filePath = null) {
+    const port = 8080;
+    const key = `devserver:${port}`;
+    
+    // Stop existing server if any
+    if (activeServers.has(key)) {
+        activeServers.get(key).kill();
+        activeServers.delete(key);
+    }
+    
+    try {
+        // Start a simple HTTP server using Node.js
+        const http = require('http');
+        const url = require('url');
+        
+        const server = http.createServer((req, res) => {
+            const pathname = url.parse(req.url).pathname;
+            let filePath = path.join(workingDir, pathname === '/' ? 'index.html' : pathname);
+            
+            // Security check
+            if (!filePath.startsWith(path.resolve(workingDir))) {
+                res.writeHead(403);
+                res.end('Forbidden');
+                return;
+            }
+            
+            fs.readFile(filePath, (err, data) => {
+                if (err) {
+                    res.writeHead(404);
+                    res.end('File not found');
+                    return;
+                }
+                
+                const ext = path.extname(filePath);
+                let contentType = 'text/html';
+                if (ext === '.js') contentType = 'application/javascript';
+                else if (ext === '.css') contentType = 'text/css';
+                else if (ext === '.json') contentType = 'application/json';
+                else if (ext === '.png') contentType = 'image/png';
+                else if (ext === '.jpg' || ext === '.jpeg') contentType = 'image/jpeg';
+                
+                res.writeHead(200, {'Content-Type': contentType});
+                res.end(data);
+            });
+        });
+        
+        server.listen(port, () => {
+            console.log(`Dev server started on port ${port}`);
+            activeServers.set(key, server);
+        });
+        
+        const openUrl = filePath ? 
+            `http://localhost:${port}/${path.basename(filePath)}` : 
+            `http://localhost:${port}`;
+        
+        return { success: true, port, url: openUrl };
+    } catch (error) {
+        console.error('Failed to start dev server:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+function startPHPServer(workingDir, filePath) {
+    const port = 8081;
+    const key = `php:${port}`;
+    
+    // Stop existing server if any
+    if (activeServers.has(key)) {
+        activeServers.get(key).kill();
+        activeServers.delete(key);
+    }
+    
+    try {
+        const phpServer = spawn('php', ['-S', `localhost:${port}`, '-t', workingDir], {
+            cwd: workingDir,
+            stdio: 'pipe'
+        });
+        
+        activeServers.set(key, phpServer);
+        
+        phpServer.stdout.on('data', (data) => {
+            console.log(`PHP Server: ${data}`);
+        });
+        
+        phpServer.stderr.on('data', (data) => {
+            console.error(`PHP Server Error: ${data}`);
+        });
+        
+        phpServer.on('close', (code) => {
+            console.log(`PHP server exited with code ${code}`);
+            activeServers.delete(key);
+        });
+        
+        const openUrl = filePath ? 
+            `http://localhost:${port}/${path.basename(filePath)}` : 
+            `http://localhost:${port}`;
+        
+        return { success: true, port, url: openUrl };
+    } catch (error) {
+        console.error('Failed to start PHP server:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+function executePython(filePath, workingDir) {
+    return new Promise((resolve) => {
+        // Try python3 first, then python
+        const pythonCommands = ['python3', 'python'];
+        let currentCommandIndex = 0;
+        
+        function tryCommand(command) {
+            try {
+                const pythonProcess = spawn(command, [filePath], {
+                    cwd: workingDir,
+                    stdio: 'pipe'
+                });
+                
+                let output = '';
+                let errorOutput = '';
+                
+                pythonProcess.stdout.on('data', (data) => {
+                    output += data.toString();
+                });
+                
+                pythonProcess.stderr.on('data', (data) => {
+                    errorOutput += data.toString();
+                });
+                
+                pythonProcess.on('close', (code) => {
+                    resolve({
+                        success: code === 0,
+                        output: output || errorOutput,
+                        exitCode: code
+                    });
+                });
+                
+                pythonProcess.on('error', (error) => {
+                    // If this command fails and we have more to try
+                    if (currentCommandIndex < pythonCommands.length - 1) {
+                        currentCommandIndex++;
+                        tryCommand(pythonCommands[currentCommandIndex]);
+                    } else {
+                        resolve({
+                            success: false,
+                            output: `Python not found. Please install Python and ensure it's in your PATH.\nError: ${error.message}`,
+                            exitCode: -1
+                        });
+                    }
+                });
+                
+                // Set timeout
+                setTimeout(() => {
+                    pythonProcess.kill();
+                    resolve({
+                        success: false,
+                        output: 'Script execution timed out (30 seconds)',
+                        exitCode: -1
+                    });
+                }, 30000);
+                
+            } catch (error) {
+                if (currentCommandIndex < pythonCommands.length - 1) {
+                    currentCommandIndex++;
+                    tryCommand(pythonCommands[currentCommandIndex]);
+                } else {
+                    resolve({
+                        success: false,
+                        output: `Error executing Python script: ${error.message}`,
+                        exitCode: -1
+                    });
+                }
+            }
+        }
+        
+        tryCommand(pythonCommands[currentCommandIndex]);
+    });
+}
+
+function executeNode(filePath, workingDir) {
+    return new Promise((resolve) => {
+        try {
+            const nodeProcess = spawn('node', [filePath], {
+                cwd: workingDir,
+                stdio: 'pipe'
+            });
+            
+            let output = '';
+            let errorOutput = '';
+            
+            nodeProcess.stdout.on('data', (data) => {
+                output += data.toString();
+            });
+            
+            nodeProcess.stderr.on('data', (data) => {
+                errorOutput += data.toString();
+            });
+            
+            nodeProcess.on('close', (code) => {
+                resolve({
+                    success: code === 0,
+                    output: output || errorOutput,
+                    exitCode: code
+                });
+            });
+            
+            setTimeout(() => {
+                nodeProcess.kill();
+                resolve({
+                    success: false,
+                    output: 'Script execution timed out (30 seconds)',
+                    exitCode: -1
+                });
+            }, 30000);
+            
+        } catch (error) {
+            resolve({
+                success: false,
+                output: `Error executing Node.js script: ${error.message}`,
+                exitCode: -1
+            });
+        }
+    });
+}
+
+function stopAllServers() {
+    for (const [key, server] of activeServers) {
+        try {
+            if (server.kill) {
+                server.kill();
+            } else if (server.close) {
+                server.close();
+            }
+        } catch (error) {
+            console.error(`Error stopping server ${key}:`, error);
+        }
+    }
+    activeServers.clear();
+    return { success: true, message: 'All servers stopped' };
+}
+
+// Server action endpoints
+app.post('/api/start-dev-server', (req, res) => {
+    const { workingDir, filePath } = req.body;
+    const result = startDevServer(workingDir, filePath);
+    res.json(result);
+});
+
+app.post('/api/start-php-server', (req, res) => {
+    const { workingDir, filePath } = req.body;
+    const result = startPHPServer(workingDir, filePath);
+    res.json(result);
+});
+
+app.post('/api/execute-python', async (req, res) => {
+    const { filePath, workingDir } = req.body;
+    const result = await executePython(filePath, workingDir);
+    res.json(result);
+});
+
+app.post('/api/execute-node', async (req, res) => {
+    const { filePath, workingDir } = req.body;
+    const result = await executeNode(filePath, workingDir);
+    res.json(result);
+});
+
+app.post('/api/stop-servers', (req, res) => {
+    const result = stopAllServers();
+    res.json(result);
 });
 
 // Chat History endpoints
@@ -1134,6 +1725,10 @@ process.on('SIGTERM', () => {
 
 process.on('SIGINT', () => {
     console.log('[SERVER] Received SIGINT, shutting down gracefully...');
+    
+    // Stop all active servers
+    stopAllServers();
+    
     db.close((err) => {
         if (err) {
             console.error('[DB ERROR] Error closing database:', err.message);

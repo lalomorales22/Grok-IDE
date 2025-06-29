@@ -1905,6 +1905,33 @@
                 sendButton.disabled = true;
                 sendButton.textContent = 'SENDING...';
 
+                // Clear inputs immediately
+                document.getElementById('aiPrompt').value = '';
+                const currentImages = [...attachedImages]; // Copy current images
+                attachedImages = [];
+                document.getElementById('imageAttachments').innerHTML = '';
+
+                // Create and display the message immediately
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'ai-message';
+                
+                let promptDisplay = escapeHtml(prompt);
+                if (currentImages.length > 0) {
+                    promptDisplay += ` [${currentImages.length} image(s) attached]`;
+                }
+                
+                const responseDiv = document.createElement('div');
+                responseDiv.innerHTML = '<strong>A:</strong> <span class="typing-indicator">●</span>';
+                
+                messageDiv.appendChild(document.createElement('div'));
+                messageDiv.firstChild.innerHTML = `<strong>Q:</strong> ${promptDisplay}`;
+                messageDiv.appendChild(responseDiv);
+                messageDiv.appendChild(document.createElement('hr'));
+                messageDiv.lastChild.style.cssText = 'border: none; border-top: 1px solid #ffffff; margin: 1rem 0;';
+                
+                aiContent.appendChild(messageDiv);
+                aiContent.scrollTop = aiContent.scrollHeight;
+
                 // Prepare messages array
                 const messages = [
                     {
@@ -1914,7 +1941,7 @@
                 ];
 
                 // Handle image attachments with RAG
-                if (attachedImages.length > 0) {
+                if (currentImages.length > 0) {
                     const userContent = [];
                     
                     // Add text content
@@ -1924,7 +1951,7 @@
                     });
                     
                     // Add images
-                    for (const imageData of attachedImages) {
+                    for (const imageData of currentImages) {
                         userContent.push({
                             type: "image_url",
                             image_url: {
@@ -1945,28 +1972,9 @@
                     });
                 }
 
-                // Create message div first for streaming
-                const messageDiv = document.createElement('div');
-                messageDiv.className = 'ai-message';
-                
-                let promptDisplay = escapeHtml(prompt);
-                if (attachedImages.length > 0) {
-                    promptDisplay += ` [${attachedImages.length} image(s) attached]`;
-                }
-                
-                const responseDiv = document.createElement('div');
-                responseDiv.innerHTML = '<strong>A:</strong> <span class="typing-indicator">●</span>';
-                
-                messageDiv.innerHTML = `
-                    <div><strong>Q:</strong> ${promptDisplay}</div>
-                `;
-                messageDiv.appendChild(responseDiv);
-                messageDiv.innerHTML += `<hr style="border: none; border-top: 1px solid #ffffff; margin: 1rem 0;">`;
-                
-                aiContent.appendChild(messageDiv);
-                aiContent.scrollTop = aiContent.scrollHeight;
+                console.log('[AI] Sending request to API...');  // Debug log
 
-                // Start streaming request
+                // Make API request
                 const response = await fetch('/api/completion', {
                     method: 'POST',
                     headers: {
@@ -1976,9 +1984,11 @@
                         messages: messages,
                         temperature: 0.7,
                         max_tokens: 4000,
-                        stream: false // Disable streaming for now due to xAI compatibility
+                        stream: false
                     })
                 });
+
+                console.log('[AI] Response received, status:', response.status);
 
                 if (!response.ok) {
                     let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
@@ -1992,86 +2002,30 @@
                     throw new Error(errorMessage);
                 }
 
-                // Check if this is a streaming response
-                const contentType = response.headers.get('content-type');
-                console.log('[AI] Response content-type:', contentType);
+                // Handle response
+                console.log('[AI] Processing response...');
+                const data = await response.json();
+                console.log('[AI] Response data:', data);
                 
-                if (contentType && contentType.includes('text/event-stream')) {
-                    // Handle streaming response
-                    console.log('[AI] Processing streaming response...');
-                    const reader = response.body.getReader();
-                    const decoder = new TextDecoder();
-                    let fullResponse = '';
-                    let buffer = '';
-
-                    try {
-                        while (true) {
-                            const { done, value } = await reader.read();
-                            if (done) {
-                                console.log('[AI] Stream completed');
-                                break;
-                            }
-
-                            buffer += decoder.decode(value, { stream: true });
-                            const lines = buffer.split('\n');
-                            buffer = lines.pop() || ''; // Keep incomplete line in buffer
-
-                            for (const line of lines) {
-                                if (line.trim() === '') continue;
-                                if (line.startsWith('data: ')) {
-                                    const data = line.slice(6);
-                                    if (data.trim() === '[DONE]') {
-                                        // Remove typing indicator and finalize
-                                        responseDiv.innerHTML = `<strong>A:</strong> ${formatMarkdown(fullResponse)}`;
-                                        
-                                        // Save to chat history
-                                        await saveChatMessage(prompt, fullResponse, attachedImages.length > 0);
-                                        return;
-                                    }
-                                    
-                                    try {
-                                        const parsed = JSON.parse(data);
-                                        if (parsed.choices && parsed.choices[0] && parsed.choices[0].delta && parsed.choices[0].delta.content) {
-                                            fullResponse += parsed.choices[0].delta.content;
-                                            responseDiv.innerHTML = `<strong>A:</strong> ${formatMarkdown(fullResponse)}<span class="typing-indicator">●</span>`;
-                                            aiContent.scrollTop = aiContent.scrollHeight;
-                                        }
-                                    } catch (e) {
-                                        console.error('[AI ERROR] Failed to parse streaming chunk:', data, e);
-                                    }
-                                }
-                            }
-                        }
-                        
-                        // If we get here without [DONE], finalize the response
-                        if (fullResponse) {
-                            responseDiv.innerHTML = `<strong>A:</strong> ${formatMarkdown(fullResponse)}`;
-                            await saveChatMessage(prompt, fullResponse, attachedImages.length > 0);
-                        }
-                    } catch (streamError) {
-                        console.error('[AI ERROR] Streaming failed:', streamError);
-                        throw new Error('Streaming failed: ' + streamError.message);
-                    }
-                } else {
-                    // Handle non-streaming response (fallback)
-                    console.log('[AI] Processing non-streaming response...');
-                    const data = await response.json();
-                    
-                    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-                        throw new Error('Invalid response format from AI service');
-                    }
-
-                    const aiResponse = data.choices[0].message.content;
-                    responseDiv.innerHTML = `<strong>A:</strong> ${formatMarkdown(aiResponse)}`;
-                    
-                    // Save to chat history
-                    await saveChatMessage(prompt, aiResponse, attachedImages.length > 0);
+                if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+                    throw new Error('Invalid response format from AI service');
                 }
+
+                const aiResponse = data.choices[0].message.content;
+                console.log('[AI] AI response:', aiResponse);
                 
-                // Clear inputs
-                document.getElementById('aiPrompt').value = '';
-                attachedImages = [];
-                document.getElementById('imageAttachments').innerHTML = '';
+                // Update the response div
+                responseDiv.innerHTML = `<strong>A:</strong> ${formatMarkdown(aiResponse)}`;
+                aiContent.scrollTop = aiContent.scrollHeight;
+                
+                // Save to chat history
+                try {
+                    await saveChatMessage(prompt, aiResponse, currentImages.length > 0);
+                    console.log('[AI] Chat message saved to history');
+                } catch (historyError) {
+                    console.error('[AI] Failed to save chat to history:', historyError);
+                    // Don't break the chat flow if history saving fails
+                }
                 
             } catch (error) {
                 console.error('[AI ERROR] Full error:', error);
@@ -2306,6 +2260,184 @@
             });
         }
 
+        // Server management functions
+        async function handleStartDevServer(workingDir, filePath) {
+            try {
+                const response = await fetch('/api/start-dev-server', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        workingDir: workingDir,
+                        filePath: filePath
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess(`Development server started on port ${result.port}`);
+                    
+                    // Open in browser
+                    setTimeout(() => {
+                        const newWindow = window.open(result.url, '_blank');
+                        if (!newWindow) {
+                            showError('Failed to open browser. Please check popup blocker settings.');
+                        }
+                    }, 1000);
+                } else {
+                    showError(`Failed to start dev server: ${result.error}`);
+                }
+            } catch (error) {
+                showError(`Error starting dev server: ${error.message}`);
+            }
+        }
+
+        async function handleStartPHPServer(workingDir, filePath) {
+            try {
+                const response = await fetch('/api/start-php-server', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        workingDir: workingDir,
+                        filePath: filePath
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess(`PHP server started on port ${result.port}`);
+                    
+                    // Open in browser
+                    setTimeout(() => {
+                        const newWindow = window.open(result.url, '_blank');
+                        if (!newWindow) {
+                            showError('Failed to open browser. Please check popup blocker settings.');
+                        }
+                    }, 2000); // Wait a bit longer for PHP server to start
+                } else {
+                    showError(`Failed to start PHP server: ${result.error}`);
+                }
+            } catch (error) {
+                showError(`Error starting PHP server: ${error.message}`);
+            }
+        }
+
+        async function handleRunPython(filePath, workingDir) {
+            try {
+                showInfo('Executing Python script...');
+                
+                const response = await fetch('/api/execute-python', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        filePath: filePath,
+                        workingDir: workingDir
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess('Python script executed successfully!');
+                    
+                    // Display output in terminal
+                    const terminalContent = document.getElementById('terminalContent');
+                    const output = document.createElement('div');
+                    output.className = 'terminal-output terminal-success';
+                    output.style.whiteSpace = 'pre-wrap';
+                    output.textContent = result.output || 'Script completed with no output';
+                    terminalContent.appendChild(output);
+                    terminalContent.scrollTop = terminalContent.scrollHeight;
+                } else {
+                    showError('Python script execution failed');
+                    
+                    // Display error in terminal
+                    const terminalContent = document.getElementById('terminalContent');
+                    const output = document.createElement('div');
+                    output.className = 'terminal-output terminal-error';
+                    output.style.whiteSpace = 'pre-wrap';
+                    output.textContent = result.output || 'Script execution failed';
+                    terminalContent.appendChild(output);
+                    terminalContent.scrollTop = terminalContent.scrollHeight;
+                }
+            } catch (error) {
+                showError(`Error executing Python script: ${error.message}`);
+            }
+        }
+
+        async function handleRunNode(filePath, workingDir) {
+            try {
+                showInfo('Executing Node.js script...');
+                
+                const response = await fetch('/api/execute-node', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        filePath: filePath,
+                        workingDir: workingDir
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess('Node.js script executed successfully!');
+                    
+                    // Display output in terminal
+                    const terminalContent = document.getElementById('terminalContent');
+                    const output = document.createElement('div');
+                    output.className = 'terminal-output terminal-success';
+                    output.style.whiteSpace = 'pre-wrap';
+                    output.textContent = result.output || 'Script completed with no output';
+                    terminalContent.appendChild(output);
+                    terminalContent.scrollTop = terminalContent.scrollHeight;
+                } else {
+                    showError('Node.js script execution failed');
+                    
+                    // Display error in terminal
+                    const terminalContent = document.getElementById('terminalContent');
+                    const output = document.createElement('div');
+                    output.className = 'terminal-output terminal-error';
+                    output.style.whiteSpace = 'pre-wrap';
+                    output.textContent = result.output || 'Script execution failed';
+                    terminalContent.appendChild(output);
+                    terminalContent.scrollTop = terminalContent.scrollHeight;
+                }
+            } catch (error) {
+                showError(`Error executing Node.js script: ${error.message}`);
+            }
+        }
+
+        async function handleStopServers() {
+            try {
+                const response = await fetch('/api/stop-servers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess('All development servers stopped');
+                } else {
+                    showError('Failed to stop servers');
+                }
+            } catch (error) {
+                showError(`Error stopping servers: ${error.message}`);
+            }
+        }
+
         // Terminal functionality
         let terminalHistory = [];
         let historyIndex = -1;
@@ -2375,6 +2507,18 @@
                         `;
                     } else if (result.action === 'openFile' && result.filePath) {
                         await openFileFromTerminal(result.filePath);
+                    } else if (result.action === 'openInBrowser' && result.filePath) {
+                        openFileInBrowser(result.filePath);
+                    } else if (result.action === 'startDevServer') {
+                        await handleStartDevServer(result.cwd, result.filePath);
+                    } else if (result.action === 'startPHPServer') {
+                        await handleStartPHPServer(result.cwd, result.filePath);
+                    } else if (result.action === 'runPython') {
+                        await handleRunPython(result.filePath, result.cwd);
+                    } else if (result.action === 'runNode') {
+                        await handleRunNode(result.filePath, result.cwd);
+                    } else if (result.action === 'stopServers') {
+                        await handleStopServers();
                     }
                     
                     if (result.output) {
@@ -2429,6 +2573,24 @@
                 showSuccess(`Opened ${filePath} from terminal`);
             } catch (error) {
                 showError(`Failed to open file ${filePath}: ${error.message}`);
+            }
+        }
+
+        function openFileInBrowser(filePath) {
+            try {
+                // Construct the URL to serve the file
+                const fileUrl = `${window.location.origin}/serve/${filePath}`;
+                
+                // Open in new tab
+                const newWindow = window.open(fileUrl, '_blank');
+                
+                if (newWindow) {
+                    showSuccess(`Opened ${filePath} in browser`);
+                } else {
+                    showError('Failed to open browser tab. Please check popup blocker settings.');
+                }
+            } catch (error) {
+                showError(`Failed to open ${filePath} in browser: ${error.message}`);
             }
         }
 
