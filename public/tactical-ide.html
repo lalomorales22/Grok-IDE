@@ -311,17 +311,20 @@
         .ai-input-controls {
             display: flex;
             gap: 0.5rem;
-            align-items: center;
+            align-items: stretch;
         }
 
         .image-upload-btn {
-            padding: 0.3rem 0.6rem;
+            padding: 0.5rem;
             background-color: #0a0a0a;
             border: 1px solid #ffffff;
             color: #ffffff;
             cursor: pointer;
-            font-size: 0.8rem;
-            font-weight: bold;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
         }
 
         .image-upload-btn:hover {
@@ -337,7 +340,7 @@
         }
 
         .ai-input-area textarea {
-            width: 100%;
+            flex: 1;
             background-color: #0a0a0a;
             color: #ffffff;
             border: 1px solid #ffffff;
@@ -353,13 +356,13 @@
         }
 
         .ai-send-btn {
-            width: 100%;
             padding: 0.5rem 1rem;
             background-color: #0a0a0a;
             border: 1px solid #ffffff;
             color: #ffffff;
             cursor: pointer;
             font-weight: bold;
+            min-width: 60px;
         }
 
         .ai-send-btn:hover {
@@ -601,17 +604,17 @@
             </div>
             <div id="aiContent" class="ai-content"></div>
             <div class="ai-input-area">
+                <div id="imageAttachments"></div>
                 <div class="ai-input-controls">
                     <input type="file" id="imageUpload" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
-                    <button onclick="document.getElementById('imageUpload').click()" class="image-upload-btn">📷 IMAGE</button>
+                    <textarea 
+                        id="aiPrompt" 
+                        placeholder="Ask about your code or upload an image..."
+                        rows="3"
+                    ></textarea>
+                    <button onclick="document.getElementById('imageUpload').click()" class="image-upload-btn">📷</button>
+                    <button onclick="sendPrompt()" class="ai-send-btn" id="sendBtn">SEND</button>
                 </div>
-                <div id="imageAttachments"></div>
-                <textarea 
-                    id="aiPrompt" 
-                    placeholder="Ask about your code or upload an image..."
-                    rows="3"
-                ></textarea>
-                <button onclick="sendPrompt()" class="ai-send-btn" id="sendBtn">SEND</button>
             </div>
         </div>
     </div>
