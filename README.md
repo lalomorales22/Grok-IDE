@@ -1,38 +1,38 @@
-# TACTICAL GROK IDE
+# GROK IDE
 
 <div align="center">
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
-║                    TACTICAL GROK IDE                         ║
+║                        GROK IDE                              ║
 ║              Metal Gear Solid Inspired IDE                   ║
 ║                 with xAI Grok Integration                     ║
 ╚══════════════════════════════════════════════════════════════╝
 ```
 
-*A tactical, dark-themed development environment with advanced AI capabilities*
+*A sleek, dark-themed development environment with advanced AI capabilities*
 
 </div>
 
 ## 🎯 MISSION OVERVIEW
 
-The Tactical Grok IDE is a cutting-edge development environment inspired by the tactical interfaces of Metal Gear Solid. Built with a sleek black aesthetic and tactical green highlights, this IDE combines traditional coding capabilities with powerful AI assistance from xAI's Grok.
+The Grok IDE is a cutting-edge development environment inspired by the interfaces of Metal Gear Solid. Built with a sleek black aesthetic and white highlights, this IDE combines traditional coding capabilities with powerful AI assistance from xAI's Grok.
 
-## ⚡ TACTICAL FEATURES
+## ⚡ CORE FEATURES
 
-### 🖥️ **TACTICAL INTERFACE**
-- **Dark Metal Gear Solid-inspired theme** with tactical green accents
+### 🖥️ **MODERN INTERFACE**
+- **Dark Metal Gear Solid-inspired theme** with white accents
 - **Resizable panels** for customizable workspace layout
 - **Advanced file explorer** with context menu operations
 - **Multi-tab editor** with syntax highlighting indicators
-- **Real-time status monitoring** with tactical status bar
+- **Real-time status monitoring** with system status bar
 
 ### 🤖 **GROK AI INTEGRATION**
 - **Multi-mode AI assistant** (Code, Image, Chat)
 - **Code generation and analysis** with insertion capabilities
 - **Image generation** using xAI's image models
 - **Context-aware assistance** with file content integration
-- **Tactical code formatting** with markdown support
+- **Advanced code formatting** with markdown support
 
 ### 📁 **FILE OPERATIONS**
 - **Native file system access** using File System API
@@ -56,18 +56,18 @@ The Tactical Grok IDE is a cutting-edge development environment inspired by the 
 
 ### Installation
 
-1. **Clone the tactical repository:**
+1. **Clone the repository:**
 ```bash
 git clone <repository-url>
-cd tactical-grok-ide
+cd grok-ide
 ```
 
-2. **Install tactical dependencies:**
+2. **Install dependencies:**
 ```bash
 npm install
 ```
 
-3. **Configure tactical environment:**
+3. **Configure environment:**
 Create a `.env` file in the root directory:
 ```env
 XAI_API_KEY=your_xai_api_key_here
@@ -76,20 +76,20 @@ PORT=3000
 
 ### Launch Sequence
 
-1. **Start the tactical server:**
+1. **Start the server:**
 ```bash
 npm start
 ```
 
-2. **Access the tactical interface:**
+2. **Access the interface:**
 Open your browser and navigate to `http://localhost:3000`
 
-3. **Begin tactical operations:**
+3. **Begin operations:**
 - Click "OPEN FOLDER" to load your project
 - Use the AI assistant for code generation and analysis
-- Create and edit files with the tactical editor
+- Create and edit files with the editor
 
-## 🎮 TACTICAL CONTROLS
+## 🎮 CONTROLS
 
 ### File Operations
 - **CTRL/CMD + S**: Save current file
@@ -106,17 +106,16 @@ Open your browser and navigate to `http://localhost:3000`
 - **Auto-save**: Automatic saving with modification indicators
 - **Code insertion**: Direct insertion from AI-generated code blocks
 
-## 🛠️ TACTICAL ARCHITECTURE
+## 🛠️ ARCHITECTURE
 
 ```
-tactical-grok-ide/
+grok-ide/
 ├── public/
-│   ├── tactical-ide.html      # Main tactical interface
-│   └── dynamic-ide.html       # Legacy interface
-├── server.js                  # Tactical server with AI endpoints
-├── package.json              # Tactical dependencies
-├── .env                      # Tactical configuration
-└── README.md                 # Tactical documentation
+│   └── tactical-ide.html      # Main interface
+├── server.js                  # Server with AI endpoints
+├── package.json              # Dependencies
+├── .env                      # Configuration
+└── README.md                 # Documentation
 ```
 
 ## 🔧 API ENDPOINTS
@@ -129,23 +128,23 @@ tactical-grok-ide/
 
 ### System Operations
 - `GET /api/health` - System status check
-- `GET /` - Main tactical interface
+- `GET /` - Main interface
 - `GET /legacy` - Legacy interface access
 
-## 🎨 TACTICAL THEME
+## 🎨 THEME
 
 The interface uses a carefully crafted color scheme:
 - **Primary Black**: `#0a0a0a` - Main background
 - **Secondary Black**: `#111111` - Panel backgrounds
 - **Tertiary Black**: `#1a1a1a` - Component backgrounds
-- **Tactical Green**: `#00ff41` - Accents and highlights
-- **Border White**: `#333333` - Borders and separators
+- **White Highlights**: `#ffffff` - Accents and borders
+- **Turquoise Text**: `#40e0d0` - Subtle status text
 
 ## 🔒 SECURITY PROTOCOLS
 
 - Environment variable protection for API keys
 - Request validation and sanitization
-- Error handling with tactical feedback
+- Error handling with system feedback
 - Secure file system operations
 
 ## 🚨 TROUBLESHOOTING
@@ -167,9 +166,9 @@ The interface uses a carefully crafted color scheme:
 - Limit AI context size for large files
 - Use browser developer tools to monitor performance
 
-## 🎯 TACTICAL OBJECTIVES
+## 🎯 OBJECTIVES
 
-- [x] Dark tactical theme implementation
+- [x] Dark theme implementation
 - [x] Multi-mode AI assistant integration
 - [x] Advanced file operations
 - [x] Code generation and insertion
@@ -178,31 +177,31 @@ The interface uses a carefully crafted color scheme:
 - [x] Context menu operations
 - [x] Real-time status monitoring
 
-## 🤝 TACTICAL SUPPORT
+## 🤝 SUPPORT
 
-For tactical support and feature requests:
+For support and feature requests:
 1. Check the troubleshooting section
 2. Review the API documentation
-3. Submit tactical reports via issues
+3. Submit reports via issues
 
-## 📜 TACTICAL LICENSE
+## 📜 LICENSE
 
-This project is licensed under the MIT License - see the LICENSE file for tactical details.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🎖️ TACTICAL ACKNOWLEDGMENTS
+## 🎖️ ACKNOWLEDGMENTS
 
-- Inspired by Metal Gear Solid tactical interfaces
+- Inspired by Metal Gear Solid interfaces
 - Powered by xAI's Grok AI technology
 - Built with modern web technologies
-- Designed for tactical development operations
+- Designed for professional development operations
 
 ---
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
-║                    TACTICAL MISSION COMPLETE                 ║
+║                    MISSION COMPLETE                          ║
 ║                   READY FOR DEPLOYMENT                       ║
 ╚══════════════════════════════════════════════════════════════╝
 ```
 
-⚠️ **TACTICAL WARNING**: This project requires a valid xAI API key for full functionality. Keep your tactical credentials secure and never commit them to version control.
+⚠️ **WARNING**: This project requires a valid xAI API key for full functionality. Keep your credentials secure and never commit them to version control.

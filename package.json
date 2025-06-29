@@ -1,7 +1,7 @@
 {
-  "name": "tactical-grok-ide",
+  "name": "grok-ide",
   "version": "2.0.0",
-  "description": "A tactical Metal Gear Solid-inspired IDE with xAI Grok integration",
+  "description": "A Metal Gear Solid-inspired IDE with xAI Grok integration",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -12,12 +12,11 @@
     "ide",
     "grok",
     "xai",
-    "tactical",
     "metal-gear-solid",
     "code-editor",
     "ai-assistant"
   ],
-  "author": "Tactical Development Team",
+  "author": "Development Team",
   "license": "MIT",
   "dependencies": {
     "axios": "^1.7.7",

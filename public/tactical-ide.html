@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TACTICAL GROK IDE</title>
+    <title>Grok IDE</title>
     <style>
         * {
             margin: 0;
@@ -21,17 +21,17 @@
             overflow: hidden;
         }
 
-        .tactical-navbar {
+        .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0.75rem 1.5rem;
             background: linear-gradient(135deg, #111111 0%, #1a1a1a 100%);
             border-bottom: 2px solid #ffffff;
-            box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
 
-        .tactical-logo {
+        .navbar-title {
             font-size: 1.2rem;
             font-weight: bold;
             color: #ffffff;
@@ -39,53 +39,91 @@
             letter-spacing: 2px;
         }
 
-        .tactical-controls {
-            display: flex;
-            gap: 0.75rem;
+        .navbar-title::before {
+            content: "◤ ";
+            color: #ffffff;
         }
 
-        .tactical-btn {
-            padding: 0.6rem 1.2rem;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+        .navbar-title::after {
+            content: " ◥";
+            color: #ffffff;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .button {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
             border: 1px solid #ffffff;
             color: #ffffff;
             cursor: pointer;
             border-radius: 0;
-            font-family: 'Consolas', monospace;
+            font-family: 'Consolas', 'Courier New', monospace;
             font-size: 0.9rem;
+            transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
         }
 
-        .tactical-btn:hover {
-            background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        .button:hover {
+            background: linear-gradient(135deg, #333333 0%, #555555 100%);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
             transform: translateY(-1px);
         }
 
-        .tactical-btn:active {
+        .button:active {
             transform: translateY(0);
         }
 
-        .tactical-btn.disabled {
-            background: #333333;
+        .button.disabled {
+            background: #1a1a1a;
             color: #666666;
-            border-color: #444444;
             cursor: not-allowed;
+            border-color: #333333;
+        }
+
+        .button.disabled:hover {
+            background: #1a1a1a;
             box-shadow: none;
             transform: none;
         }
 
-        .tactical-path {
+        .status-bar {
             padding: 0.5rem 1.5rem;
-            background-color: #111111;
-            color: #ffffff;
-            font-size: 0.9rem;
+            background: #111111;
             border-bottom: 1px solid #ffffff;
-            font-family: 'Consolas', monospace;
+            color: #40e0d0;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-left {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         .main-container {
@@ -95,49 +133,83 @@
             overflow: hidden;
         }
 
-        .tactical-sidebar {
+        .sidebar {
             width: 300px;
-            background: linear-gradient(180deg, #111111 0%, #0a0a0a 100%);
+            background: linear-gradient(180deg, #111111 0%, #1a1a1a 100%);
             border-right: 2px solid #ffffff;
             display: flex;
             flex-direction: column;
-            min-width: 250px;
-            max-width: 500px;
+            min-width: 200px;
+            max-width: 600px;
         }
 
         .sidebar-header {
             padding: 1rem 1.5rem;
-            background: linear-gradient(135deg, #1a1a1a 0%, #111111 100%);
+            background: #1a1a1a;
             border-bottom: 1px solid #ffffff;
-            font-weight: bold;
             font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #ffffff;
+            font-weight: bold;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            color: #ffffff;
+            letter-spacing: 1px;
         }
 
-        .tactical-explorer {
+        .sidebar-header::before {
+            content: "◤ ";
+            color: #ffffff;
+        }
+
+        .sidebar-header::after {
+            content: " ◥";
+            color: #ffffff;
+        }
+
+        .refresh-btn {
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            padding: 0.25rem;
+        }
+
+        .refresh-btn:hover {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            transform: rotate(180deg);
+        }
+
+        .file-explorer {
             flex: 1;
             padding: 1rem;
             overflow-y: auto;
             scrollbar-width: thin;
-            scrollbar-color: #ffffff #111111;
+            scrollbar-color: #ffffff #1a1a1a;
         }
 
-        .tactical-explorer::-webkit-scrollbar {
+        .file-explorer::-webkit-scrollbar {
             width: 8px;
         }
 
-        .tactical-explorer::-webkit-scrollbar-track {
-            background: #111111;
+        .file-explorer::-webkit-scrollbar-track {
+            background: #1a1a1a;
         }
 
-        .tactical-explorer::-webkit-scrollbar-thumb {
+        .file-explorer::-webkit-scrollbar-thumb {
             background-color: #ffffff;
-            border-radius: 0;
+            border-radius: 4px;
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #40e0d0;
+            font-size: 1rem;
+            line-height: 1.6;
+            border: 1px dashed #40e0d0;
+            border-radius: 4px;
+            background: rgba(64, 224, 208, 0.05);
         }
 
         .folder {
@@ -150,13 +222,13 @@
             display: flex;
             align-items: center;
             color: #ffffff;
-            border: 1px solid transparent;
-            transition: all 0.2s ease;
+            border-radius: 2px;
+            transition: all 0.3s ease;
         }
 
         .folder-name:hover {
-            background-color: #1a1a1a;
-            border-color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: inset 2px 0 0 #ffffff;
         }
 
         .folder-icon {
@@ -171,50 +243,56 @@
         }
 
         .file {
-            padding: 0.4rem 0.75rem;
+            padding: 0.4rem 0.5rem;
             cursor: pointer;
             color: #ffffff;
-            border: 1px solid transparent;
-            margin-bottom: 0.25rem;
-            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            border-radius: 2px;
+            transition: all 0.3s ease;
         }
 
         .file:hover {
-            background-color: #1a1a1a;
-            border-color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: inset 2px 0 0 #ffffff;
         }
 
-        .tactical-editor {
+        .file::before {
+            content: "📄";
+            margin-right: 0.5rem;
+        }
+
+        .editor-section {
             flex: 1;
             display: flex;
             flex-direction: column;
-            background-color: #0a0a0a;
+            background: #0a0a0a;
         }
 
-        .tactical-tabs {
+        .tabs {
             display: flex;
-            background: linear-gradient(135deg, #111111 0%, #1a1a1a 100%);
-            border-bottom: 2px solid #ffffff;
+            background: #111111;
+            border-bottom: 1px solid #ffffff;
             overflow-x: auto;
             scrollbar-width: thin;
             scrollbar-color: #ffffff #111111;
         }
 
-        .tactical-tabs::-webkit-scrollbar {
-            height: 6px;
+        .tabs::-webkit-scrollbar {
+            height: 4px;
         }
 
-        .tactical-tabs::-webkit-scrollbar-track {
+        .tabs::-webkit-scrollbar-track {
             background: #111111;
         }
 
-        .tactical-tabs::-webkit-scrollbar-thumb {
+        .tabs::-webkit-scrollbar-thumb {
             background-color: #ffffff;
         }
 
-        .tactical-tab {
+        .tab {
             padding: 0.75rem 1.5rem;
-            background-color: #111111;
+            background: #1a1a1a;
             border: none;
             color: #ffffff;
             cursor: pointer;
@@ -223,29 +301,64 @@
             gap: 0.75rem;
             white-space: nowrap;
             border-right: 1px solid #ffffff;
-            transition: all 0.2s ease;
-            font-family: 'Consolas', monospace;
+            transition: all 0.3s ease;
+            font-family: 'Consolas', 'Courier New', monospace;
         }
 
-        .tactical-tab.active {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
-            color: #ffffff;
+        .tab.active {
+            background: #0a0a0a;
             box-shadow: inset 0 2px 0 #ffffff;
         }
 
-        .tactical-tab:hover {
-            background-color: #2a2a2a;
+        .tab:hover:not(.active) {
+            background: #333333;
+        }
+
+        .tab-close {
+            margin-left: 0.5rem;
+            color: #ffffff;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .tab-close:hover {
+            color: #ff4444;
+            text-shadow: 0 0 5px rgba(255, 68, 68, 0.5);
         }
 
         .editor-content {
             flex: 1;
-            padding: 0;
-            background-color: #0a0a0a;
+            display: flex;
+            flex-direction: column;
+            background: #0a0a0a;
         }
 
-        #tacticalEditor {
-            width: 100%;
-            height: 100%;
+        .editor-toolbar {
+            padding: 0.5rem 1rem;
+            background: #111111;
+            border-bottom: 1px solid #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-info {
+            color: #40e0d0;
+            font-size: 0.85rem;
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .editor-actions .button {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        #editor {
+            flex: 1;
             background-color: #0a0a0a;
             color: #ffffff;
             border: none;
@@ -257,57 +370,96 @@
             outline: none;
         }
 
-        .tactical-ai-panel {
+        #editor::placeholder {
+            color: #40e0d0;
+            opacity: 0.7;
+        }
+
+        .resize-handle {
+            width: 4px;
+            background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.5) 100%);
+            cursor: col-resize;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .resize-handle:hover,
+        .resize-handle.active {
+            background: #ffffff;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .ai-column {
             width: 400px;
-            background: linear-gradient(180deg, #111111 0%, #0a0a0a 100%);
+            background: linear-gradient(180deg, #111111 0%, #1a1a1a 100%);
             border-left: 2px solid #ffffff;
             display: flex;
             flex-direction: column;
             min-width: 300px;
-            max-width: 600px;
+            max-width: 800px;
         }
 
         .ai-header {
             padding: 1rem 1.5rem;
-            background: linear-gradient(135deg, #1a1a1a 0%, #111111 100%);
+            background: #1a1a1a;
             border-bottom: 1px solid #ffffff;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            color: #ffffff;
+            font-weight: bold;
+            letter-spacing: 1px;
         }
 
-        .ai-mode-selector {
+        .ai-header::before {
+            content: "◤ ";
+            color: #ffffff;
+        }
+
+        .ai-header::after {
+            content: " ◥";
+            color: #ffffff;
+        }
+
+        .ai-modes {
             display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+            background: #111111;
+            border-bottom: 1px solid #ffffff;
         }
 
-        .ai-mode-btn {
-            padding: 0.4rem 0.8rem;
-            background: #111111;
-            border: 1px solid #ffffff;
+        .ai-mode {
+            flex: 1;
+            padding: 0.75rem;
+            background: #1a1a1a;
+            border: none;
             color: #ffffff;
             cursor: pointer;
-            font-family: 'Consolas', monospace;
-            font-size: 0.8rem;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
             text-transform: uppercase;
-            transition: all 0.2s ease;
+            letter-spacing: 1px;
         }
 
-        .ai-mode-btn.active {
-            background: #ffffff;
-            color: #0a0a0a;
+        .ai-mode.active {
+            background: #0a0a0a;
+            box-shadow: inset 0 2px 0 #ffffff;
+        }
+
+        .ai-mode:hover:not(.active) {
+            background: #333333;
         }
 
         .ai-content {
             flex: 1;
             overflow-y: auto;
             padding: 1.5rem;
-            font-family: 'Consolas', monospace;
+            font-family: 'Consolas', 'Courier New', monospace;
             font-size: 13px;
-            line-height: 1.5;
+            line-height: 1.6;
             scrollbar-width: thin;
-            scrollbar-color: #ffffff #111111;
+            scrollbar-color: #ffffff #1a1a1a;
+            background: #0a0a0a;
         }
 
         .ai-content::-webkit-scrollbar {
@@ -315,107 +467,138 @@
         }
 
         .ai-content::-webkit-scrollbar-track {
-            background: #111111;
+            background: #1a1a1a;
         }
 
         .ai-content::-webkit-scrollbar-thumb {
             background-color: #ffffff;
-        }
-
-        .ai-input-area {
-            padding: 1.5rem;
-            background: linear-gradient(135deg, #1a1a1a 0%, #111111 100%);
-            border-top: 2px solid #ffffff;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .ai-input-area textarea {
-            width: 100%;
-            background-color: #0a0a0a;
-            color: #ffffff;
-            border: 2px solid #ffffff;
-            padding: 1rem;
-            resize: vertical;
-            font-family: 'Consolas', monospace;
-            min-height: 80px;
-            outline: none;
-        }
-
-        .ai-input-area textarea:focus {
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
         }
 
         .ai-message {
             margin-bottom: 2rem;
             padding: 1rem;
+            border-radius: 4px;
             border: 1px solid #ffffff;
-            background-color: #111111;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .ai-message .question {
+            color: #ffffff;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #ffffff;
+        }
+
+        .ai-message .answer {
+            color: #ffffff;
+            white-space: pre-wrap;
         }
 
         .ai-message pre {
             position: relative;
-            background: #0a0a0a;
+            background: #111111;
             padding: 1.5rem;
-            border: 1px solid #ffffff;
+            border-radius: 4px;
             margin: 1rem 0;
+            border: 1px solid #ffffff;
             overflow-x: auto;
         }
 
         .ai-message code {
-            font-family: 'Consolas', monospace;
+            font-family: 'Consolas', 'Courier New', monospace;
             color: #ffffff;
         }
 
         .code-actions {
             position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
+            top: 0.75rem;
+            right: 0.75rem;
             display: flex;
             gap: 0.5rem;
+            opacity: 0.8;
         }
 
         .code-action-btn {
-            padding: 0.3rem 0.6rem;
-            background: #111111;
+            padding: 0.25rem 0.75rem;
+            background: #1a1a1a;
             border: 1px solid #ffffff;
             color: #ffffff;
+            border-radius: 2px;
             cursor: pointer;
             font-size: 11px;
-            font-family: 'Consolas', monospace;
+            font-family: 'Consolas', 'Courier New', monospace;
+            transition: all 0.3s ease;
             text-transform: uppercase;
-            transition: all 0.2s ease;
         }
 
         .code-action-btn:hover {
-            background: #ffffff;
-            color: #0a0a0a;
+            background: #333333;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
         }
 
-        .resize-handle {
-            width: 4px;
-            background-color: #ffffff;
-            cursor: col-resize;
-            transition: all 0.2s ease;
-            opacity: 0.5;
+        .ai-input-area {
+            padding: 1.5rem;
+            background: #111111;
+            border-top: 1px solid #ffffff;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
-        .resize-handle:hover,
-        .resize-handle.active {
-            opacity: 1;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        .ai-options {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ffffff;
+            font-size: 0.85rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            accent-color: #ffffff;
+        }
+
+        .ai-input-area textarea {
+            width: 100%;
+            background: #0a0a0a;
+            color: #ffffff;
+            border: 1px solid #ffffff;
+            padding: 1rem;
+            resize: vertical;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            min-height: 80px;
+            border-radius: 2px;
+        }
+
+        .ai-input-area textarea:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .ai-input-area textarea::placeholder {
+            color: #40e0d0;
+            opacity: 0.7;
         }
 
         .context-menu {
             position: fixed;
-            background: linear-gradient(135deg, #111111 0%, #1a1a1a 100%);
+            background: #1a1a1a;
             border: 2px solid #ffffff;
+            border-radius: 4px;
             padding: 0.5rem 0;
-            min-width: 180px;
+            min-width: 200px;
             z-index: 1000;
-            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
-            font-family: 'Consolas', monospace;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);
         }
 
         .context-menu-item {
@@ -425,44 +608,90 @@
             display: flex;
             align-items: center;
             gap: 1rem;
-            transition: all 0.2s ease;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
         }
 
         .context-menu-item:hover {
-            background-color: #2a2a2a;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: inset 2px 0 0 #ffffff;
         }
 
-        .welcome-message {
-            text-align: center;
-            padding: 3rem 2rem;
-            color: #ffffff;
-            font-family: 'Consolas', monospace;
-            font-size: 1.1rem;
-            line-height: 1.8;
+        .context-menu-separator {
+            height: 1px;
+            background: #ffffff;
+            margin: 0.5rem 0;
         }
 
-        .tactical-status {
-            padding: 0.5rem 1.5rem;
-            background: linear-gradient(135deg, #111111 0%, #1a1a1a 100%);
-            border-top: 1px solid #ffffff;
-            font-size: 0.8rem;
+        .new-item-input {
+            position: relative;
+            padding: 0.5rem;
+            background: #0a0a0a;
+            border: 2px solid #ffffff;
+            border-radius: 2px;
+            margin: 0.5rem;
+        }
+
+        .new-item-input input {
+            width: 100%;
+            background: transparent;
+            border: none;
             color: #ffffff;
-            font-family: 'Consolas', monospace;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 13px;
+            outline: none;
+            padding: 0.25rem;
+        }
+
+        .new-item-input input::placeholder {
+            color: #40e0d0;
+            opacity: 0.7;
         }
 
         .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 2rem;
-            color: #ffffff;
-            text-align: center;
-            font-family: 'Consolas', monospace;
+            color: #40e0d0;
+            font-size: 1rem;
+        }
+
+        .loading::before {
+            content: "◤ ";
+            animation: pulse 1s infinite;
+        }
+
+        .loading::after {
+            content: " ◥";
+            animation: pulse 1s infinite reverse;
+        }
+
+        .error-message {
+            color: #ff4444;
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid #ff4444;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+
+        .success-message {
+            color: #44ff44;
+            background: rgba(68, 255, 68, 0.1);
+            border: 1px solid #44ff44;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+            font-family: 'Consolas', 'Courier New', monospace;
         }
 
         .image-preview {
             max-width: 100%;
-            border: 2px solid #ffffff;
+            border: 1px solid #ffffff;
+            border-radius: 4px;
             margin: 1rem 0;
         }
 
@@ -472,930 +701,1064 @@
             margin-top: 0.5rem;
         }
 
-        .new-item-input {
-            padding: 0.5rem;
-            background: #0a0a0a;
-            border: 2px solid #ffffff;
-            margin: 0.5rem 0;
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 250px;
+            }
+            .ai-column {
+                width: 350px;
+            }
         }
 
-        .new-item-input input {
-            width: 100%;
-            background: transparent;
-            border: none;
-            color: #ffffff;
-            font-family: 'Consolas', monospace;
-            font-size: 13px;
-            outline: none;
-            padding: 0.5rem;
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 200px;
+            }
+            .ai-column {
+                width: 300px;
+            }
         }
 
-        .tactical-checkbox {
-            margin-right: 0.5rem;
+        /* Animation for system status */
+        .system-online {
+            animation: systemPulse 3s infinite;
         }
 
-        .tactical-checkbox input[type="checkbox"] {
-            margin-right: 0.5rem;
-        }
-
-        .tactical-label {
-            color: #ffffff;
-            font-family: 'Consolas', monospace;
-            font-size: 0.9rem;
+        @keyframes systemPulse {
+            0%, 100% { 
+                text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+            }
+            50% { 
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="tactical-navbar">
-        <div class="tactical-logo">◤ TACTICAL GROK IDE ◥</div>
-        <div class="tactical-controls">
-            <button id="openFolderBtn" class="tactical-btn">OPEN FOLDER</button>
-            <button id="saveBtn" class="tactical-btn disabled" disabled>SAVE</button>
-            <button id="saveAllBtn" class="tactical-btn disabled" disabled>SAVE ALL</button>
+    <div class="navbar">
+        <div class="navbar-title system-online">GROK IDE</div>
+        <div class="button-group">
+            <button id="openFolderBtn" class="button">OPEN FOLDER</button>
+            <button id="saveBtn" class="button disabled" disabled>SAVE</button>
+            <button id="saveAllBtn" class="button disabled" disabled>SAVE ALL</button>
         </div>
     </div>
 
-    <div id="currentPath" class="tactical-path">NO FOLDER LOADED - AWAITING TACTICAL DEPLOYMENT</div>
+    <div class="status-bar">
+        <div class="status-left">
+            <div class="status-item">
+                <div class="status-indicator"></div>
+                <span id="systemStatus">Editor ready - load files to begin operations</span>
+            </div>
+            <div class="status-item">
+                <span id="fileCount">Files: 0</span>
+            </div>
+            <div class="status-item">
+                <span id="modifiedCount">Modified: 0</span>
+            </div>
+        </div>
+        <div class="status-right">
+            <span id="currentPath">No folder opened</span>
+        </div>
+    </div>
 
     <div class="main-container">
-        <div class="tactical-sidebar">
+        <div class="sidebar">
             <div class="sidebar-header">
-                ◤ TACTICAL EXPLORER ◥
-                <span id="refreshBtn" onclick="refreshFileExplorer()" style="cursor: pointer; opacity: 0.7;" title="REFRESH">⟲</span>
+                EXPLORER
+                <span id="refreshBtn" class="refresh-btn" title="Refresh">🔄</span>
             </div>
-            <div id="fileExplorer" class="tactical-explorer">
+            <div id="fileExplorer" class="file-explorer">
                 <div class="welcome-message">
-                    ◤ TACTICAL SYSTEM STANDBY ◥<br>
-                    CLICK "OPEN FOLDER" TO INITIALIZE<br>
-                    TACTICAL OPERATIONS
+                    ◤ SYSTEM READY ◥<br><br>
+                    Click "OPEN FOLDER" to initialize file operations<br><br>
+                    Right-click in explorer to create new files and folders
                 </div>
             </div>
         </div>
 
         <div class="resize-handle" id="leftResizeHandle"></div>
 
-        <div class="tactical-editor">
-            <div id="tabs" class="tactical-tabs"></div>
+        <div class="editor-section">
+            <div id="tabs" class="tabs"></div>
             <div class="editor-content">
-                <textarea id="tacticalEditor" disabled placeholder="TACTICAL EDITOR READY - LOAD FILES TO BEGIN OPERATIONS"></textarea>
+                <div class="editor-toolbar">
+                    <div class="editor-info">
+                        <span id="editorStatus">No file selected</span>
+                    </div>
+                    <div class="editor-actions">
+                        <button id="formatBtn" class="button disabled" disabled>FORMAT</button>
+                        <button id="analyzeBtn" class="button disabled" disabled>ANALYZE</button>
+                    </div>
+                </div>
+                <textarea 
+                    id="editor" 
+                    disabled 
+                    placeholder="◤ EDITOR READY ◥&#10;&#10;Open a file to begin editing operations..."
+                ></textarea>
             </div>
         </div>
 
         <div class="resize-handle" id="rightResizeHandle"></div>
 
-        <div class="tactical-ai-panel">
+        <div class="ai-column">
             <div class="ai-header">
-                <div>
-                    <div style="font-weight: bold; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; color: #ffffff;">◤ GROK TACTICAL AI ◥</div>
-                    <div class="ai-mode-selector">
-                        <button class="ai-mode-btn active" data-mode="code">CODE</button>
-                        <button class="ai-mode-btn" data-mode="image">IMAGE</button>
-                        <button class="ai-mode-btn" data-mode="chat">CHAT</button>
-                    </div>
-                </div>
-                <button id="clearAIBtn" onclick="clearAIChat()" class="tactical-btn">CLEAR</button>
+                GROK ASSISTANT
+                <button id="clearAIBtn" class="button">CLEAR</button>
             </div>
-            <div id="aiContent" class="ai-content"></div>
+            
+            <div class="ai-modes">
+                <button class="ai-mode active" data-mode="code">CODE</button>
+                <button class="ai-mode" data-mode="image">IMAGE</button>
+                <button class="ai-mode" data-mode="chat">CHAT</button>
+            </div>
+
+            <div id="aiContent" class="ai-content">
+                <div class="welcome-message">
+                    ◤ AI ASSISTANT READY ◥<br><br>
+                    Select a mode and enter your request below<br><br>
+                    • CODE: Get programming assistance<br>
+                    • IMAGE: Generate visual content<br>
+                    • CHAT: General conversation
+                </div>
+            </div>
+
             <div class="ai-input-area">
-                <div class="tactical-checkbox">
-                    <input type="checkbox" id="includeFileContext" checked>
-                    <label for="includeFileContext" class="tactical-label">INCLUDE CURRENT FILE CONTEXT</label>
+                <div class="ai-options">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="includeContext" checked>
+                        <label for="includeContext">INCLUDE CURRENT FILE CONTEXT</label>
+                    </div>
                 </div>
                 <textarea 
                     id="aiPrompt" 
-                    placeholder="ENTER TACTICAL AI COMMAND..."
-                    rows="3"
+                    placeholder="Enter your request..."
+                    rows="4"
                 ></textarea>
-                <button onclick="sendAIRequest()" class="tactical-btn">EXECUTE TACTICAL AI</button>
+                <button id="sendAIBtn" class="button">SEND REQUEST</button>
             </div>
         </div>
     </div>
 
-    <div class="tactical-status">
-        <span id="statusLeft">TACTICAL SYSTEM: READY</span>
-        <span id="statusRight">FILES: 0 | TABS: 0</span>
-    </div>
-
     <script>
-        // Global tactical variables
-        let currentPath = '';
-        let openFiles = new Map();
-        let currentDirectoryHandle = null;
-        let currentAIMode = 'code';
-        let modifiedFiles = new Set();
+        // Global state management
+        const AppState = {
+            currentPath: '',
+            openFiles: new Map(),
+            modifiedFiles: new Set(),
+            currentDirectoryHandle: null,
+            currentFile: null,
+            aiMode: 'code'
+        };
 
-        // Initialize tactical UI elements
-        const saveBtn = document.getElementById('saveBtn');
-        const saveAllBtn = document.getElementById('saveAllBtn');
-        const openFolderBtn = document.getElementById('openFolderBtn');
-        const refreshBtn = document.getElementById('refreshBtn');
-        const editor = document.getElementById('tacticalEditor');
-        const statusLeft = document.getElementById('statusLeft');
-        const statusRight = document.getElementById('statusRight');
+        // UI Elements
+        const UI = {
+            saveBtn: document.getElementById('saveBtn'),
+            saveAllBtn: document.getElementById('saveAllBtn'),
+            openFolderBtn: document.getElementById('openFolderBtn'),
+            refreshBtn: document.getElementById('refreshBtn'),
+            editor: document.getElementById('editor'),
+            fileExplorer: document.getElementById('fileExplorer'),
+            tabs: document.getElementById('tabs'),
+            aiContent: document.getElementById('aiContent'),
+            aiPrompt: document.getElementById('aiPrompt'),
+            sendAIBtn: document.getElementById('sendAIBtn'),
+            systemStatus: document.getElementById('systemStatus'),
+            fileCount: document.getElementById('fileCount'),
+            modifiedCount: document.getElementById('modifiedCount'),
+            currentPath: document.getElementById('currentPath'),
+            editorStatus: document.getElementById('editorStatus'),
+            formatBtn: document.getElementById('formatBtn'),
+            analyzeBtn: document.getElementById('analyzeBtn'),
+            includeContext: document.getElementById('includeContext')
+        };
 
-        // Tactical error handling
-        function showError(message) {
-            console.error('[TACTICAL IDE ERROR]', message);
-            alert(`[TACTICAL IDE ERROR] ${message}`);
-        }
+        // Utility functions
+        const Utils = {
+            showError(message) {
+                console.error(`[IDE ERROR] ${message}`);
+                this.showNotification(message, 'error');
+            },
 
-        function showSuccess(message) {
-            console.log('[TACTICAL IDE SUCCESS]', message);
-            // You could implement a toast notification here
-        }
+            showSuccess(message) {
+                console.log(`[IDE SUCCESS] ${message}`);
+                this.showNotification(message, 'success');
+            },
 
-        // Initialize tactical file explorer
-        async function initializeFileExplorer() {
-            try {
-                if (!('showDirectoryPicker' in window)) {
-                    showError('Browser does not support File System API. Use Chrome or Edge for full tactical capabilities.');
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `${type}-message`;
+                notification.textContent = `◤ ${message} ◥`;
+                
+                // Find a good place to show the notification
+                const aiContent = document.getElementById('aiContent');
+                aiContent.insertBefore(notification, aiContent.firstChild);
+                
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 5000);
+            },
+
+            updateStatus() {
+                UI.systemStatus.textContent = AppState.currentDirectoryHandle ? 
+                    'System operational - files loaded' : 'Editor ready - load files to begin operations';
+                UI.fileCount.textContent = `Files: ${AppState.openFiles.size}`;
+                UI.modifiedCount.textContent = `Modified: ${AppState.modifiedFiles.size}`;
+                UI.currentPath.textContent = AppState.currentPath || 'No folder opened';
+                UI.editorStatus.textContent = AppState.currentFile || 'No file selected';
+            },
+
+            formatMarkdown(text) {
+                const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
+                
+                return text.replace(codeBlockRegex, (match, language, code) => {
+                    const langClass = language ? ` class="language-${language}"` : '';
+                    return `<pre><div class="code-actions">
+                        <button class="code-action-btn" onclick="FileOperations.copyCode(this)">COPY</button>
+                        <button class="code-action-btn" onclick="FileOperations.insertCode(this)">INSERT</button>
+                        <button class="code-action-btn" onclick="FileOperations.createFileFromCode(this)">CREATE FILE</button>
+                    </div><code${langClass}>${this.escapeHtml(code.trim())}</code></pre>`;
+                });
+            },
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            },
+
+            getFileExtension(filename) {
+                return filename.split('.').pop().toLowerCase();
+            },
+
+            generateFilename(code, language) {
+                const extensions = {
+                    javascript: 'js',
+                    typescript: 'ts',
+                    python: 'py',
+                    html: 'html',
+                    css: 'css',
+                    json: 'json',
+                    markdown: 'md',
+                    sql: 'sql',
+                    bash: 'sh',
+                    shell: 'sh'
+                };
+                
+                const ext = extensions[language] || 'txt';
+                const timestamp = Date.now();
+                return `generated_${timestamp}.${ext}`;
+            }
+        };
+
+        // File operations
+        const FileOperations = {
+            async openFolder() {
+                try {
+                    if (!('showDirectoryPicker' in window)) {
+                        throw new Error('File System API not supported in this browser');
+                    }
+
+                    const handle = await window.showDirectoryPicker();
+                    AppState.currentDirectoryHandle = handle;
+                    AppState.currentPath = handle.name;
+                    
+                    await this.loadFileStructure(handle);
+                    this.enableUI();
+                    Utils.updateStatus();
+                    Utils.showSuccess('Folder opened successfully');
+                    
+                } catch (error) {
+                    if (error.name !== 'AbortError') {
+                        Utils.showError(`Failed to open folder: ${error.message}`);
+                    }
+                }
+            },
+
+            async loadFileStructure(directoryHandle) {
+                try {
+                    UI.fileExplorer.innerHTML = '<div class="loading">Loading file structure...</div>';
+                    const files = await this.listFiles(directoryHandle);
+                    this.renderFileStructure(files);
+                } catch (error) {
+                    Utils.showError(`Error loading file structure: ${error.message}`);
+                }
+            },
+
+            async listFiles(directoryHandle) {
+                const files = [];
+                for await (const entry of directoryHandle.values()) {
+                    if (entry.kind === 'directory') {
+                        files.push({
+                            type: 'directory',
+                            name: entry.name,
+                            handle: entry,
+                            children: await this.listFiles(entry)
+                        });
+                    } else if (entry.kind === 'file') {
+                        files.push({ 
+                            type: 'file', 
+                            name: entry.name,
+                            handle: entry 
+                        });
+                    }
+                }
+                return files.sort((a, b) => {
+                    if (a.type === b.type) return a.name.localeCompare(b.name);
+                    return a.type === 'directory' ? -1 : 1;
+                });
+            },
+
+            renderFileStructure(files, parentElement = UI.fileExplorer, parentHandle = AppState.currentDirectoryHandle) {
+                parentElement.innerHTML = '';
+                
+                parentElement.oncontextmenu = (e) => this.showContextMenu(e, parentHandle);
+                
+                files.forEach(item => {
+                    if (item.type === 'directory') {
+                        const folderDiv = document.createElement('div');
+                        folderDiv.className = 'folder';
+                        
+                        const folderName = document.createElement('div');
+                        folderName.className = 'folder-name';
+                        folderName.innerHTML = `<span class="folder-icon">📁</span>${item.name}`;
+                        
+                        const filesDiv = document.createElement('div');
+                        filesDiv.className = 'files';
+                        filesDiv.style.display = 'none';
+                        
+                        folderName.oncontextmenu = (e) => {
+                            e.stopPropagation();
+                            this.showContextMenu(e, item.handle);
+                        };
+                        
+                        folderName.onclick = () => {
+                            filesDiv.style.display = filesDiv.style.display === 'none' ? 'block' : 'none';
+                        };
+                        
+                        if (item.children && item.children.length > 0) {
+                            this.renderFileStructure(item.children, filesDiv, item.handle);
+                        }
+                        
+                        folderDiv.appendChild(folderName);
+                        folderDiv.appendChild(filesDiv);
+                        parentElement.appendChild(folderDiv);
+                    } else {
+                        const fileDiv = document.createElement('div');
+                        fileDiv.className = 'file';
+                        fileDiv.textContent = item.name;
+                        fileDiv.onclick = () => this.openFile(item.name, item.handle);
+                        parentElement.appendChild(fileDiv);
+                    }
+                });
+            },
+
+            async openFile(fileName, fileHandle) {
+                try {
+                    const file = await fileHandle.getFile();
+                    const content = await file.text();
+                    
+                    AppState.openFiles.set(fileName, { 
+                        content: content, 
+                        handle: fileHandle,
+                        originalContent: content
+                    });
+                    
+                    this.createOrActivateTab(fileName);
+                    UI.editor.value = content;
+                    AppState.currentFile = fileName;
+                    Utils.updateStatus();
+                    
+                } catch (error) {
+                    Utils.showError(`Error opening file: ${error.message}`);
+                }
+            },
+
+            createOrActivateTab(fileName) {
+                let tab = document.querySelector(`.tab[data-filename="${fileName}"]`);
+                
+                if (!tab) {
+                    tab = document.createElement('div');
+                    tab.className = 'tab';
+                    tab.setAttribute('data-filename', fileName);
+                    tab.innerHTML = `
+                        ${fileName}
+                        <span class="tab-close" onclick="FileOperations.closeTab('${fileName}')">×</span>
+                    `;
+                    tab.onclick = (e) => {
+                        if (!e.target.classList.contains('tab-close')) {
+                            this.activateTab(fileName);
+                        }
+                    };
+                    UI.tabs.appendChild(tab);
+                }
+                
+                this.activateTab(fileName);
+            },
+
+            activateTab(fileName) {
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                const tab = document.querySelector(`.tab[data-filename="${fileName}"]`);
+                if (tab) {
+                    tab.classList.add('active');
+                    const fileData = AppState.openFiles.get(fileName);
+                    if (fileData) {
+                        UI.editor.value = fileData.content;
+                        AppState.currentFile = fileName;
+                        Utils.updateStatus();
+                    }
+                }
+            },
+
+            closeTab(fileName) {
+                const tab = document.querySelector(`.tab[data-filename="${fileName}"]`);
+                if (tab) {
+                    if (tab.classList.contains('active')) {
+                        const nextTab = tab.nextElementSibling || tab.previousElementSibling;
+                        if (nextTab) {
+                            this.activateTab(nextTab.getAttribute('data-filename'));
+                        } else {
+                            UI.editor.value = '';
+                            AppState.currentFile = null;
+                        }
+                    }
+                    tab.remove();
+                    AppState.openFiles.delete(fileName);
+                    AppState.modifiedFiles.delete(fileName);
+                    Utils.updateStatus();
+                }
+            },
+
+            async saveCurrentFile() {
+                if (!AppState.currentFile) {
+                    Utils.showError('No file is currently open');
+                    return;
+                }
+                
+                try {
+                    const fileData = AppState.openFiles.get(AppState.currentFile);
+                    if (!fileData || !fileData.handle) {
+                        throw new Error('File handle not found');
+                    }
+                    
+                    const content = UI.editor.value;
+                    const writable = await fileData.handle.createWritable();
+                    await writable.write(content);
+                    await writable.close();
+                    
+                    // Update stored content
+                    AppState.openFiles.set(AppState.currentFile, { 
+                        ...fileData,
+                        content: content,
+                        originalContent: content
+                    });
+                    
+                    AppState.modifiedFiles.delete(AppState.currentFile);
+                    Utils.updateStatus();
+                    Utils.showSuccess(`File ${AppState.currentFile} saved successfully`);
+                    
+                } catch (error) {
+                    Utils.showError(`Error saving file: ${error.message}`);
+                }
+            },
+
+            async saveAllFiles() {
+                if (AppState.modifiedFiles.size === 0) {
+                    Utils.showError('No modified files to save');
                     return;
                 }
 
-                const handle = await window.showDirectoryPicker();
-                currentDirectoryHandle = handle;
-                currentPath = handle.name;
-                document.getElementById('currentPath').textContent = `TACTICAL FOLDER: ${currentPath}`;
-                await loadFileStructure(handle);
-                
-                // Enable tactical UI elements
-                saveBtn.classList.remove('disabled');
-                saveBtn.disabled = false;
-                saveAllBtn.classList.remove('disabled');
-                saveAllBtn.disabled = false;
-                refreshBtn.style.opacity = '1';
-                editor.disabled = false;
-                editor.placeholder = 'TACTICAL EDITOR ACTIVE - BEGIN CODING OPERATIONS';
-                
-                updateStatus();
-                showSuccess('Tactical folder loaded successfully');
-            } catch (error) {
-                if (error.name !== 'AbortError') {
-                    showError('Failed to open folder: ' + error.message);
-                }
-            }
-        }
+                let savedCount = 0;
+                const totalFiles = AppState.modifiedFiles.size;
 
-        // Load tactical file structure
-        async function loadFileStructure(directoryHandle) {
-            try {
-                const fileExplorer = document.getElementById('fileExplorer');
-                fileExplorer.innerHTML = '<div class="loading">◤ SCANNING TACTICAL FILES ◥</div>';
-                const files = await listFiles(directoryHandle);
-                renderFileStructure(files);
-                updateStatus();
-            } catch (error) {
-                showError('Error loading file structure: ' + error.message);
-            }
-        }
-
-        // List files recursively
-        async function listFiles(directoryHandle) {
-            const files = [];
-            for await (const entry of directoryHandle.values()) {
-                if (entry.kind === 'directory') {
-                    files.push({
-                        type: 'directory',
-                        name: entry.name,
-                        handle: entry,
-                        children: await listFiles(entry)
-                    });
-                } else if (entry.kind === 'file') {
-                    files.push({ 
-                        type: 'file', 
-                        name: entry.name,
-                        handle: entry 
-                    });
-                }
-            }
-            return files.sort((a, b) => {
-                if (a.type === b.type) return a.name.localeCompare(b.name);
-                return a.type === 'directory' ? -1 : 1;
-            });
-        }
-
-        // Render tactical file structure
-        function renderFileStructure(files, parentElement = document.getElementById('fileExplorer'), parentHandle = currentDirectoryHandle) {
-            parentElement.innerHTML = '';
-            
-            parentElement.oncontextmenu = (e) => showContextMenu(e, parentHandle);
-            
-            files.forEach(item => {
-                if (item.type === 'directory') {
-                    const folderDiv = document.createElement('div');
-                    folderDiv.className = 'folder';
-                    
-                    const folderName = document.createElement('div');
-                    folderName.className = 'folder-name';
-                    folderName.innerHTML = `<span class="folder-icon">📁</span>${item.name}`;
-                    
-                    const filesDiv = document.createElement('div');
-                    filesDiv.className = 'files';
-                    filesDiv.style.display = 'none';
-                    
-                    folderName.oncontextmenu = (e) => {
-                        e.stopPropagation();
-                        showContextMenu(e, item.handle);
-                    };
-                    
-                    folderName.onclick = () => {
-                        filesDiv.style.display = filesDiv.style.display === 'none' ? 'block' : 'none';
-                    };
-                    
-                    if (item.children && item.children.length > 0) {
-                        renderFileStructure(item.children, filesDiv, item.handle);
-                    }
-                    
-                    folderDiv.appendChild(folderName);
-                    folderDiv.appendChild(filesDiv);
-                    parentElement.appendChild(folderDiv);
-                } else {
-                    const fileDiv = document.createElement('div');
-                    fileDiv.className = 'file';
-                    fileDiv.textContent = `📄 ${item.name}`;
-                    fileDiv.onclick = () => openFile(item.name, item.handle);
-                    parentElement.appendChild(fileDiv);
-                }
-            });
-        }
-
-        // Open tactical file
-        async function openFile(fileName, fileHandle) {
-            try {
-                const file = await fileHandle.getFile();
-                const content = await file.text();
-                openFiles.set(fileName, { content, handle: fileHandle, originalContent: content });
-                createOrActivateTab(fileName);
-                editor.value = content;
-                updateStatus();
-                showSuccess(`File ${fileName} loaded`);
-            } catch (error) {
-                showError('Error opening file: ' + error.message);
-            }
-        }
-
-        // Create or activate tactical tab
-        function createOrActivateTab(fileName) {
-            const tabs = document.getElementById('tabs');
-            let tab = document.querySelector(`.tactical-tab[data-filename="${fileName}"]`);
-            
-            if (!tab) {
-                tab = document.createElement('div');
-                tab.className = 'tactical-tab';
-                tab.setAttribute('data-filename', fileName);
-                tab.innerHTML = `
-                    📄 ${fileName}
-                    <span onclick="closeTab('${fileName}')" style="margin-left: 8px; cursor: pointer;">✕</span>
-                `;
-                tabs.appendChild(tab);
-            }
-            
-            activateTab(fileName);
-        }
-
-        // Activate tactical tab
-        function activateTab(fileName) {
-            document.querySelectorAll('.tactical-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            const tab = document.querySelector(`.tactical-tab[data-filename="${fileName}"]`);
-            if (tab) {
-                tab.classList.add('active');
-                const fileData = openFiles.get(fileName);
-                if (fileData) {
-                    editor.value = fileData.content;
-                }
-            }
-        }
-
-        // Close tactical tab
-        function closeTab(fileName) {
-            const tab = document.querySelector(`.tactical-tab[data-filename="${fileName}"]`);
-            if (tab) {
-                if (tab.classList.contains('active')) {
-                    const nextTab = tab.nextElementSibling || tab.previousElementSibling;
-                    if (nextTab) {
-                        activateTab(nextTab.getAttribute('data-filename'));
-                    } else {
-                        editor.value = '';
-                    }
-                }
-                tab.remove();
-                openFiles.delete(fileName);
-                modifiedFiles.delete(fileName);
-                updateStatus();
-            }
-        }
-
-        // Save current tactical file
-        async function saveCurrentFile() {
-            const activeTab = document.querySelector('.tactical-tab.active');
-            if (!activeTab) {
-                showError('No file is currently active');
-                return;
-            }
-            
-            try {
-                const fileName = activeTab.getAttribute('data-filename');
-                const fileData = openFiles.get(fileName);
-                if (!fileData || !fileData.handle) {
-                    throw new Error('File handle not found');
-                }
-                
-                const content = editor.value;
-                const writable = await fileData.handle.createWritable();
-                await writable.write(content);
-                await writable.close();
-                
-                // Update stored content
-                openFiles.set(fileName, { 
-                    content: content, 
-                    handle: fileData.handle,
-                    originalContent: content
-                });
-                
-                modifiedFiles.delete(fileName);
-                updateStatus();
-                showSuccess(`File ${fileName} saved successfully`);
-            } catch (error) {
-                showError('Error saving file: ' + error.message);
-            }
-        }
-
-        // Save all tactical files
-        async function saveAllFiles() {
-            const modifiedFilesList = Array.from(modifiedFiles);
-            if (modifiedFilesList.length === 0) {
-                showError('No modified files to save');
-                return;
-            }
-
-            let savedCount = 0;
-            for (const fileName of modifiedFilesList) {
-                try {
-                    const fileData = openFiles.get(fileName);
-                    if (fileData && fileData.handle) {
-                        const writable = await fileData.handle.createWritable();
-                        await writable.write(fileData.content);
-                        await writable.close();
-                        
-                        openFiles.set(fileName, {
-                            ...fileData,
-                            originalContent: fileData.content
-                        });
-                        
-                        modifiedFiles.delete(fileName);
-                        savedCount++;
-                    }
-                } catch (error) {
-                    showError(`Error saving ${fileName}: ${error.message}`);
-                }
-            }
-            
-            updateStatus();
-            showSuccess(`Saved ${savedCount} files successfully`);
-        }
-
-        // Update tactical status
-        function updateStatus() {
-            const fileCount = openFiles.size;
-            const tabCount = document.querySelectorAll('.tactical-tab').length;
-            const modifiedCount = modifiedFiles.size;
-            
-            statusLeft.textContent = `TACTICAL SYSTEM: ${currentDirectoryHandle ? 'ACTIVE' : 'STANDBY'}`;
-            statusRight.textContent = `FILES: ${fileCount} | TABS: ${tabCount} | MODIFIED: ${modifiedCount}`;
-        }
-
-        // Track file modifications
-        editor.addEventListener('input', () => {
-            const activeTab = document.querySelector('.tactical-tab.active');
-            if (activeTab) {
-                const fileName = activeTab.getAttribute('data-filename');
-                const fileData = openFiles.get(fileName);
-                if (fileData) {
-                    fileData.content = editor.value;
-                    openFiles.set(fileName, fileData);
-                    
-                    if (fileData.content !== fileData.originalContent) {
-                        modifiedFiles.add(fileName);
-                    } else {
-                        modifiedFiles.delete(fileName);
-                    }
-                    updateStatus();
-                }
-            }
-        });
-
-        // AI Mode Management
-        document.querySelectorAll('.ai-mode-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.ai-mode-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentAIMode = btn.getAttribute('data-mode');
-                
-                const placeholder = {
-                    'code': 'ENTER CODE ANALYSIS REQUEST...',
-                    'image': 'DESCRIBE IMAGE TO GENERATE...',
-                    'chat': 'ENTER GENERAL CHAT MESSAGE...'
-                };
-                
-                document.getElementById('aiPrompt').placeholder = placeholder[currentAIMode];
-            });
-        });
-
-        // Send AI Request
-        async function sendAIRequest() {
-            const prompt = document.getElementById('aiPrompt').value.trim();
-            const includeContext = document.getElementById('includeFileContext').checked;
-            const aiContent = document.getElementById('aiContent');
-            const sendButton = document.querySelector('.ai-input-area button');
-
-            if (!prompt) {
-                showError('Please enter a tactical AI command');
-                return;
-            }
-
-            try {
-                sendButton.disabled = true;
-                sendButton.textContent = 'PROCESSING...';
-
-                let requestData = {};
-                let endpoint = '';
-
-                if (currentAIMode === 'image') {
-                    endpoint = '/api/generate-image';
-                    requestData = {
-                        prompt: prompt,
-                        n: 1,
-                        response_format: "url"
-                    };
-                } else {
-                    endpoint = '/api/completion';
-                    
-                    let messages = [
-                        {
-                            role: "system",
-                            content: `You are a tactical AI assistant integrated into a Metal Gear Solid-inspired IDE. 
-                            When providing code examples, always wrap them in markdown code blocks with the appropriate language identifier.
-                            Be precise, tactical, and provide actionable solutions.
-                            Current mode: ${currentAIMode.toUpperCase()}`
+                for (const fileName of AppState.modifiedFiles) {
+                    try {
+                        const fileData = AppState.openFiles.get(fileName);
+                        if (fileData && fileData.handle) {
+                            const writable = await fileData.handle.createWritable();
+                            await writable.write(fileData.content);
+                            await writable.close();
+                            
+                            AppState.openFiles.set(fileName, {
+                                ...fileData,
+                                originalContent: fileData.content
+                            });
+                            
+                            savedCount++;
                         }
-                    ];
+                    } catch (error) {
+                        Utils.showError(`Error saving ${fileName}: ${error.message}`);
+                    }
+                }
 
-                    let userContent = prompt;
+                AppState.modifiedFiles.clear();
+                Utils.updateStatus();
+                Utils.showSuccess(`Saved ${savedCount}/${totalFiles} files successfully`);
+            },
 
-                    // Include current file context if requested and available
-                    if (includeContext) {
-                        const activeTab = document.querySelector('.tactical-tab.active');
-                        if (activeTab) {
-                            const fileName = activeTab.getAttribute('data-filename');
-                            const fileData = openFiles.get(fileName);
-                            if (fileData && fileData.content.trim()) {
-                                const fileExtension = fileName.split('.').pop();
-                                userContent += `\n\nCurrent file: ${fileName}\nContent:\n\`\`\`${fileExtension}\n${fileData.content}\n\`\`\``;
+            showContextMenu(e, directoryHandle) {
+                e.preventDefault();
+                this.removeContextMenu();
+                
+                AppState.currentContextDirectory = directoryHandle;
+                
+                const contextMenu = document.createElement('div');
+                contextMenu.className = 'context-menu';
+                contextMenu.innerHTML = `
+                    <div class="context-menu-item" onclick="FileOperations.createNewFile()">
+                        <span>📄</span> NEW FILE
+                    </div>
+                    <div class="context-menu-item" onclick="FileOperations.createNewFolder()">
+                        <span>📁</span> NEW FOLDER
+                    </div>
+                `;
+                
+                contextMenu.style.left = `${e.pageX}px`;
+                contextMenu.style.top = `${e.pageY}px`;
+                
+                document.body.appendChild(contextMenu);
+                AppState.contextMenu = contextMenu;
+                
+                setTimeout(() => {
+                    document.addEventListener('click', this.removeContextMenu.bind(this));
+                }, 0);
+            },
+
+            removeContextMenu() {
+                if (AppState.contextMenu) {
+                    AppState.contextMenu.remove();
+                    AppState.contextMenu = null;
+                }
+                document.removeEventListener('click', this.removeContextMenu.bind(this));
+            },
+
+            async createNewFile() {
+                this.removeContextMenu();
+                
+                if (!AppState.currentContextDirectory) {
+                    Utils.showError('No project folder open');
+                    return;
+                }
+                
+                const inputContainer = document.createElement('div');
+                inputContainer.className = 'new-item-input';
+                inputContainer.innerHTML = `<input type="text" placeholder="filename.ext">`;
+                UI.fileExplorer.appendChild(inputContainer);
+                
+                const input = inputContainer.querySelector('input');
+                input.focus();
+                
+                input.addEventListener('keyup', async (e) => {
+                    if (e.key === 'Enter') {
+                        const filename = input.value.trim();
+                        if (filename) {
+                            try {
+                                const fileHandle = await AppState.currentContextDirectory.getFileHandle(filename, { create: true });
+                                const writable = await fileHandle.createWritable();
+                                await writable.write('');
+                                await writable.close();
+                                
+                                await this.loadFileStructure(AppState.currentDirectoryHandle);
+                                Utils.showSuccess(`File ${filename} created successfully`);
+                            } catch (error) {
+                                Utils.showError(`Error creating file: ${error.message}`);
                             }
                         }
+                        inputContainer.remove();
+                    } else if (e.key === 'Escape') {
+                        inputContainer.remove();
                     }
+                });
+            },
 
-                    messages.push({
-                        role: "user",
-                        content: userContent
-                    });
+            async createNewFolder() {
+                this.removeContextMenu();
+                
+                if (!AppState.currentContextDirectory) {
+                    Utils.showError('No project folder open');
+                    return;
+                }
+                
+                const inputContainer = document.createElement('div');
+                inputContainer.className = 'new-item-input';
+                inputContainer.innerHTML = `<input type="text" placeholder="folder name">`;
+                UI.fileExplorer.appendChild(inputContainer);
+                
+                const input = inputContainer.querySelector('input');
+                input.focus();
+                
+                input.addEventListener('keyup', async (e) => {
+                    if (e.key === 'Enter') {
+                        const foldername = input.value.trim();
+                        if (foldername) {
+                            try {
+                                await AppState.currentContextDirectory.getDirectoryHandle(foldername, { create: true });
+                                await this.loadFileStructure(AppState.currentDirectoryHandle);
+                                Utils.showSuccess(`Folder ${foldername} created successfully`);
+                            } catch (error) {
+                                Utils.showError(`Error creating folder: ${error.message}`);
+                            }
+                        }
+                        inputContainer.remove();
+                    } else if (e.key === 'Escape') {
+                        inputContainer.remove();
+                    }
+                });
+            },
 
-                    requestData = { messages };
+            enableUI() {
+                UI.saveBtn.classList.remove('disabled');
+                UI.saveBtn.disabled = false;
+                UI.saveAllBtn.classList.remove('disabled');
+                UI.saveAllBtn.disabled = false;
+                UI.formatBtn.classList.remove('disabled');
+                UI.formatBtn.disabled = false;
+                UI.analyzeBtn.classList.remove('disabled');
+                UI.analyzeBtn.disabled = false;
+                UI.editor.disabled = false;
+            },
+
+            copyCode(button) {
+                const codeElement = button.closest('pre').querySelector('code');
+                navigator.clipboard.writeText(codeElement.textContent)
+                    .then(() => {
+                        const originalText = button.textContent;
+                        button.textContent = 'COPIED!';
+                        setTimeout(() => {
+                            button.textContent = originalText;
+                        }, 1500);
+                    })
+                    .catch(err => Utils.showError(`Failed to copy code: ${err.message}`));
+            },
+
+            insertCode(button) {
+                const codeElement = button.closest('pre').querySelector('code');
+                const cursorPos = UI.editor.selectionStart;
+                const textBefore = UI.editor.value.substring(0, cursorPos);
+                const textAfter = UI.editor.value.substring(cursorPos);
+                
+                UI.editor.value = textBefore + codeElement.textContent + textAfter;
+                UI.editor.focus();
+                
+                // Update stored content
+                if (AppState.currentFile) {
+                    const fileData = AppState.openFiles.get(AppState.currentFile);
+                    if (fileData) {
+                        AppState.openFiles.set(AppState.currentFile, {
+                            ...fileData,
+                            content: UI.editor.value
+                        });
+                        AppState.modifiedFiles.add(AppState.currentFile);
+                        Utils.updateStatus();
+                    }
+                }
+            },
+
+            async createFileFromCode(button) {
+                if (!AppState.currentDirectoryHandle) {
+                    Utils.showError('No project folder open');
+                    return;
                 }
 
-                const response = await fetch(endpoint, {
+                const codeElement = button.closest('pre').querySelector('code');
+                const code = codeElement.textContent;
+                const language = codeElement.className.replace('language-', '') || 'txt';
+                
+                const filename = Utils.generateFilename(code, language);
+                
+                try {
+                    const fileHandle = await AppState.currentDirectoryHandle.getFileHandle(filename, { create: true });
+                    const writable = await fileHandle.createWritable();
+                    await writable.write(code);
+                    await writable.close();
+                    
+                    await this.loadFileStructure(AppState.currentDirectoryHandle);
+                    Utils.showSuccess(`File ${filename} created successfully`);
+                    
+                    // Optionally open the new file
+                    this.openFile(filename, fileHandle);
+                    
+                } catch (error) {
+                    Utils.showError(`Error creating file: ${error.message}`);
+                }
+            },
+
+            async saveImageToFolder(imageUrl, prompt) {
+                if (!AppState.currentDirectoryHandle) {
+                    Utils.showError('No project folder open');
+                    return;
+                }
+
+                try {
+                    // Create a safe filename from the prompt
+                    const safePrompt = prompt.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 50);
+                    const timestamp = Date.now();
+                    const filename = `image_${safePrompt}_${timestamp}.png`;
+
+                    // Fetch the image
+                    const response = await fetch(imageUrl);
+                    const blob = await response.blob();
+
+                    // Convert to PNG if needed
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const img = new Image();
+                    
+                    return new Promise((resolve, reject) => {
+                        img.onload = async () => {
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            ctx.drawImage(img, 0, 0);
+                            
+                            canvas.toBlob(async (pngBlob) => {
+                                try {
+                                    const fileHandle = await AppState.currentDirectoryHandle.getFileHandle(filename, { create: true });
+                                    const writable = await fileHandle.createWritable();
+                                    await writable.write(pngBlob);
+                                    await writable.close();
+                                    
+                                    await this.loadFileStructure(AppState.currentDirectoryHandle);
+                                    Utils.showSuccess(`Image saved as ${filename}`);
+                                    resolve(filename);
+                                } catch (error) {
+                                    reject(error);
+                                }
+                            }, 'image/png');
+                        };
+                        
+                        img.onerror = () => reject(new Error('Failed to load image'));
+                        img.src = imageUrl;
+                    });
+                    
+                } catch (error) {
+                    Utils.showError(`Error saving image: ${error.message}`);
+                }
+            }
+        };
+
+        // AI operations
+        const AIOperations = {
+            async sendAIRequest() {
+                const prompt = UI.aiPrompt.value.trim();
+                if (!prompt) {
+                    Utils.showError('Please enter a request');
+                    return;
+                }
+
+                const originalText = UI.sendAIBtn.textContent;
+                UI.sendAIBtn.disabled = true;
+                UI.sendAIBtn.textContent = 'PROCESSING...';
+
+                try {
+                    let response;
+                    
+                    if (AppState.aiMode === 'image') {
+                        response = await this.generateImage(prompt);
+                    } else {
+                        response = await this.sendChatRequest(prompt);
+                    }
+                    
+                    this.displayAIResponse(prompt, response);
+                    UI.aiPrompt.value = '';
+                    
+                } catch (error) {
+                    Utils.showError(`AI request failed: ${error.message}`);
+                } finally {
+                    UI.sendAIBtn.disabled = false;
+                    UI.sendAIBtn.textContent = originalText;
+                }
+            },
+
+            async sendChatRequest(prompt) {
+                const messages = [
+                    {
+                        role: "system",
+                        content: this.getSystemPrompt()
+                    }
+                ];
+
+                // Include current file context if enabled
+                if (UI.includeContext.checked && AppState.currentFile) {
+                    const fileData = AppState.openFiles.get(AppState.currentFile);
+                    if (fileData) {
+                        const fileExtension = Utils.getFileExtension(AppState.currentFile);
+                        messages.push({
+                            role: "user",
+                            content: `Current file: ${AppState.currentFile} (${fileExtension})\n\nFile content:\n\`\`\`${fileExtension}\n${fileData.content}\n\`\`\`\n\nUser request: ${prompt}`
+                        });
+                    } else {
+                        messages.push({
+                            role: "user",
+                            content: prompt
+                        });
+                    }
+                } else {
+                    messages.push({
+                        role: "user",
+                        content: prompt
+                    });
+                }
+
+                const response = await fetch('/api/completion', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(requestData)
+                    body: JSON.stringify({ messages })
                 });
 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    throw new Error(errorData.message || 'AI request failed');
+                    throw new Error(errorData.message || 'Failed to get AI response');
                 }
 
                 const data = await response.json();
-                
-                if (currentAIMode === 'image') {
-                    displayImageResponse(data, prompt);
-                } else {
-                    displayTextResponse(data.choices[0].message.content, prompt);
+                return {
+                    type: 'text',
+                    content: data.choices[0].message.content
+                };
+            },
+
+            async generateImage(prompt) {
+                const response = await fetch('/api/generate-image', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        prompt: prompt,
+                        n: 1,
+                        response_format: "url"
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to generate image');
                 }
 
-                document.getElementById('aiPrompt').value = '';
-            } catch (error) {
-                showError('AI request failed: ' + error.message);
-            } finally {
-                sendButton.disabled = false;
-                sendButton.textContent = 'EXECUTE TACTICAL AI';
-            }
-        }
+                const data = await response.json();
+                return {
+                    type: 'image',
+                    imageUrl: data.imageUrl,
+                    prompt: prompt
+                };
+            },
 
-        // Display text response
-        function displayTextResponse(content, prompt) {
-            const aiContent = document.getElementById('aiContent');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'ai-message';
-            messageDiv.innerHTML = `
-                <div><strong>◤ TACTICAL QUERY ◥</strong></div>
-                <div>${escapeHtml(prompt)}</div>
-                <div style="margin-top: 1rem;"><strong>◤ TACTICAL RESPONSE ◥</strong></div>
-                <div>${formatMarkdown(content)}</div>
-                <hr style="border: none; border-top: 1px solid #ffffff; margin: 1rem 0;">
-            `;
-            
-            aiContent.appendChild(messageDiv);
-            aiContent.scrollTop = aiContent.scrollHeight;
-        }
-
-        // Display image response
-        function displayImageResponse(data, prompt) {
-            const aiContent = document.getElementById('aiContent');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'ai-message';
-            
-            const imageUrl = data.imageUrl || data.data[0].url;
-            
-            messageDiv.innerHTML = `
-                <div><strong>◤ TACTICAL IMAGE QUERY ◥</strong></div>
-                <div>${escapeHtml(prompt)}</div>
-                <div style="margin-top: 1rem;"><strong>◤ GENERATED IMAGE ◥</strong></div>
-                <img src="${imageUrl}" alt="Generated Image" class="image-preview" />
-                <div class="image-actions">
-                    <button class="code-action-btn" onclick="saveImageToFolder('${imageUrl}', '${prompt}')">SAVE TO FOLDER</button>
-                    <button class="code-action-btn" onclick="copyImageUrl('${imageUrl}')">COPY URL</button>
-                </div>
-                <hr style="border: none; border-top: 1px solid #ffffff; margin: 1rem 0;">
-            `;
-            
-            aiContent.appendChild(messageDiv);
-            aiContent.scrollTop = aiContent.scrollHeight;
-        }
-
-        // Save image to current folder as PNG
-        async function saveImageToFolder(imageUrl, prompt) {
-            if (!currentDirectoryHandle) {
-                showError('No folder is currently open');
-                return;
-            }
-
-            try {
-                // Fetch the image
-                const response = await fetch(imageUrl);
-                const blob = await response.blob();
-                
-                // Generate filename from prompt
-                const sanitizedPrompt = prompt.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 50);
-                const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
-                const filename = `tactical_image_${sanitizedPrompt}_${timestamp}.png`;
-                
-                // Create file handle
-                const fileHandle = await currentDirectoryHandle.getFileHandle(filename, { create: true });
-                const writable = await fileHandle.createWritable();
-                
-                // Convert blob to PNG if needed
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                const img = new Image();
-                
-                img.onload = async () => {
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    ctx.drawImage(img, 0, 0);
-                    
-                    canvas.toBlob(async (pngBlob) => {
-                        await writable.write(pngBlob);
-                        await writable.close();
-                        
-                        // Refresh file explorer
-                        await loadFileStructure(currentDirectoryHandle);
-                        showSuccess(`Image saved as ${filename}`);
-                    }, 'image/png');
+            getSystemPrompt() {
+                const prompts = {
+                    code: "You are a professional programming assistant. Provide clear, well-commented code examples and explanations. Always wrap code in markdown code blocks with the appropriate language identifier. Focus on best practices, security, and maintainability.",
+                    image: "You are an AI image generation assistant. Help users create detailed, creative prompts for image generation. Provide suggestions for improving prompts and describe what makes effective image prompts.",
+                    chat: "You are a helpful AI assistant. Provide clear, informative responses to user questions. Be concise but thorough in your explanations."
                 };
                 
-                img.src = imageUrl;
+                return prompts[AppState.aiMode] || prompts.chat;
+            },
+
+            displayAIResponse(question, response) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'ai-message';
                 
-            } catch (error) {
-                showError('Failed to save image: ' + error.message);
-            }
-        }
-
-        // Copy image URL
-        function copyImageUrl(imageUrl) {
-            navigator.clipboard.writeText(imageUrl)
-                .then(() => showSuccess('Image URL copied to clipboard'))
-                .catch(err => showError('Failed to copy URL: ' + err.message));
-        }
-
-        // Format markdown
-        function formatMarkdown(text) {
-            const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
-            
-            return text.replace(codeBlockRegex, (match, language, code) => {
-                const langClass = language ? ` class="language-${language}"` : '';
-                return `<pre><div class="code-actions">
-                    <button class="code-action-btn" onclick="copyCode(this)">COPY</button>
-                    <button class="code-action-btn" onclick="insertCode(this)">INSERT</button>
-                    <button class="code-action-btn" onclick="createFileFromCode(this, '${language || 'txt'}')">CREATE FILE</button>
-                </div><code${langClass}>${escapeHtml(code.trim())}</code></pre>`;
-            });
-        }
-
-        // Escape HTML
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // Copy code
-        function copyCode(button) {
-            const codeElement = button.closest('pre').querySelector('code');
-            navigator.clipboard.writeText(codeElement.textContent)
-                .then(() => {
-                    const originalText = button.textContent;
-                    button.textContent = 'COPIED!';
-                    setTimeout(() => {
-                        button.textContent = originalText;
-                    }, 1500);
-                })
-                .catch(err => showError('Failed to copy code: ' + err.message));
-        }
-
-        // Insert code into current editor
-        function insertCode(button) {
-            const codeElement = button.closest('pre').querySelector('code');
-            const cursorPos = editor.selectionStart;
-            const textBefore = editor.value.substring(0, cursorPos);
-            const textAfter = editor.value.substring(cursorPos);
-            
-            editor.value = textBefore + codeElement.textContent + textAfter;
-            editor.focus();
-            
-            // Update the stored content for the current file
-            const activeTab = document.querySelector('.tactical-tab.active');
-            if (activeTab) {
-                const fileName = activeTab.getAttribute('data-filename');
-                const fileData = openFiles.get(fileName);
-                if (fileData) {
-                    fileData.content = editor.value;
-                    openFiles.set(fileName, fileData);
-                    modifiedFiles.add(fileName);
-                    updateStatus();
+                if (response.type === 'image') {
+                    messageDiv.innerHTML = `
+                        <div class="question">◤ REQUEST ◥<br>${Utils.escapeHtml(question)}</div>
+                        <div class="answer">
+                            <img src="${response.imageUrl}" alt="Generated image" class="image-preview">
+                            <div class="image-actions">
+                                <button class="code-action-btn" onclick="AIOperations.saveImageToFolder('${response.imageUrl}', '${Utils.escapeHtml(response.prompt)}')">SAVE TO FOLDER</button>
+                                <button class="code-action-btn" onclick="window.open('${response.imageUrl}', '_blank')">OPEN FULL SIZE</button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    messageDiv.innerHTML = `
+                        <div class="question">◤ REQUEST ◥<br>${Utils.escapeHtml(question)}</div>
+                        <div class="answer">${Utils.formatMarkdown(response.content)}</div>
+                    `;
                 }
-            }
-        }
-
-        // Create file from code
-        async function createFileFromCode(button, language) {
-            if (!currentDirectoryHandle) {
-                showError('No folder is currently open');
-                return;
-            }
-
-            const codeElement = button.closest('pre').querySelector('code');
-            const code = codeElement.textContent;
-            
-            // Generate filename based on language
-            const extensions = {
-                'javascript': 'js',
-                'typescript': 'ts',
-                'python': 'py',
-                'html': 'html',
-                'css': 'css',
-                'json': 'json',
-                'markdown': 'md',
-                'txt': 'txt'
-            };
-            
-            const extension = extensions[language] || 'txt';
-            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
-            const filename = `tactical_generated_${timestamp}.${extension}`;
-            
-            try {
-                const fileHandle = await currentDirectoryHandle.getFileHandle(filename, { create: true });
-                const writable = await fileHandle.createWritable();
-                await writable.write(code);
-                await writable.close();
                 
-                // Refresh file explorer and open the new file
-                await loadFileStructure(currentDirectoryHandle);
-                await openFile(filename, fileHandle);
+                UI.aiContent.appendChild(messageDiv);
+                UI.aiContent.scrollTop = UI.aiContent.scrollHeight;
+            },
+
+            async saveImageToFolder(imageUrl, prompt) {
+                await FileOperations.saveImageToFolder(imageUrl, prompt);
+            },
+
+            clearChat() {
+                UI.aiContent.innerHTML = `
+                    <div class="welcome-message">
+                        ◤ AI ASSISTANT READY ◥<br><br>
+                        Select a mode and enter your request below<br><br>
+                        • CODE: Get programming assistance<br>
+                        • IMAGE: Generate visual content<br>
+                        • CHAT: General conversation
+                    </div>
+                `;
+            },
+
+            switchMode(mode) {
+                AppState.aiMode = mode;
                 
-                showSuccess(`File ${filename} created and opened`);
-            } catch (error) {
-                showError('Failed to create file: ' + error.message);
+                // Update UI
+                document.querySelectorAll('.ai-mode').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+                
+                // Update placeholder
+                const placeholders = {
+                    code: 'Ask about code, request examples, or get programming help...',
+                    image: 'Describe the image you want to generate...',
+                    chat: 'Ask me anything...'
+                };
+                
+                UI.aiPrompt.placeholder = placeholders[mode];
             }
-        }
+        };
 
-        // Clear AI chat
-        function clearAIChat() {
-            document.getElementById('aiContent').innerHTML = '';
-            showSuccess('AI chat cleared');
-        }
+        // Resize functionality
+        const ResizeManager = {
+            init() {
+                this.initializeResize(
+                    document.getElementById('leftResizeHandle'),
+                    document.querySelector('.sidebar'),
+                    true
+                );
+                
+                this.initializeResize(
+                    document.getElementById('rightResizeHandle'),
+                    document.querySelector('.ai-column'),
+                    false
+                );
+            },
 
-        // Refresh file explorer
-        function refreshFileExplorer() {
-            if (currentDirectoryHandle) {
-                loadFileStructure(currentDirectoryHandle);
-                showSuccess('File explorer refreshed');
-            }
-        }
-
-        // Context menu functionality
-        let contextMenu = null;
-        let currentContextDirectory = null;
-
-        function showContextMenu(e, directoryHandle) {
-            e.preventDefault();
-            
-            removeContextMenu();
-            currentContextDirectory = directoryHandle;
-            
-            contextMenu = document.createElement('div');
-            contextMenu.className = 'context-menu';
-            contextMenu.innerHTML = `
-                <div class="context-menu-item" onclick="createNewFile()">
-                    <span>📄</span> NEW FILE
-                </div>
-                <div class="context-menu-item" onclick="createNewFolder()">
-                    <span>📁</span> NEW FOLDER
-                </div>
-            `;
-            
-            contextMenu.style.left = `${e.pageX}px`;
-            contextMenu.style.top = `${e.pageY}px`;
-            
-            document.body.appendChild(contextMenu);
-            
-            setTimeout(() => {
-                document.addEventListener('click', removeContextMenu);
-            }, 0);
-        }
-
-        function removeContextMenu() {
-            if (contextMenu) {
-                contextMenu.remove();
-                contextMenu = null;
-            }
-            document.removeEventListener('click', removeContextMenu);
-        }
-
-        async function createNewFile() {
-            removeContextMenu();
-            
-            if (!currentContextDirectory) {
-                showError('No project folder open. Please open a folder first.');
-                return;
-            }
-            
-            const parentElement = document.getElementById('fileExplorer');
-            
-            const inputContainer = document.createElement('div');
-            inputContainer.className = 'new-item-input';
-            inputContainer.innerHTML = `<input type="text" placeholder="filename.ext">`;
-            parentElement.appendChild(inputContainer);
-            
-            const input = inputContainer.querySelector('input');
-            input.focus();
-            
-            input.addEventListener('keyup', async (e) => {
-                if (e.key === 'Enter') {
-                    const filename = input.value.trim();
-                    if (filename) {
-                        try {
-                            const fileHandle = await currentContextDirectory.getFileHandle(filename, { create: true });
-                            const writable = await fileHandle.createWritable();
-                            await writable.write('');
-                            await writable.close();
-                            
-                            await loadFileStructure(currentDirectoryHandle);
-                            showSuccess(`File ${filename} created`);
-                        } catch (error) {
-                            showError('Error creating file: ' + error.message);
-                        }
-                    }
-                    inputContainer.remove();
-                } else if (e.key === 'Escape') {
-                    inputContainer.remove();
-                }
-            });
-        }
-
-        async function createNewFolder() {
-            removeContextMenu();
-            
-            if (!currentContextDirectory) {
-                showError('No project folder open. Please open a folder first.');
-                return;
-            }
-            
-            const parentElement = document.getElementById('fileExplorer');
-            
-            const inputContainer = document.createElement('div');
-            inputContainer.className = 'new-item-input';
-            inputContainer.innerHTML = `<input type="text" placeholder="folder name">`;
-            parentElement.appendChild(inputContainer);
-            
-            const input = inputContainer.querySelector('input');
-            input.focus();
-            
-            input.addEventListener('keyup', async (e) => {
-                if (e.key === 'Enter') {
-                    const foldername = input.value.trim();
-                    if (foldername) {
-                        try {
-                            await currentContextDirectory.getDirectoryHandle(foldername, { create: true });
-                            await loadFileStructure(currentDirectoryHandle);
-                            showSuccess(`Folder ${foldername} created`);
-                        } catch (error) {
-                            showError('Error creating folder: ' + error.message);
-                        }
-                    }
-                    inputContainer.remove();
-                } else if (e.key === 'Escape') {
-                    inputContainer.remove();
-                }
-            });
-        }
-
-        // Initialize resize handles
-        function initializeResizeHandles() {
-            const leftHandle = document.getElementById('leftResizeHandle');
-            const rightHandle = document.getElementById('rightResizeHandle');
-            const sidebar = document.querySelector('.tactical-sidebar');
-            const aiPanel = document.querySelector('.tactical-ai-panel');
-
-            function initializeResize(handle, element, isLeft) {
+            initializeResize(handle, element, isLeft) {
                 let startX, startWidth;
 
-                function startResize(e) {
+                const startResize = (e) => {
                     startX = e.clientX;
                     startWidth = parseInt(getComputedStyle(element).width, 10);
                     handle.classList.add('active');
                     document.addEventListener('mousemove', resize);
                     document.addEventListener('mouseup', stopResize);
                     document.body.style.userSelect = 'none';
-                }
+                };
 
-                function resize(e) {
+                const resize = (e) => {
                     const diff = e.clientX - startX;
                     let newWidth = isLeft ? startWidth + diff : startWidth - diff;
                     
-                    newWidth = Math.max(250, Math.min(600, newWidth));
+                    newWidth = Math.max(200, Math.min(800, newWidth));
                     element.style.width = `${newWidth}px`;
-                }
+                };
 
-                function stopResize() {
+                const stopResize = () => {
                     handle.classList.remove('active');
                     document.removeEventListener('mousemove', resize);
                     document.removeEventListener('mouseup', stopResize);
                     document.body.style.userSelect = '';
-                }
+                };
 
                 handle.addEventListener('mousedown', startResize);
             }
-
-            initializeResize(leftHandle, sidebar, true);
-            initializeResize(rightHandle, aiPanel, false);
-        }
-
-        // Initialize tactical system
-        function initializeTacticalSystem() {
-            initializeResizeHandles();
-            updateStatus();
-            
-            // Add keyboard shortcuts
-            document.addEventListener('keydown', (e) => {
-                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-                    e.preventDefault();
-                    if (e.shiftKey) {
-                        saveAllFiles();
-                    } else {
-                        saveCurrentFile();
-                    }
-                }
-                
-                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                    e.preventDefault();
-                    sendAIRequest();
-                }
-            });
-            
-            console.log('[TACTICAL IDE] System initialized and ready for operations');
-        }
+        };
 
         // Event listeners
-        openFolderBtn.addEventListener('click', initializeFileExplorer);
-        saveBtn.addEventListener('click', saveCurrentFile);
-        saveAllBtn.addEventListener('click', saveAllFiles);
+        function initializeEventListeners() {
+            // File operations
+            UI.openFolderBtn.addEventListener('click', FileOperations.openFolder.bind(FileOperations));
+            UI.saveBtn.addEventListener('click', FileOperations.saveCurrentFile.bind(FileOperations));
+            UI.saveAllBtn.addEventListener('click', FileOperations.saveAllFiles.bind(FileOperations));
+            UI.refreshBtn.addEventListener('click', () => {
+                if (AppState.currentDirectoryHandle) {
+                    FileOperations.loadFileStructure(AppState.currentDirectoryHandle);
+                }
+            });
 
-        // Initialize on load
-        document.addEventListener('DOMContentLoaded', initializeTacticalSystem);
+            // Editor events
+            UI.editor.addEventListener('input', () => {
+                if (AppState.currentFile) {
+                    const fileData = AppState.openFiles.get(AppState.currentFile);
+                    if (fileData) {
+                        AppState.openFiles.set(AppState.currentFile, {
+                            ...fileData,
+                            content: UI.editor.value
+                        });
+                        
+                        // Mark as modified if content changed
+                        if (UI.editor.value !== fileData.originalContent) {
+                            AppState.modifiedFiles.add(AppState.currentFile);
+                        } else {
+                            AppState.modifiedFiles.delete(AppState.currentFile);
+                        }
+                        Utils.updateStatus();
+                    }
+                }
+            });
+
+            // AI operations
+            UI.sendAIBtn.addEventListener('click', AIOperations.sendAIRequest.bind(AIOperations));
+            document.getElementById('clearAIBtn').addEventListener('click', AIOperations.clearChat.bind(AIOperations));
+            
+            // AI mode switching
+            document.querySelectorAll('.ai-mode').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    AIOperations.switchMode(btn.dataset.mode);
+                });
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey || e.metaKey) {
+                    switch (e.key) {
+                        case 's':
+                            e.preventDefault();
+                            if (e.shiftKey) {
+                                FileOperations.saveAllFiles();
+                            } else {
+                                FileOperations.saveCurrentFile();
+                            }
+                            break;
+                        case 'Enter':
+                            if (UI.aiPrompt === document.activeElement) {
+                                e.preventDefault();
+                                AIOperations.sendAIRequest();
+                            }
+                            break;
+                    }
+                }
+            });
+
+            // AI prompt enter key
+            UI.aiPrompt.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                    e.preventDefault();
+                    AIOperations.sendAIRequest();
+                }
+            });
+        }
+
+        // Initialize application
+        function initializeApp() {
+            console.log('◤ GROK IDE INITIALIZING ◥');
+            
+            initializeEventListeners();
+            ResizeManager.init();
+            Utils.updateStatus();
+            
+            console.log('◤ GROK IDE READY ◥');
+        }
+
+        // Start the application
+        document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
 </html>

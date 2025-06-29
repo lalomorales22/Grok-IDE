@@ -16,7 +16,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 // Serve static files from the public directory
 app.use(express.static('public'));
 
-// Basic route to serve the new Tactical IDE
+// Basic route to serve the new IDE
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'tactical-ide.html'));
 });
@@ -45,7 +45,7 @@ app.post('/api/completion', async (req, res) => {
 
         const { messages, temperature = 0.7, max_tokens = 4000 } = req.body;
 
-        console.log('[TACTICAL AI] Processing completion request...');
+        console.log('[AI] Processing completion request...');
 
         const response = await grokClient.post('/chat/completions', {
             model: "grok-3-latest",
@@ -55,14 +55,14 @@ app.post('/api/completion', async (req, res) => {
             stream: false
         });
 
-        console.log('[TACTICAL AI] Completion successful');
+        console.log('[AI] Completion successful');
         res.json(response.data);
 
     } catch (error) {
-        console.error('[TACTICAL AI ERROR]', error.message);
+        console.error('[AI ERROR]', error.message);
         
         if (error.response) {
-            console.error('[TACTICAL AI ERROR] Response:', error.response.data);
+            console.error('[AI ERROR] Response:', error.response.data);
             res.status(error.response.status).json({
                 error: 'AI service error',
                 message: error.response.data.error?.message || error.message,
@@ -91,7 +91,7 @@ app.post('/api/generate-image', async (req, res) => {
 
         const { prompt, n = 1, response_format = "url" } = req.body;
 
-        console.log('[TACTICAL AI] Processing image generation request...');
+        console.log('[AI] Processing image generation request...');
 
         const response = await grokClient.post('/images/generations', {
             model: "grok-2-image",
@@ -100,7 +100,7 @@ app.post('/api/generate-image', async (req, res) => {
             response_format: response_format
         });
 
-        console.log('[TACTICAL AI] Image generation completed');
+        console.log('[AI] Image generation completed');
         
         // Format response to match expected structure
         const imageResponse = {
@@ -115,10 +115,10 @@ app.post('/api/generate-image', async (req, res) => {
         res.json(imageResponse);
 
     } catch (error) {
-        console.error('[TACTICAL AI ERROR] Image generation failed:', error.message);
+        console.error('[AI ERROR] Image generation failed:', error.message);
         
         if (error.response) {
-            console.error('[TACTICAL AI ERROR] Response:', error.response.data);
+            console.error('[AI ERROR] Response:', error.response.data);
             res.status(error.response.status).json({
                 error: 'Image generation failed',
                 message: error.response.data.error?.message || error.message,
@@ -149,7 +149,7 @@ app.post('/api/analyze-code', async (req, res) => {
             style: 'Review this code for style consistency and adherence to best practices.'
         };
 
-        const systemPrompt = `You are a tactical code analysis AI. ${analysisPrompts[analysisType]} 
+        const systemPrompt = `You are a code analysis AI. ${analysisPrompts[analysisType]} 
         Provide specific, actionable feedback with code examples where appropriate.
         Format your response with clear sections and use markdown for code blocks.`;
 
@@ -176,7 +176,7 @@ app.post('/api/analyze-code', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('[TACTICAL AI ERROR] Code analysis failed:', error.message);
+        console.error('[AI ERROR] Code analysis failed:', error.message);
         res.status(500).json({
             error: 'Code analysis failed',
             message: error.message
@@ -193,7 +193,7 @@ app.post('/api/analyze-project', async (req, res) => {
 
         const { fileStructure, projectType } = req.body;
 
-        const systemPrompt = `You are a tactical project analysis AI. Analyze the provided project structure 
+        const systemPrompt = `You are a project analysis AI. Analyze the provided project structure 
         and provide insights about architecture, organization, potential issues, and recommendations for improvement.
         Consider the project type: ${projectType || 'general'}.`;
 
@@ -219,7 +219,7 @@ app.post('/api/analyze-project', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('[TACTICAL AI ERROR] Project analysis failed:', error.message);
+        console.error('[AI ERROR] Project analysis failed:', error.message);
         res.status(500).json({
             error: 'Project analysis failed',
             message: error.message
@@ -230,7 +230,7 @@ app.post('/api/analyze-project', async (req, res) => {
 // Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({
-        status: 'TACTICAL SYSTEM ONLINE',
+        status: 'SYSTEM ONLINE',
         timestamp: new Date().toISOString(),
         version: '2.0.0',
         features: {
@@ -243,10 +243,10 @@ app.get('/api/health', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    console.error('[TACTICAL SERVER ERROR]', err.stack);
+    console.error('[SERVER ERROR]', err.stack);
     res.status(500).json({
         error: 'Internal server error',
-        message: 'A tactical system error occurred'
+        message: 'A system error occurred'
     });
 });
 
@@ -254,31 +254,31 @@ app.use((err, req, res, next) => {
 app.use((req, res) => {
     res.status(404).json({
         error: 'Endpoint not found',
-        message: 'The requested tactical endpoint does not exist'
+        message: 'The requested endpoint does not exist'
     });
 });
 
 // Graceful shutdown handling
 process.on('SIGTERM', () => {
-    console.log('[TACTICAL SERVER] Received SIGTERM, shutting down gracefully...');
+    console.log('[SERVER] Received SIGTERM, shutting down gracefully...');
     process.exit(0);
 });
 
 process.on('SIGINT', () => {
-    console.log('[TACTICAL SERVER] Received SIGINT, shutting down gracefully...');
+    console.log('[SERVER] Received SIGINT, shutting down gracefully...');
     process.exit(0);
 });
 
-// Start the tactical server
+// Start the server
 app.listen(port, () => {
     console.log(`
     ╔══════════════════════════════════════════════════════════════╗
-    ║                    TACTICAL GROK IDE SERVER                  ║
+    ║                      GROK IDE SERVER                         ║
     ║                         SYSTEM ONLINE                        ║
     ╠══════════════════════════════════════════════════════════════╣
     ║  Server running at: http://localhost:${port}                     ║
     ║  AI Features: ${process.env.XAI_API_KEY ? 'ENABLED' : 'DISABLED'}                              ║
-    ║  Status: READY FOR TACTICAL OPERATIONS                      ║
+    ║  Status: READY FOR OPERATIONS                                ║
     ╚══════════════════════════════════════════════════════════════╝
     `);
 });
