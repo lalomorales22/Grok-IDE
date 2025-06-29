@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TACTICAL GROK IDE</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary-black: #0a0a0a;
+            --secondary-black: #111111;
+            --tertiary-black: #1a1a1a;
+            --accent-white: #ffffff;
+            --border-white: #333333;
+            --hover-white: #444444;
+            --active-white: #555555;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-muted: #808080;
+            --success-green: #00ff41;
+            --warning-orange: #ff8c00;
+            --error-red: #ff0040;
+            --info-blue: #00bfff;
+            --tactical-glow: rgba(0, 255, 65, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            height: 100vh;
+            background: var(--primary-black);
+            color: var(--text-primary);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Tactical Header */
+        .tactical-header {
+            background: linear-gradient(135deg, var(--secondary-black), var(--tertiary-black));
+            border-bottom: 2px solid var(--border-white);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .tactical-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--success-green);
+            text-shadow: 0 0 10px var(--tactical-glow);
+        }
+
+        .tactical-logo::before {
+            content: "◢";
+            font-size: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .tactical-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .tactical-btn {
+            background: linear-gradient(135deg, var(--tertiary-black), var(--secondary-black));
+            border: 1px solid var(--border-white);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tactical-btn:hover {
+            border-color: var(--success-green);
+            box-shadow: 0 0 15px var(--tactical-glow);
+            transform: translateY(-1px);
+        }
+
+        .tactical-btn:active {
+            transform: translateY(0);
+        }
+
+        .tactical-btn.primary {
+            background: linear-gradient(135deg, var(--success-green), #00cc33);
+            color: var(--primary-black);
+            font-weight: 600;
+        }
+
+        .tactical-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: var(--secondary-black);
+            border-bottom: 1px solid var(--border-white);
+            padding: 0.5rem 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success-green);
+            animation: pulse 2s infinite;
+        }
+
+        /* Main Layout */
+        .tactical-workspace {
+            display: flex;
+            flex: 1;
+            background: var(--primary-black);
+            overflow: hidden;
+        }
+
+        /* File Explorer */
+        .file-explorer {
+            width: 300px;
+            background: var(--secondary-black);
+            border-right: 2px solid var(--border-white);
+            display: flex;
+            flex-direction: column;
+            min-width: 250px;
+            max-width: 500px;
+        }
+
+        .explorer-header {
+            background: var(--tertiary-black);
+            border-bottom: 1px solid var(--border-white);
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .explorer-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            background: none;
+            border: 1px solid var(--border-white);
+            color: var(--text-primary);
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .icon-btn:hover {
+            border-color: var(--success-green);
+            color: var(--success-green);
+            box-shadow: 0 0 10px var(--tactical-glow);
+        }
+
+        .file-tree {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+
+        .tree-item {
+            display: flex;
+            align-items: center;
+            padding: 0.4rem 0.5rem;
+            cursor: pointer;
+            border-radius: 2px;
+            margin-bottom: 2px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .tree-item:hover {
+            background: var(--hover-white);
+            border-left: 3px solid var(--success-green);
+        }
+
+        .tree-item.active {
+            background: var(--active-white);
+            border-left: 3px solid var(--success-green);
+            color: var(--success-green);
+        }
+
+        .tree-item.folder {
+            font-weight: 500;
+        }
+
+        .tree-icon {
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .tree-children {
+            margin-left: 1.5rem;
+        }
+
+        /* Code Editor */
+        .editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--primary-black);
+        }
+
+        .editor-tabs {
+            background: var(--secondary-black);
+            border-bottom: 1px solid var(--border-white);
+            display: flex;
+            overflow-x: auto;
+            min-height: 40px;
+        }
+
+        .editor-tab {
+            background: var(--tertiary-black);
+            border-right: 1px solid var(--border-white);
+            padding: 0.6rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .editor-tab:hover {
+            background: var(--hover-white);
+        }
+
+        .editor-tab.active {
+            background: var(--primary-black);
+            border-bottom: 2px solid var(--success-green);
+            color: var(--success-green);
+        }
+
+        .tab-close {
+            margin-left: 0.5rem;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+
+        .tab-close:hover {
+            opacity: 1;
+            color: var(--error-red);
+        }
+
+        .code-editor {
+            flex: 1;
+            background: var(--primary-black);
+            color: var(--text-primary);
+            border: none;
+            resize: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            padding: 1rem;
+            outline: none;
+            tab-size: 4;
+        }
+
+        .code-editor:focus {
+            box-shadow: inset 0 0 0 1px var(--success-green);
+        }
+
+        /* AI Assistant */
+        .ai-assistant {
+            width: 400px;
+            background: var(--secondary-black);
+            border-left: 2px solid var(--border-white);
+            display: flex;
+            flex-direction: column;
+            min-width: 300px;
+            max-width: 600px;
+        }
+
+        .ai-header {
+            background: var(--tertiary-black);
+            border-bottom: 1px solid var(--border-white);
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .ai-mode-selector {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .mode-btn {
+            background: var(--primary-black);
+            border: 1px solid var(--border-white);
+            color: var(--text-secondary);
+            padding: 0.3rem 0.6rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn.active {
+            background: var(--success-green);
+            color: var(--primary-black);
+            font-weight: 600;
+        }
+
+        .ai-chat {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-message {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .message-header.user {
+            color: var(--info-blue);
+        }
+
+        .message-header.assistant {
+            color: var(--success-green);
+        }
+
+        .message-content {
+            background: var(--tertiary-black);
+            border: 1px solid var(--border-white);
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .code-block {
+            background: var(--primary-black);
+            border: 1px solid var(--border-white);
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 4px;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .code-block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-white);
+        }
+
+        .code-language {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .code-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .code-action-btn {
+            background: var(--secondary-black);
+            border: 1px solid var(--border-white);
+            color: var(--text-primary);
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .code-action-btn:hover {
+            border-color: var(--success-green);
+            color: var(--success-green);
+        }
+
+        .ai-input-area {
+            background: var(--tertiary-black);
+            border-top: 1px solid var(--border-white);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .ai-input {
+            background: var(--primary-black);
+            border: 1px solid var(--border-white);
+            color: var(--text-primary);
+            padding: 0.75rem;
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 80px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .ai-input:focus {
+            border-color: var(--success-green);
+            box-shadow: 0 0 10px var(--tactical-glow);
+        }
+
+        .input-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .input-options {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.8rem;
+        }
+
+        .tactical-checkbox {
+            width: 16px;
+            height: 16px;
+            background: var(--primary-black);
+            border: 1px solid var(--border-white);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .tactical-checkbox:checked {
+            background: var(--success-green);
+        }
+
+        .tactical-checkbox:checked::after {
+            content: "✓";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--primary-black);
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        /* Resize Handles */
+        .resize-handle {
+            width: 4px;
+            background: var(--border-white);
+            cursor: col-resize;
+            transition: background-color 0.3s ease;
+            position: relative;
+        }
+
+        .resize-handle:hover,
+        .resize-handle.active {
+            background: var(--success-green);
+            box-shadow: 0 0 10px var(--tactical-glow);
+        }
+
+        /* Context Menu */
+        .context-menu {
+            position: fixed;
+            background: var(--secondary-black);
+            border: 2px solid var(--border-white);
+            border-radius: 4px;
+            padding: 0.5rem 0;
+            min-width: 180px;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+        }
+
+        .context-menu-item {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .context-menu-item:hover {
+            background: var(--hover-white);
+            color: var(--success-green);
+        }
+
+        .context-menu-separator {
+            height: 1px;
+            background: var(--border-white);
+            margin: 0.25rem 0;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal {
+            background: var(--secondary-black);
+            border: 2px solid var(--border-white);
+            border-radius: 4px;
+            padding: 1.5rem;
+            min-width: 400px;
+            max-width: 80vw;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-white);
+        }
+
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--success-green);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: var(--error-red);
+        }
+
+        /* Image Generation */
+        .image-preview {
+            max-width: 100%;
+            border: 2px solid var(--border-white);
+            border-radius: 4px;
+            margin: 0.5rem 0;
+        }
+
+        .generation-progress {
+            background: var(--tertiary-black);
+            border: 1px solid var(--border-white);
+            padding: 1rem;
+            text-align: center;
+            margin: 0.5rem 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--border-white);
+            margin: 0.5rem 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--success-green);
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px var(--tactical-glow);
+        }
+
+        /* Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--secondary-black);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-white);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--success-green);
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .file-explorer {
+                width: 250px;
+            }
+            .ai-assistant {
+                width: 350px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .tactical-workspace {
+                flex-direction: column;
+            }
+            .file-explorer,
+            .ai-assistant {
+                width: 100%;
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Tactical Header -->
+    <div class="tactical-header">
+        <div class="tactical-logo">
+            TACTICAL GROK IDE
+        </div>
+        <div class="tactical-controls">
+            <button id="openFolderBtn" class="tactical-btn">OPEN FOLDER</button>
+            <button id="saveBtn" class="tactical-btn disabled" disabled>SAVE</button>
+            <button id="saveAllBtn" class="tactical-btn disabled" disabled>SAVE ALL</button>
+            <button id="deployBtn" class="tactical-btn primary disabled" disabled>DEPLOY</button>
+        </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span id="statusText">SYSTEM READY</span>
+        </div>
+        <div id="projectPath">NO PROJECT LOADED</div>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="tactical-workspace">
+        <!-- File Explorer -->
+        <div class="file-explorer">
+            <div class="explorer-header">
+                <span>FILE EXPLORER</span>
+                <div class="explorer-actions">
+                    <button class="icon-btn" id="newFileBtn" title="New File">📄</button>
+                    <button class="icon-btn" id="newFolderBtn" title="New Folder">📁</button>
+                    <button class="icon-btn" id="refreshBtn" title="Refresh">🔄</button>
+                </div>
+            </div>
+            <div class="file-tree" id="fileTree">
+                <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                    CLICK "OPEN FOLDER" TO START
+                </div>
+            </div>
+        </div>
+
+        <!-- Resize Handle -->
+        <div class="resize-handle" id="leftResizeHandle"></div>
+
+        <!-- Code Editor -->
+        <div class="editor-container">
+            <div class="editor-tabs" id="editorTabs">
+                <!-- Tabs will be dynamically added here -->
+            </div>
+            <textarea 
+                class="code-editor" 
+                id="codeEditor" 
+                placeholder="// TACTICAL GROK IDE - SELECT A FILE TO START CODING"
+                disabled
+            ></textarea>
+        </div>
+
+        <!-- Resize Handle -->
+        <div class="resize-handle" id="rightResizeHandle"></div>
+
+        <!-- AI Assistant -->
+        <div class="ai-assistant">
+            <div class="ai-header">
+                <span>GROK ASSISTANT</span>
+                <div class="ai-mode-selector">
+                    <button class="mode-btn active" data-mode="code">CODE</button>
+                    <button class="mode-btn" data-mode="image">IMAGE</button>
+                    <button class="mode-btn" data-mode="chat">CHAT</button>
+                </div>
+            </div>
+            <div class="ai-chat" id="aiChat">
+                <div class="chat-message">
+                    <div class="message-header assistant">
+                        <span>◢ GROK TACTICAL AI</span>
+                    </div>
+                    <div class="message-content">
+                        TACTICAL GROK AI ASSISTANT ONLINE<br>
+                        Ready to assist with code generation, image creation, and development tasks.<br><br>
+                        <strong>AVAILABLE MODES:</strong><br>
+                        • CODE: Generate and analyze code<br>
+                        • IMAGE: Create images with AI<br>
+                        • CHAT: General assistance
+                    </div>
+                </div>
+            </div>
+            <div class="ai-input-area">
+                <textarea 
+                    class="ai-input" 
+                    id="aiInput" 
+                    placeholder="Enter your tactical request..."
+                ></textarea>
+                <div class="input-actions">
+                    <div class="input-options">
+                        <label class="checkbox-container">
+                            <input type="checkbox" class="tactical-checkbox" id="includeContext">
+                            <span>Include file context</span>
+                        </label>
+                    </div>
+                    <button class="tactical-btn primary" id="sendBtn">EXECUTE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state management
+        const TacticalIDE = {
+            currentProject: null,
+            openFiles: new Map(),
+            activeFile: null,
+            aiMode: 'code',
+            directoryHandle: null,
+            
+            // Initialize the IDE
+            async init() {
+                this.setupEventListeners();
+                this.setupResizeHandles();
+                this.updateStatus('TACTICAL GROK IDE INITIALIZED');
+            },
+
+            // Setup all event listeners
+            setupEventListeners() {
+                // Header buttons
+                document.getElementById('openFolderBtn').addEventListener('click', () => this.openFolder());
+                document.getElementById('saveBtn').addEventListener('click', () => this.saveCurrentFile());
+                document.getElementById('saveAllBtn').addEventListener('click', () => this.saveAllFiles());
+                
+                // Explorer buttons
+                document.getElementById('newFileBtn').addEventListener('click', () => this.createNewFile());
+                document.getElementById('newFolderBtn').addEventListener('click', () => this.createNewFolder());
+                document.getElementById('refreshBtn').addEventListener('click', () => this.refreshExplorer());
+                
+                // AI mode selector
+                document.querySelectorAll('.mode-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.setAIMode(e.target.dataset.mode));
+                });
+                
+                // AI input
+                document.getElementById('sendBtn').addEventListener('click', () => this.sendAIRequest());
+                document.getElementById('aiInput').addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                        this.sendAIRequest();
+                    }
+                });
+                
+                // Code editor auto-save
+                document.getElementById('codeEditor').addEventListener('input', () => {
+                    this.autoSave();
+                });
+                
+                // Context menu
+                document.getElementById('fileTree').addEventListener('contextmenu', (e) => {
+                    this.showContextMenu(e);
+                });
+            },
+
+            // Setup resize handles
+            setupResizeHandles() {
+                const leftHandle = document.getElementById('leftResizeHandle');
+                const rightHandle = document.getElementById('rightResizeHandle');
+                const fileExplorer = document.querySelector('.file-explorer');
+                const aiAssistant = document.querySelector('.ai-assistant');
+
+                this.makeResizable(leftHandle, fileExplorer, 'width', true);
+                this.makeResizable(rightHandle, aiAssistant, 'width', false);
+            },
+
+            makeResizable(handle, element, property, isLeft) {
+                let startPos, startSize;
+
+                const startResize = (e) => {
+                    startPos = isLeft ? e.clientX : e.clientX;
+                    startSize = parseInt(getComputedStyle(element)[property]);
+                    handle.classList.add('active');
+                    document.addEventListener('mousemove', resize);
+                    document.addEventListener('mouseup', stopResize);
+                    document.body.style.userSelect = 'none';
+                };
+
+                const resize = (e) => {
+                    const diff = isLeft ? e.clientX - startPos : startPos - e.clientX;
+                    const newSize = Math.max(250, Math.min(600, startSize + diff));
+                    element.style[property] = `${newSize}px`;
+                };
+
+                const stopResize = () => {
+                    handle.classList.remove('active');
+                    document.removeEventListener('mousemove', resize);
+                    document.removeEventListener('mouseup', stopResize);
+                    document.body.style.userSelect = '';
+                };
+
+                handle.addEventListener('mousedown', startResize);
+            },
+
+            // File system operations
+            async openFolder() {
+                try {
+                    if (!('showDirectoryPicker' in window)) {
+                        this.showError('File System API not supported in this browser');
+                        return;
+                    }
+
+                    const handle = await window.showDirectoryPicker();
+                    this.directoryHandle = handle;
+                    this.currentProject = handle.name;
+                    
+                    document.getElementById('projectPath').textContent = this.currentProject;
+                    this.updateStatus('PROJECT LOADED: ' + this.currentProject);
+                    
+                    await this.loadFileTree();
+                    this.enableProjectFeatures();
+                } catch (error) {
+                    if (error.name !== 'AbortError') {
+                        this.showError('Failed to open folder: ' + error.message);
+                    }
+                }
+            },
+
+            async loadFileTree() {
+                const fileTree = document.getElementById('fileTree');
+                fileTree.innerHTML = '<div style="padding: 1rem; text-align: center;">LOADING...</div>';
+                
+                try {
+                    const structure = await this.buildFileStructure(this.directoryHandle);
+                    this.renderFileTree(structure, fileTree);
+                } catch (error) {
+                    this.showError('Failed to load file tree: ' + error.message);
+                }
+            },
+
+            async buildFileStructure(directoryHandle, path = '') {
+                const items = [];
+                
+                for await (const [name, handle] of directoryHandle.entries()) {
+                    const fullPath = path ? `${path}/${name}` : name;
+                    
+                    if (handle.kind === 'directory') {
+                        const children = await this.buildFileStructure(handle, fullPath);
+                        items.push({
+                            type: 'directory',
+                            name,
+                            path: fullPath,
+                            handle,
+                            children
+                        });
+                    } else {
+                        items.push({
+                            type: 'file',
+                            name,
+                            path: fullPath,
+                            handle
+                        });
+                    }
+                }
+                
+                return items.sort((a, b) => {
+                    if (a.type !== b.type) return a.type === 'directory' ? -1 : 1;
+                    return a.name.localeCompare(b.name);
+                });
+            },
+
+            renderFileTree(items, container, level = 0) {
+                container.innerHTML = '';
+                
+                items.forEach(item => {
+                    const element = document.createElement('div');
+                    element.className = 'tree-item';
+                    element.style.paddingLeft = `${level * 1.5 + 0.5}rem`;
+                    
+                    if (item.type === 'directory') {
+                        element.classList.add('folder');
+                        element.innerHTML = `
+                            <span class="tree-icon">📁</span>
+                            <span>${item.name}</span>
+                        `;
+                        
+                        const childContainer = document.createElement('div');
+                        childContainer.className = 'tree-children';
+                        childContainer.style.display = 'none';
+                        
+                        element.addEventListener('click', () => {
+                            const isOpen = childContainer.style.display !== 'none';
+                            childContainer.style.display = isOpen ? 'none' : 'block';
+                            element.querySelector('.tree-icon').textContent = isOpen ? '📁' : '📂';
+                        });
+                        
+                        container.appendChild(element);
+                        this.renderFileTree(item.children, childContainer, level + 1);
+                        container.appendChild(childContainer);
+                    } else {
+                        const icon = this.getFileIcon(item.name);
+                        element.innerHTML = `
+                            <span class="tree-icon">${icon}</span>
+                            <span>${item.name}</span>
+                        `;
+                        
+                        element.addEventListener('click', () => this.openFile(item));
+                        container.appendChild(element);
+                    }
+                });
+            },
+
+            getFileIcon(filename) {
+                const ext = filename.split('.').pop()?.toLowerCase();
+                const icons = {
+                    'js': '📜', 'ts': '📘', 'jsx': '⚛️', 'tsx': '⚛️',
+                    'html': '🌐', 'css': '🎨', 'scss': '🎨', 'sass': '🎨',
+                    'json': '📋', 'md': '📝', 'txt': '📄',
+                    'py': '🐍', 'java': '☕', 'cpp': '⚙️', 'c': '⚙️',
+                    'php': '🐘', 'rb': '💎', 'go': '🐹',
+                    'png': '🖼️', 'jpg': '🖼️', 'jpeg': '🖼️', 'gif': '🖼️', 'svg': '🖼️'
+                };
+                return icons[ext] || '📄';
+            },
+
+            async openFile(fileItem) {
+                try {
+                    if (this.openFiles.has(fileItem.path)) {
+                        this.switchToFile(fileItem.path);
+                        return;
+                    }
+
+                    const file = await fileItem.handle.getFile();
+                    const content = await file.text();
+                    
+                    this.openFiles.set(fileItem.path, {
+                        name: fileItem.name,
+                        path: fileItem.path,
+                        handle: fileItem.handle,
+                        content: content,
+                        originalContent: content,
+                        modified: false
+                    });
+                    
+                    this.createTab(fileItem.path);
+                    this.switchToFile(fileItem.path);
+                    this.updateStatus(`OPENED: ${fileItem.name}`);
+                } catch (error) {
+                    this.showError('Failed to open file: ' + error.message);
+                }
+            },
+
+            createTab(filePath) {
+                const tabsContainer = document.getElementById('editorTabs');
+                const fileData = this.openFiles.get(filePath);
+                
+                const tab = document.createElement('div');
+                tab.className = 'editor-tab';
+                tab.dataset.filePath = filePath;
+                tab.innerHTML = `
+                    <span class="tree-icon">${this.getFileIcon(fileData.name)}</span>
+                    <span>${fileData.name}</span>
+                    <span class="tab-close" onclick="TacticalIDE.closeFile('${filePath}')">×</span>
+                `;
+                
+                tab.addEventListener('click', (e) => {
+                    if (!e.target.classList.contains('tab-close')) {
+                        this.switchToFile(filePath);
+                    }
+                });
+                
+                tabsContainer.appendChild(tab);
+            },
+
+            switchToFile(filePath) {
+                // Update active tab
+                document.querySelectorAll('.editor-tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.filePath === filePath);
+                });
+                
+                // Update editor content
+                const fileData = this.openFiles.get(filePath);
+                if (fileData) {
+                    document.getElementById('codeEditor').value = fileData.content;
+                    document.getElementById('codeEditor').disabled = false;
+                    this.activeFile = filePath;
+                    this.enableFileFeatures();
+                }
+            },
+
+            closeFile(filePath) {
+                const fileData = this.openFiles.get(filePath);
+                if (fileData && fileData.modified) {
+                    if (!confirm(`${fileData.name} has unsaved changes. Close anyway?`)) {
+                        return;
+                    }
+                }
+                
+                // Remove tab
+                const tab = document.querySelector(`[data-file-path="${filePath}"]`);
+                if (tab) tab.remove();
+                
+                // Remove from open files
+                this.openFiles.delete(filePath);
+                
+                // Switch to another file or clear editor
+                if (this.activeFile === filePath) {
+                    const remainingFiles = Array.from(this.openFiles.keys());
+                    if (remainingFiles.length > 0) {
+                        this.switchToFile(remainingFiles[0]);
+                    } else {
+                        this.activeFile = null;
+                        document.getElementById('codeEditor').value = '';
+                        document.getElementById('codeEditor').disabled = true;
+                        this.disableFileFeatures();
+                    }
+                }
+            },
+
+            async saveCurrentFile() {
+                if (!this.activeFile) return;
+                
+                try {
+                    const fileData = this.openFiles.get(this.activeFile);
+                    const content = document.getElementById('codeEditor').value;
+                    
+                    const writable = await fileData.handle.createWritable();
+                    await writable.write(content);
+                    await writable.close();
+                    
+                    fileData.content = content;
+                    fileData.originalContent = content;
+                    fileData.modified = false;
+                    
+                    this.updateStatus(`SAVED: ${fileData.name}`);
+                    this.updateTabModifiedState(this.activeFile);
+                } catch (error) {
+                    this.showError('Failed to save file: ' + error.message);
+                }
+            },
+
+            async saveAllFiles() {
+                const modifiedFiles = Array.from(this.openFiles.entries())
+                    .filter(([_, data]) => data.modified);
+                
+                if (modifiedFiles.length === 0) {
+                    this.updateStatus('NO FILES TO SAVE');
+                    return;
+                }
+                
+                try {
+                    for (const [filePath, fileData] of modifiedFiles) {
+                        const writable = await fileData.handle.createWritable();
+                        await writable.write(fileData.content);
+                        await writable.close();
+                        
+                        fileData.originalContent = fileData.content;
+                        fileData.modified = false;
+                        this.updateTabModifiedState(filePath);
+                    }
+                    
+                    this.updateStatus(`SAVED ${modifiedFiles.length} FILES`);
+                } catch (error) {
+                    this.showError('Failed to save files: ' + error.message);
+                }
+            },
+
+            autoSave() {
+                if (!this.activeFile) return;
+                
+                const fileData = this.openFiles.get(this.activeFile);
+                const content = document.getElementById('codeEditor').value;
+                
+                fileData.content = content;
+                fileData.modified = content !== fileData.originalContent;
+                
+                this.updateTabModifiedState(this.activeFile);
+            },
+
+            updateTabModifiedState(filePath) {
+                const tab = document.querySelector(`[data-file-path="${filePath}"]`);
+                const fileData = this.openFiles.get(filePath);
+                
+                if (tab && fileData) {
+                    const nameSpan = tab.querySelector('span:nth-child(2)');
+                    if (fileData.modified && !nameSpan.textContent.endsWith('*')) {
+                        nameSpan.textContent += '*';
+                    } else if (!fileData.modified && nameSpan.textContent.endsWith('*')) {
+                        nameSpan.textContent = nameSpan.textContent.slice(0, -1);
+                    }
+                }
+            },
+
+            // AI Assistant functionality
+            setAIMode(mode) {
+                this.aiMode = mode;
+                document.querySelectorAll('.mode-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.mode === mode);
+                });
+                
+                const placeholder = {
+                    'code': 'Generate code, analyze files, or ask programming questions...',
+                    'image': 'Describe the image you want to generate...',
+                    'chat': 'Ask me anything...'
+                };
+                
+                document.getElementById('aiInput').placeholder = placeholder[mode];
+            },
+
+            async sendAIRequest() {
+                const input = document.getElementById('aiInput').value.trim();
+                if (!input) return;
+                
+                const includeContext = document.getElementById('includeContext').checked;
+                const sendBtn = document.getElementById('sendBtn');
+                
+                // Add user message to chat
+                this.addChatMessage('user', input);
+                
+                // Clear input and disable button
+                document.getElementById('aiInput').value = '';
+                sendBtn.disabled = true;
+                sendBtn.textContent = 'PROCESSING...';
+                
+                try {
+                    let context = '';
+                    if (includeContext && this.activeFile) {
+                        const fileData = this.openFiles.get(this.activeFile);
+                        context = `\n\nCurrent file (${fileData.name}):\n\`\`\`\n${fileData.content}\n\`\`\``;
+                    }
+                    
+                    if (this.aiMode === 'image') {
+                        await this.generateImage(input);
+                    } else {
+                        await this.sendChatRequest(input + context);
+                    }
+                } catch (error) {
+                    this.showError('AI request failed: ' + error.message);
+                    this.addChatMessage('assistant', 'Sorry, I encountered an error processing your request.');
+                } finally {
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = 'EXECUTE';
+                }
+            },
+
+            async sendChatRequest(message) {
+                const response = await fetch('/api/completion', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        messages: [
+                            {
+                                role: 'system',
+                                content: 'You are a tactical AI assistant for a development IDE. Provide concise, actionable responses. When providing code, always use proper markdown formatting with language identifiers.'
+                            },
+                            {
+                                role: 'user',
+                                content: message
+                            }
+                        ]
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to get AI response');
+                }
+                
+                const data = await response.json();
+                const content = data.choices[0].message.content;
+                
+                this.addChatMessage('assistant', content);
+            },
+
+            async generateImage(prompt) {
+                // Add progress indicator
+                const progressDiv = document.createElement('div');
+                progressDiv.className = 'generation-progress';
+                progressDiv.innerHTML = `
+                    <div>GENERATING IMAGE...</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                `;
+                
+                const chatContainer = document.getElementById('aiChat');
+                chatContainer.appendChild(progressDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                
+                // Simulate progress
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += Math.random() * 20;
+                    if (progress > 90) progress = 90;
+                    progressDiv.querySelector('.progress-fill').style.width = `${progress}%`;
+                }, 500);
+                
+                try {
+                    const response = await fetch('/api/generate-image', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to generate image');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Complete progress and remove indicator
+                    clearInterval(progressInterval);
+                    progressDiv.querySelector('.progress-fill').style.width = '100%';
+                    setTimeout(() => progressDiv.remove(), 1000);
+                    
+                    // Add image to chat
+                    this.addChatMessage('assistant', `Generated image for: "${prompt}"`, data.imageUrl);
+                } catch (error) {
+                    clearInterval(progressInterval);
+                    progressDiv.remove();
+                    throw error;
+                }
+            },
+
+            addChatMessage(role, content, imageUrl = null) {
+                const chatContainer = document.getElementById('aiChat');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'chat-message fade-in';
+                
+                const headerText = role === 'user' ? '◢ USER' : '◢ GROK TACTICAL AI';
+                const headerClass = role === 'user' ? 'user' : 'assistant';
+                
+                let messageContent = content;
+                
+                // Process code blocks
+                if (role === 'assistant') {
+                    messageContent = this.formatCodeBlocks(content);
+                }
+                
+                messageDiv.innerHTML = `
+                    <div class="message-header ${headerClass}">
+                        <span>${headerText}</span>
+                    </div>
+                    <div class="message-content">
+                        ${messageContent}
+                        ${imageUrl ? `<img src="${imageUrl}" class="image-preview" alt="Generated image">` : ''}
+                    </div>
+                `;
+                
+                chatContainer.appendChild(messageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            },
+
+            formatCodeBlocks(content) {
+                return content.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, language, code) => {
+                    const lang = language || 'text';
+                    const escapedCode = this.escapeHtml(code.trim());
+                    
+                    return `
+                        <div class="code-block">
+                            <div class="code-block-header">
+                                <span class="code-language">${lang.toUpperCase()}</span>
+                                <div class="code-actions">
+                                    <button class="code-action-btn" onclick="TacticalIDE.copyCode(this)">COPY</button>
+                                    <button class="code-action-btn" onclick="TacticalIDE.insertCode(this)">INSERT</button>
+                                    <button class="code-action-btn" onclick="TacticalIDE.createFileFromCode(this, '${lang}')">CREATE FILE</button>
+                                </div>
+                            </div>
+                            <pre><code>${escapedCode}</code></pre>
+                        </div>
+                    `;
+                });
+            },
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            },
+
+            copyCode(button) {
+                const codeBlock = button.closest('.code-block');
+                const code = codeBlock.querySelector('code').textContent;
+                
+                navigator.clipboard.writeText(code).then(() => {
+                    const originalText = button.textContent;
+                    button.textContent = 'COPIED!';
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                    }, 2000);
+                }).catch(() => {
+                    this.showError('Failed to copy code');
+                });
+            },
+
+            insertCode(button) {
+                if (!this.activeFile) {
+                    this.showError('No active file to insert code into');
+                    return;
+                }
+                
+                const codeBlock = button.closest('.code-block');
+                const code = codeBlock.querySelector('code').textContent;
+                const editor = document.getElementById('codeEditor');
+                
+                const cursorPos = editor.selectionStart;
+                const textBefore = editor.value.substring(0, cursorPos);
+                const textAfter = editor.value.substring(cursorPos);
+                
+                editor.value = textBefore + '\n' + code + '\n' + textAfter;
+                editor.focus();
+                
+                // Update file data
+                this.autoSave();
+                
+                this.updateStatus('CODE INSERTED');
+            },
+
+            async createFileFromCode(button, language) {
+                if (!this.directoryHandle) {
+                    this.showError('No project folder open');
+                    return;
+                }
+                
+                const codeBlock = button.closest('.code-block');
+                const code = codeBlock.querySelector('code').textContent;
+                
+                const extensions = {
+                    'javascript': 'js',
+                    'typescript': 'ts',
+                    'html': 'html',
+                    'css': 'css',
+                    'python': 'py',
+                    'java': 'java',
+                    'cpp': 'cpp',
+                    'c': 'c'
+                };
+                
+                const ext = extensions[language.toLowerCase()] || 'txt';
+                const filename = prompt(`Enter filename (without extension):`, `generated_${Date.now()}`);
+                
+                if (!filename) return;
+                
+                try {
+                    const fullFilename = `${filename}.${ext}`;
+                    const fileHandle = await this.directoryHandle.getFileHandle(fullFilename, { create: true });
+                    
+                    const writable = await fileHandle.createWritable();
+                    await writable.write(code);
+                    await writable.close();
+                    
+                    await this.loadFileTree();
+                    this.updateStatus(`CREATED: ${fullFilename}`);
+                } catch (error) {
+                    this.showError('Failed to create file: ' + error.message);
+                }
+            },
+
+            // Context menu functionality
+            showContextMenu(e) {
+                e.preventDefault();
+                
+                const contextMenu = document.createElement('div');
+                contextMenu.className = 'context-menu';
+                contextMenu.innerHTML = `
+                    <div class="context-menu-item" onclick="TacticalIDE.createNewFile()">
+                        <span>📄</span> New File
+                    </div>
+                    <div class="context-menu-item" onclick="TacticalIDE.createNewFolder()">
+                        <span>📁</span> New Folder
+                    </div>
+                    <div class="context-menu-separator"></div>
+                    <div class="context-menu-item" onclick="TacticalIDE.refreshExplorer()">
+                        <span>🔄</span> Refresh
+                    </div>
+                `;
+                
+                contextMenu.style.left = `${e.pageX}px`;
+                contextMenu.style.top = `${e.pageY}px`;
+                
+                document.body.appendChild(contextMenu);
+                
+                const closeMenu = () => {
+                    contextMenu.remove();
+                    document.removeEventListener('click', closeMenu);
+                };
+                
+                setTimeout(() => {
+                    document.addEventListener('click', closeMenu);
+                }, 0);
+            },
+
+            async createNewFile() {
+                if (!this.directoryHandle) {
+                    this.showError('No project folder open');
+                    return;
+                }
+                
+                const filename = prompt('Enter filename:');
+                if (!filename) return;
+                
+                try {
+                    const fileHandle = await this.directoryHandle.getFileHandle(filename, { create: true });
+                    const writable = await fileHandle.createWritable();
+                    await writable.write('');
+                    await writable.close();
+                    
+                    await this.loadFileTree();
+                    this.updateStatus(`CREATED: ${filename}`);
+                } catch (error) {
+                    this.showError('Failed to create file: ' + error.message);
+                }
+            },
+
+            async createNewFolder() {
+                if (!this.directoryHandle) {
+                    this.showError('No project folder open');
+                    return;
+                }
+                
+                const foldername = prompt('Enter folder name:');
+                if (!foldername) return;
+                
+                try {
+                    await this.directoryHandle.getDirectoryHandle(foldername, { create: true });
+                    await this.loadFileTree();
+                    this.updateStatus(`CREATED FOLDER: ${foldername}`);
+                } catch (error) {
+                    this.showError('Failed to create folder: ' + error.message);
+                }
+            },
+
+            refreshExplorer() {
+                if (this.directoryHandle) {
+                    this.loadFileTree();
+                    this.updateStatus('EXPLORER REFRESHED');
+                }
+            },
+
+            // UI state management
+            enableProjectFeatures() {
+                document.getElementById('saveAllBtn').classList.remove('disabled');
+                document.getElementById('saveAllBtn').disabled = false;
+                document.getElementById('deployBtn').classList.remove('disabled');
+                document.getElementById('deployBtn').disabled = false;
+                document.getElementById('newFileBtn').disabled = false;
+                document.getElementById('newFolderBtn').disabled = false;
+                document.getElementById('refreshBtn').disabled = false;
+            },
+
+            enableFileFeatures() {
+                document.getElementById('saveBtn').classList.remove('disabled');
+                document.getElementById('saveBtn').disabled = false;
+            },
+
+            disableFileFeatures() {
+                document.getElementById('saveBtn').classList.add('disabled');
+                document.getElementById('saveBtn').disabled = true;
+            },
+
+            updateStatus(message) {
+                document.getElementById('statusText').textContent = message;
+                console.log(`[TACTICAL IDE] ${message}`);
+            },
+
+            showError(message) {
+                console.error(`[TACTICAL IDE ERROR] ${message}`);
+                alert(`TACTICAL ERROR: ${message}`);
+            }
+        };
+
+        // Initialize the IDE when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            TacticalIDE.init();
+        });
+    </script>
+</body>
+</html>
