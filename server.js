@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware to parse JSON bodies
+// Middleware to parse JSON bodies with larger limit for images
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
@@ -36,7 +36,7 @@ const grokClient = axios.create({
     timeout: 60000 // 60 second timeout for AI requests
 });
 
-// Enhanced Grok completions endpoint
+// Enhanced Grok completions endpoint with image support
 app.post('/api/completion', async (req, res) => {
     try {
         if (!process.env.XAI_API_KEY) {
@@ -47,13 +47,34 @@ app.post('/api/completion', async (req, res) => {
 
         console.log('[AI] Processing completion request...');
 
-        const response = await grokClient.post('/chat/completions', {
-            model: "grok-3-latest",
-            messages: messages,
-            temperature: temperature,
-            max_tokens: max_tokens,
-            stream: false
-        });
+        // Check if any message contains images
+        const hasImages = messages.some(msg => 
+            Array.isArray(msg.content) && 
+            msg.content.some(item => item.type === 'image_url')
+        );
+
+        let response;
+        
+        if (hasImages) {
+            // Use vision-capable model for image analysis
+            console.log('[AI] Using vision model for image analysis...');
+            response = await grokClient.post('/chat/completions', {
+                model: "grok-vision-beta", // Use vision model for images
+                messages: messages,
+                temperature: temperature,
+                max_tokens: max_tokens,
+                stream: false
+            });
+        } else {
+            // Use regular model for text-only
+            response = await grokClient.post('/chat/completions', {
+                model: "grok-beta",
+                messages: messages,
+                temperature: temperature,
+                max_tokens: max_tokens,
+                stream: false
+            });
+        }
 
         console.log('[AI] Completion successful');
         res.json(response.data);
@@ -133,28 +154,39 @@ app.post('/api/generate-image', async (req, res) => {
     }
 });
 
-// Code analysis endpoint
+// Code analysis endpoint with RAG capabilities
 app.post('/api/analyze-code', async (req, res) => {
     try {
         if (!process.env.XAI_API_KEY) {
             throw new Error('XAI_API_KEY environment variable not set');
         }
 
-        const { code, language, analysisType = 'general' } = req.body;
+        const { code, language, analysisType = 'general', context = '' } = req.body;
 
         const analysisPrompts = {
             general: 'Analyze this code for potential improvements, bugs, and best practices.',
             security: 'Perform a security analysis of this code, identifying potential vulnerabilities.',
             performance: 'Analyze this code for performance issues and optimization opportunities.',
-            style: 'Review this code for style consistency and adherence to best practices.'
+            style: 'Review this code for style consistency and adherence to best practices.',
+            refactor: 'Suggest refactoring opportunities to improve code structure and maintainability.'
         };
 
-        const systemPrompt = `You are a code analysis AI. ${analysisPrompts[analysisType]} 
+        const systemPrompt = `You are a code analysis AI with access to the full project context. ${analysisPrompts[analysisType]} 
         Provide specific, actionable feedback with code examples where appropriate.
-        Format your response with clear sections and use markdown for code blocks.`;
+        Format your response with clear sections and use markdown for code blocks.
+        Consider the broader project context when making recommendations.`;
+
+        const userContent = `Language: ${language}
+        
+        ${context ? `Project Context:\n${context}\n\n` : ''}
+        
+        Code to analyze:
+        \`\`\`${language}
+        ${code}
+        \`\`\``;
 
         const response = await grokClient.post('/chat/completions', {
-            model: "grok-3-latest",
+            model: "grok-beta",
             messages: [
                 {
                     role: 'system',
@@ -162,7 +194,7 @@ app.post('/api/analyze-code', async (req, res) => {
                 },
                 {
                     role: 'user',
-                    content: `Language: ${language}\n\nCode:\n\`\`\`${language}\n${code}\n\`\`\``
+                    content: userContent
                 }
             ],
             temperature: 0.3,
@@ -184,21 +216,39 @@ app.post('/api/analyze-code', async (req, res) => {
     }
 });
 
-// Project structure analysis endpoint
+// Project structure analysis endpoint with enhanced RAG
 app.post('/api/analyze-project', async (req, res) => {
     try {
         if (!process.env.XAI_API_KEY) {
             throw new Error('XAI_API_KEY environment variable not set');
         }
 
-        const { fileStructure, projectType } = req.body;
+        const { fileStructure, projectType, fileContents = {} } = req.body;
 
-        const systemPrompt = `You are a project analysis AI. Analyze the provided project structure 
-        and provide insights about architecture, organization, potential issues, and recommendations for improvement.
-        Consider the project type: ${projectType || 'general'}.`;
+        const systemPrompt = `You are a project analysis AI with deep understanding of software architecture patterns. 
+        Analyze the provided project structure and file contents to provide comprehensive insights about:
+        - Architecture and design patterns
+        - Code organization and modularity
+        - Potential issues and technical debt
+        - Security considerations
+        - Performance implications
+        - Best practices adherence
+        - Recommendations for improvement
+        
+        Consider the project type: ${projectType || 'general'}.
+        Provide actionable recommendations with specific examples.`;
+
+        let analysisContent = `Project Structure:\n${JSON.stringify(fileStructure, null, 2)}`;
+        
+        if (Object.keys(fileContents).length > 0) {
+            analysisContent += '\n\nKey File Contents:\n';
+            Object.entries(fileContents).forEach(([filename, content]) => {
+                analysisContent += `\n--- ${filename} ---\n${content}\n`;
+            });
+        }
 
         const response = await grokClient.post('/chat/completions', {
-            model: "grok-3-latest",
+            model: "grok-beta",
             messages: [
                 {
                     role: 'system',
@@ -206,11 +256,11 @@ app.post('/api/analyze-project', async (req, res) => {
                 },
                 {
                     role: 'user',
-                    content: `Project Structure:\n${JSON.stringify(fileStructure, null, 2)}`
+                    content: analysisContent
                 }
             ],
             temperature: 0.4,
-            max_tokens: 3000
+            max_tokens: 4000
         });
 
         res.json({
@@ -227,16 +277,78 @@ app.post('/api/analyze-project', async (req, res) => {
     }
 });
 
+// Image analysis endpoint for uploaded images
+app.post('/api/analyze-image', async (req, res) => {
+    try {
+        if (!process.env.XAI_API_KEY) {
+            throw new Error('XAI_API_KEY environment variable not set');
+        }
+
+        const { imageData, prompt = "Analyze this image and describe what you see." } = req.body;
+
+        console.log('[AI] Processing image analysis request...');
+
+        const response = await grokClient.post('/chat/completions', {
+            model: "grok-vision-beta",
+            messages: [
+                {
+                    role: "user",
+                    content: [
+                        {
+                            type: "text",
+                            text: prompt
+                        },
+                        {
+                            type: "image_url",
+                            image_url: {
+                                url: imageData
+                            }
+                        }
+                    ]
+                }
+            ],
+            temperature: 0.7,
+            max_tokens: 2000
+        });
+
+        console.log('[AI] Image analysis completed');
+        
+        res.json({
+            analysis: response.data.choices[0].message.content,
+            prompt: prompt
+        });
+
+    } catch (error) {
+        console.error('[AI ERROR] Image analysis failed:', error.message);
+        
+        if (error.response) {
+            console.error('[AI ERROR] Response:', error.response.data);
+            res.status(error.response.status).json({
+                error: 'Image analysis failed',
+                message: error.response.data.error?.message || error.message,
+                details: error.response.data
+            });
+        } else {
+            res.status(500).json({
+                error: 'Image analysis failed',
+                message: error.message
+            });
+        }
+    }
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({
         status: 'SYSTEM ONLINE',
         timestamp: new Date().toISOString(),
-        version: '2.0.0',
+        version: '2.1.0',
         features: {
             aiCompletion: !!process.env.XAI_API_KEY,
             imageGeneration: !!process.env.XAI_API_KEY,
-            codeAnalysis: !!process.env.XAI_API_KEY
+            imageAnalysis: !!process.env.XAI_API_KEY,
+            codeAnalysis: !!process.env.XAI_API_KEY,
+            projectAnalysis: !!process.env.XAI_API_KEY
         }
     });
 });
@@ -278,6 +390,7 @@ app.listen(port, () => {
     ╠══════════════════════════════════════════════════════════════╣
     ║  Server running at: http://localhost:${port}                     ║
     ║  AI Features: ${process.env.XAI_API_KEY ? 'ENABLED' : 'DISABLED'}                              ║
+    ║  Image Analysis: ${process.env.XAI_API_KEY ? 'ENABLED' : 'DISABLED'}                          ║
     ║  Status: READY FOR OPERATIONS                                ║
     ╚══════════════════════════════════════════════════════════════╝
     `);

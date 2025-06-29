@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>◤ GROK IDE ◥</title>
+    <title>Grok IDE</title>
     <style>
         * {
             margin: 0;
@@ -12,26 +12,33 @@
         }
 
         body {
-            font-family: 'Consolas', 'Courier New', monospace;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             height: 100vh;
             display: flex;
             flex-direction: column;
             background-color: #0a0a0a;
             color: #ffffff;
-            overflow: hidden;
         }
 
         .navbar {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            padding: 0.75rem 1rem;
-            background-color: #0a0a0a;
-            color: #ffffff;
-            border-bottom: 2px solid #ffffff;
+            padding: 0.5rem 1rem;
+            background-color: #111111;
+            border-bottom: 1px solid #ffffff;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .navbar-title {
             font-weight: bold;
             font-size: 1.1rem;
-            letter-spacing: 2px;
+            color: #ffffff;
         }
 
         .main-container {
@@ -39,35 +46,29 @@
             flex: 1;
             background-color: #0a0a0a;
             color: #ffffff;
-            overflow: hidden;
         }
 
         .sidebar {
-            width: 280px;
+            width: 250px;
             background-color: #111111;
-            border-right: 2px solid #ffffff;
+            border-right: 1px solid #ffffff;
             display: flex;
             flex-direction: column;
             min-width: 200px;
-            max-width: 500px;
+            max-width: 800px;
         }
 
         .sidebar-header {
-            padding: 0.75rem 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 0.5rem 1rem;
             font-size: 0.9rem;
-            font-weight: bold;
             border-bottom: 1px solid #ffffff;
             background-color: #1a1a1a;
-            letter-spacing: 1px;
+            font-weight: bold;
         }
 
         .sidebar-controls {
-            padding: 0.75rem;
+            padding: 0.5rem;
             border-bottom: 1px solid #ffffff;
-            background-color: #111111;
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
@@ -78,42 +79,39 @@
             gap: 0.5rem;
         }
 
-        .button {
-            padding: 0.5rem 1rem;
+        .control-button {
+            flex: 1;
+            padding: 0.4rem 0.6rem;
             background-color: #0a0a0a;
             border: 1px solid #ffffff;
             color: #ffffff;
             cursor: pointer;
-            font-family: 'Consolas', 'Courier New', monospace;
             font-size: 0.8rem;
             font-weight: bold;
-            letter-spacing: 1px;
-            transition: all 0.2s ease;
-            flex: 1;
+            text-transform: uppercase;
         }
 
-        .button:hover {
+        .control-button:hover {
             background-color: #ffffff;
             color: #0a0a0a;
         }
 
-        .button:disabled {
-            background-color: #1a1a1a;
+        .control-button:disabled {
+            background-color: #333333;
+            border-color: #666666;
             color: #666666;
             cursor: not-allowed;
-            border-color: #333333;
         }
 
-        .button:disabled:hover {
-            background-color: #1a1a1a;
+        .control-button:disabled:hover {
+            background-color: #333333;
             color: #666666;
         }
 
         .file-explorer {
             flex: 1;
             padding: 0.5rem;
-            overflow-y: auto;
-            background-color: #111111;
+            overflow: auto;
         }
 
         .folder {
@@ -121,23 +119,19 @@
         }
 
         .folder-name {
-            padding: 0.4rem;
+            padding: 0.25rem;
             cursor: pointer;
             display: flex;
             align-items: center;
-            font-size: 0.85rem;
-            border: 1px solid transparent;
-            transition: all 0.2s ease;
+            color: #ffffff;
         }
 
         .folder-name:hover {
             background-color: #1a1a1a;
-            border-color: #ffffff;
         }
 
         .folder-icon {
             margin-right: 0.5rem;
-            font-size: 0.9rem;
         }
 
         .files {
@@ -145,44 +139,32 @@
         }
 
         .file {
-            padding: 0.3rem;
+            padding: 0.25rem;
             padding-left: 1.5rem;
             cursor: pointer;
-            font-size: 0.8rem;
-            border: 1px solid transparent;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
+            color: #ffffff;
         }
 
         .file:hover {
             background-color: #1a1a1a;
-            border-color: #ffffff;
-        }
-
-        .file-icon {
-            margin-right: 0.5rem;
-            font-size: 0.8rem;
         }
 
         .editor {
             flex: 1;
             display: flex;
             flex-direction: column;
-            background-color: #0a0a0a;
         }
 
         .tabs {
             display: flex;
-            background-color: #111111;
+            background-color: #1a1a1a;
             border-bottom: 1px solid #ffffff;
             overflow-x: auto;
-            min-height: 40px;
         }
 
         .tab {
-            padding: 0.6rem 1rem;
-            background-color: #111111;
+            padding: 0.5rem 1rem;
+            background-color: #1a1a1a;
             border: none;
             color: #ffffff;
             cursor: pointer;
@@ -190,37 +172,25 @@
             align-items: center;
             gap: 0.5rem;
             white-space: nowrap;
-            font-family: 'Consolas', 'Courier New', monospace;
-            font-size: 0.8rem;
-            border-right: 1px solid #333333;
-            transition: all 0.2s ease;
+            border-right: 1px solid #ffffff;
         }
 
         .tab.active {
             background-color: #0a0a0a;
-            border-bottom: 2px solid #ffffff;
         }
 
         .tab:hover {
-            background-color: #1a1a1a;
+            background-color: #333333;
         }
 
-        .tab-close {
-            margin-left: 0.5rem;
-            padding: 0 0.3rem;
-            border-radius: 2px;
-            transition: all 0.2s ease;
-        }
-
-        .tab-close:hover {
-            background-color: #ffffff;
-            color: #0a0a0a;
+        .tab.modified::after {
+            content: '●';
+            color: #ffffff;
         }
 
         .editor-content {
             flex: 1;
-            padding: 0;
-            background-color: #0a0a0a;
+            padding: 1rem;
         }
 
         #editor {
@@ -228,73 +198,74 @@
             height: 100%;
             background-color: #0a0a0a;
             color: #ffffff;
-            border: none;
+            border: 1px solid #ffffff;
             resize: none;
             font-family: 'Consolas', 'Courier New', monospace;
             font-size: 14px;
-            line-height: 1.6;
-            padding: 1rem;
+            line-height: 1.5;
+            padding: 0.5rem;
+        }
+
+        #editor:focus {
             outline: none;
+            border-color: #ffffff;
+        }
+
+        #editor:disabled {
+            background-color: #111111;
+            color: #40e0d0;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading {
+            padding: 1rem;
+            color: #40e0d0;
+            text-align: center;
         }
 
         .welcome-message {
             text-align: center;
             padding: 2rem;
             color: #40e0d0;
-            font-size: 0.9rem;
-            line-height: 1.6;
         }
 
         .ai-column {
             width: 350px;
             background-color: #111111;
-            border-left: 2px solid #ffffff;
+            border-left: 1px solid #ffffff;
             display: flex;
             flex-direction: column;
             max-height: 100%;
             overflow: hidden;
             min-width: 200px;
-            max-width: 600px;
+            max-width: 800px;
         }
 
         .ai-header {
-            padding: 0.75rem 1rem;
+            padding: 0.5rem 1rem;
             background-color: #1a1a1a;
             border-bottom: 1px solid #ffffff;
             font-size: 0.9rem;
-            font-weight: bold;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            letter-spacing: 1px;
+            font-weight: bold;
         }
 
-        .ai-mode-selector {
-            display: flex;
-            gap: 0.25rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .mode-btn {
-            padding: 0.3rem 0.6rem;
+        .ai-clear-btn {
+            padding: 0.2rem 0.4rem;
             background-color: #0a0a0a;
             border: 1px solid #ffffff;
             color: #ffffff;
             cursor: pointer;
-            font-family: 'Consolas', 'Courier New', monospace;
             font-size: 0.7rem;
             font-weight: bold;
-            transition: all 0.2s ease;
-            flex: 1;
-            text-align: center;
         }
 
-        .mode-btn.active {
-            background-color: #ffffff;
-            color: #0a0a0a;
-        }
-
-        .mode-btn:hover {
+        .ai-clear-btn:hover {
             background-color: #ffffff;
             color: #0a0a0a;
         }
@@ -304,10 +275,11 @@
             overflow-y: auto;
             padding: 1rem;
             font-family: 'Consolas', 'Courier New', monospace;
-            font-size: 13px;
+            font-size: 14px;
             line-height: 1.5;
             white-space: pre-wrap;
-            background-color: #111111;
+            scrollbar-width: thin;
+            scrollbar-color: #ffffff #1a1a1a;
         }
 
         .ai-content::-webkit-scrollbar {
@@ -328,7 +300,7 @@
         }
 
         .ai-input-area {
-            padding: 0.75rem;
+            padding: 0.5rem;
             background-color: #1a1a1a;
             border-top: 1px solid #ffffff;
             display: flex;
@@ -336,43 +308,90 @@
             gap: 0.5rem;
         }
 
+        .ai-input-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .image-upload-btn {
+            padding: 0.3rem 0.6rem;
+            background-color: #0a0a0a;
+            border: 1px solid #ffffff;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .image-upload-btn:hover {
+            background-color: #ffffff;
+            color: #0a0a0a;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 100px;
+            border: 1px solid #ffffff;
+            margin: 0.5rem 0;
+        }
+
         .ai-input-area textarea {
             width: 100%;
             background-color: #0a0a0a;
             color: #ffffff;
             border: 1px solid #ffffff;
-            padding: 0.75rem;
+            padding: 0.5rem;
             resize: none;
             font-family: 'Consolas', 'Courier New', monospace;
-            font-size: 13px;
-            min-height: 80px;
-            outline: none;
+            min-height: 60px;
         }
 
-        .ai-input-area textarea::placeholder {
-            color: #40e0d0;
+        .ai-input-area textarea:focus {
+            outline: none;
+            border-color: #ffffff;
+        }
+
+        .ai-send-btn {
+            width: 100%;
+            padding: 0.5rem 1rem;
+            background-color: #0a0a0a;
+            border: 1px solid #ffffff;
+            color: #ffffff;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .ai-send-btn:hover {
+            background-color: #ffffff;
+            color: #0a0a0a;
+        }
+
+        .ai-send-btn:disabled {
+            background-color: #333333;
+            border-color: #666666;
+            color: #666666;
+            cursor: not-allowed;
         }
 
         .ai-message {
-            margin-bottom: 1.5rem;
-            padding: 0.75rem;
-            border: 1px solid #333333;
-            background-color: #0a0a0a;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-radius: 4px;
         }
 
         .ai-message pre {
             position: relative;
-            background: #1a1a1a;
+            background: #0a0a0a;
             padding: 1rem;
+            border-radius: 4px;
             margin: 0.5rem 0;
             border: 1px solid #ffffff;
-            overflow-x: auto;
         }
 
         .ai-message code {
             font-family: 'Consolas', 'Courier New', monospace;
             white-space: pre-wrap;
-            color: #ffffff;
         }
 
         .code-actions {
@@ -385,16 +404,17 @@
 
         .code-action-btn {
             padding: 0.25rem 0.5rem;
-            background: #0a0a0a;
+            background: #1a1a1a;
             border: 1px solid #ffffff;
             color: #ffffff;
+            border-radius: 3px;
             cursor: pointer;
-            font-size: 11px;
-            font-family: 'Consolas', 'Courier New', monospace;
-            transition: all 0.2s ease;
+            font-size: 12px;
+            opacity: 0.8;
         }
 
         .code-action-btn:hover {
+            opacity: 1;
             background: #ffffff;
             color: #0a0a0a;
         }
@@ -404,39 +424,34 @@
             background-color: #ffffff;
             cursor: col-resize;
             transition: background-color 0.2s;
-            opacity: 0.3;
         }
 
         .resize-handle:hover, .resize-handle.active {
-            background-color: #ffffff;
-            opacity: 1;
+            background-color: #cccccc;
         }
 
         .context-menu {
             position: fixed;
             background: #1a1a1a;
-            border: 2px solid #ffffff;
+            border: 1px solid #ffffff;
+            border-radius: 3px;
             padding: 4px 0;
-            min-width: 180px;
+            min-width: 150px;
             z-index: 1000;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-            font-family: 'Consolas', 'Courier New', monospace;
+            box-shadow: 0 2px 5px rgba(255,255,255,0.3);
         }
 
         .context-menu-item {
-            padding: 8px 16px;
+            padding: 6px 12px;
             cursor: pointer;
             color: #ffffff;
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.8rem;
-            transition: all 0.2s ease;
         }
 
         .context-menu-item:hover {
-            background: #ffffff;
-            color: #0a0a0a;
+            background: #333333;
         }
 
         .context-menu-separator {
@@ -447,10 +462,9 @@
 
         .new-item-input {
             position: relative;
-            padding: 4px 8px;
+            padding: 2px 4px;
             background: #0a0a0a;
-            border: 2px solid #ffffff;
-            margin: 0.25rem;
+            border: 1px solid #ffffff;
         }
 
         .new-item-input input {
@@ -460,33 +474,30 @@
             color: #ffffff;
             font-size: 13px;
             outline: none;
-            padding: 4px;
-            font-family: 'Consolas', 'Courier New', monospace;
+            padding: 2px;
         }
 
-        .new-item-input input::placeholder {
+        .status-bar {
+            background-color: #111111;
+            border-top: 1px solid #ffffff;
+            padding: 0.25rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
             color: #40e0d0;
         }
 
-        .image-preview {
-            max-width: 100%;
-            height: auto;
-            border: 1px solid #ffffff;
-            margin: 0.5rem 0;
+        .status-left {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
         }
 
-        .loading-spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #333333;
-            border-radius: 50%;
-            border-top-color: #ffffff;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .status-right {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
         }
 
         .status-indicator {
@@ -497,344 +508,168 @@
             margin-right: 0.5rem;
         }
 
-        .status-online {
-            background-color: #00ff00;
-            box-shadow: 0 0 4px #00ff00;
-        }
-
-        .status-offline {
-            background-color: #ff0000;
-            box-shadow: 0 0 4px #ff0000;
-        }
-
-        .status-processing {
-            background-color: #ffff00;
-            box-shadow: 0 0 4px #ffff00;
-            animation: pulse 1s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        /* Footer Status Bar */
-        .footer-status {
-            height: 28px;
-            background-color: #1a1a1a;
-            border-top: 1px solid #ffffff;
-            display: flex;
-            align-items: center;
-            padding: 0 1rem;
-            font-size: 0.75rem;
-            color: #40e0d0;
-            font-family: 'Consolas', 'Courier New', monospace;
-            justify-content: space-between;
-        }
-
-        .status-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .status-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
+        .status-connected {
             background-color: #00ff00;
         }
 
-        .status-dot.offline {
+        .status-disconnected {
             background-color: #ff0000;
         }
 
-        .status-dot.processing {
-            background-color: #ffff00;
-            animation: pulse 1s ease-in-out infinite;
+        .hidden {
+            display: none !important;
+        }
+
+        .image-attachment {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background-color: #0a0a0a;
+            border: 1px solid #ffffff;
+            margin: 0.5rem 0;
+        }
+
+        .image-attachment img {
+            max-width: 60px;
+            max-height: 60px;
+            border: 1px solid #ffffff;
+        }
+
+        .image-attachment-info {
+            flex: 1;
+            font-size: 0.8rem;
+        }
+
+        .image-attachment-remove {
+            padding: 0.2rem 0.4rem;
+            background-color: #ff0000;
+            border: 1px solid #ffffff;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+
+        .image-attachment-remove:hover {
+            background-color: #ffffff;
+            color: #ff0000;
         }
     </style>
 </head>
 <body>
     <div class="navbar">
-        ◤ GROK IDE ◥
+        <div class="navbar-left">
+            <div class="navbar-title">◤ GROK IDE ◥</div>
+        </div>
     </div>
 
     <div class="main-container">
         <div class="sidebar">
             <div class="sidebar-header">
                 EXPLORER
-                <span id="refreshBtn" onclick="refreshFileExplorer()" style="cursor: pointer; opacity: 0.7;" title="Refresh">🔄</span>
             </div>
-            
             <div class="sidebar-controls">
                 <div class="control-row">
-                    <button id="openFolderBtn" class="button" onclick="openFolder()">OPEN FOLDER</button>
-                    <button id="saveBtn" class="button" onclick="saveCurrentFile()" disabled>SAVE</button>
+                    <button id="openFolderBtn" class="control-button">OPEN FOLDER</button>
+                    <button id="saveBtn" class="control-button" onclick="saveCurrentFile()" disabled>SAVE</button>
                 </div>
                 <div class="control-row">
-                    <button id="saveAllBtn" class="button" onclick="saveAllFiles()" disabled>SAVE ALL</button>
-                    <button id="newFileBtn" class="button" onclick="createNewFileInRoot()" disabled>NEW FILE</button>
+                    <button id="newFolderBtn" class="control-button" onclick="createNewFolder()" disabled>NEW FOLDER</button>
+                    <button id="newFileBtn" class="control-button" onclick="createNewFile()" disabled>NEW FILE</button>
                 </div>
             </div>
-            
             <div id="fileExplorer" class="file-explorer">
                 <div class="welcome-message">
-                    Click "OPEN FOLDER" to begin operations
+                    EDITOR READY - LOAD FILES TO BEGIN OPERATIONS
                 </div>
             </div>
         </div>
-        
         <div class="resize-handle" id="leftResizeHandle"></div>
 
         <div class="editor">
             <div id="tabs" class="tabs"></div>
             <div class="editor-content">
-                <textarea id="editor" placeholder="Select a file to begin editing..." disabled></textarea>
+                <textarea id="editor" disabled placeholder="EDITOR READY - LOAD FILES TO BEGIN OPERATIONS"></textarea>
             </div>
         </div>
 
         <div class="resize-handle" id="rightResizeHandle"></div>
-        
         <div class="ai-column">
             <div class="ai-header">
                 GROK ASSISTANT
-                <button id="clearAIBtn" onclick="clearAIChat()" class="button" style="font-size: 0.7rem; padding: 0.3rem 0.6rem;">CLEAR</button>
+                <button id="clearAIBtn" onclick="clearAIChat()" class="ai-clear-btn">CLEAR</button>
             </div>
-            
-            <div class="ai-mode-selector" style="padding: 0.5rem;">
-                <button class="mode-btn active" data-mode="code" onclick="switchAIMode('code')">CODE</button>
-                <button class="mode-btn" data-mode="image" onclick="switchAIMode('image')">IMAGE</button>
-                <button class="mode-btn" data-mode="chat" onclick="switchAIMode('chat')">CHAT</button>
-            </div>
-            
             <div id="aiContent" class="ai-content"></div>
-            
             <div class="ai-input-area">
+                <div class="ai-input-controls">
+                    <input type="file" id="imageUpload" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                    <button onclick="document.getElementById('imageUpload').click()" class="image-upload-btn">📷 IMAGE</button>
+                </div>
+                <div id="imageAttachments"></div>
                 <textarea 
                     id="aiPrompt" 
-                    placeholder="Enter your request..."
+                    placeholder="Ask about your code or upload an image..."
                     rows="3"
                 ></textarea>
-                <button onclick="sendAIRequest()" class="button">SEND TO GROK</button>
+                <button onclick="sendPrompt()" class="ai-send-btn" id="sendBtn">SEND</button>
             </div>
         </div>
     </div>
 
-    <!-- Footer Status Bar -->
-    <div class="footer-status">
+    <div class="status-bar">
         <div class="status-left">
-            <div class="status-item">
-                <div class="status-dot" id="aiStatusDot"></div>
-                <span id="aiStatus">AI: Disconnected</span>
-            </div>
-            <div class="status-item">
-                <span id="folderStatus">No folder opened</span>
-            </div>
+            <span id="aiStatus">
+                <span class="status-indicator status-disconnected"></span>
+                AI: DISCONNECTED
+            </span>
+            <span id="folderStatus">FOLDER: NO FOLDER OPENED</span>
         </div>
         <div class="status-right">
-            <div class="status-item">
-                <span id="fileCount">Files: 0</span>
-            </div>
-            <div class="status-item">
-                <span id="openTabsCount">Open: 0</span>
-            </div>
-            <div class="status-item">
-                <span id="modifiedCount">Modified: 0</span>
-            </div>
+            <span id="fileCount">FILES: 0</span>
+            <span id="openCount">OPEN: 0</span>
+            <span id="modifiedCount">MODIFIED: 0</span>
         </div>
     </div>
 
     <script>
-        // Global state management
-        const AppState = {
-            currentDirectoryHandle: null,
-            openFiles: new Map(),
-            currentFile: null,
-            aiMode: 'code',
-            aiConnected: false,
-            modifiedFiles: new Set(),
-            fileStructure: null
-        };
+        let currentPath = '';
+        const openFiles = new Map();
+        let currentDirectoryHandle = null;
+        let attachedImages = [];
 
-        // UI Elements
-        const UI = {
-            editor: document.getElementById('editor'),
-            fileExplorer: document.getElementById('fileExplorer'),
-            aiContent: document.getElementById('aiContent'),
-            aiPrompt: document.getElementById('aiPrompt'),
-            tabs: document.getElementById('tabs'),
-            saveBtn: document.getElementById('saveBtn'),
-            saveAllBtn: document.getElementById('saveAllBtn'),
-            newFileBtn: document.getElementById('newFileBtn'),
-            openFolderBtn: document.getElementById('openFolderBtn'),
-            refreshBtn: document.getElementById('refreshBtn'),
-            clearAIBtn: document.getElementById('clearAIBtn'),
-            // Status bar elements
-            aiStatus: document.getElementById('aiStatus'),
-            aiStatusDot: document.getElementById('aiStatusDot'),
-            folderStatus: document.getElementById('folderStatus'),
-            fileCount: document.getElementById('fileCount'),
-            openTabsCount: document.getElementById('openTabsCount'),
-            modifiedCount: document.getElementById('modifiedCount')
-        };
+        // Initialize UI elements
+        const saveBtn = document.getElementById('saveBtn');
+        const openFolderBtn = document.getElementById('openFolderBtn');
+        const newFolderBtn = document.getElementById('newFolderBtn');
+        const newFileBtn = document.getElementById('newFileBtn');
+        const editor = document.getElementById('editor');
 
-        // Initialize the application
-        function initializeApp() {
-            console.log('[SYSTEM] Initializing IDE...');
-            
-            // Check AI connection
-            checkAIConnection();
-            
-            // Update status bar
-            updateStatusBar();
-            
-            // Initialize resize handles
-            initializeResizeHandles();
-            
-            // Set up editor change listener
-            UI.editor.addEventListener('input', handleEditorChange);
-            
-            // Set up AI prompt enter key
-            UI.aiPrompt.addEventListener('keydown', (e) => {
-                if (e.ctrlKey && e.key === 'Enter') {
-                    sendAIRequest();
-                }
-            });
-            
-            console.log('[SYSTEM] IDE initialized successfully');
-        }
+        // Status tracking
+        let totalFileCount = 0;
+        let modifiedFiles = new Set();
 
-        // Check AI connection status
-        async function checkAIConnection() {
-            try {
-                const response = await fetch('/api/health');
-                const data = await response.json();
-                AppState.aiConnected = data.features.aiCompletion;
-                updateAIStatus();
-            } catch (error) {
-                console.error('[AI] Connection check failed:', error);
-                AppState.aiConnected = false;
-                updateAIStatus();
-            }
-        }
-
-        // Update AI status in the status bar
-        function updateAIStatus() {
-            if (AppState.aiConnected) {
-                UI.aiStatus.textContent = 'AI: Connected';
-                UI.aiStatusDot.className = 'status-dot';
-            } else {
-                UI.aiStatus.textContent = 'AI: Disconnected';
-                UI.aiStatusDot.className = 'status-dot offline';
-            }
-        }
-
-        // Update the status bar with current information
-        function updateStatusBar() {
-            // Update folder status
-            if (AppState.currentDirectoryHandle) {
-                UI.folderStatus.textContent = `Folder: ${AppState.currentDirectoryHandle.name}`;
-            } else {
-                UI.folderStatus.textContent = 'No folder opened';
-            }
-
-            // Update file count
-            const fileCount = AppState.fileStructure ? countFiles(AppState.fileStructure) : 0;
-            UI.fileCount.textContent = `Files: ${fileCount}`;
-
-            // Update open tabs count
-            UI.openTabsCount.textContent = `Open: ${AppState.openFiles.size}`;
-
-            // Update modified files count
-            UI.modifiedCount.textContent = `Modified: ${AppState.modifiedFiles.size}`;
-        }
-
-        // Count total files in structure
-        function countFiles(structure) {
-            let count = 0;
-            for (const item of structure) {
-                if (item.type === 'file') {
-                    count++;
-                } else if (item.children) {
-                    count += countFiles(item.children);
-                }
-            }
-            return count;
-        }
-
-        // Handle editor content changes
-        function handleEditorChange() {
-            if (AppState.currentFile) {
-                const currentContent = UI.editor.value;
-                const fileData = AppState.openFiles.get(AppState.currentFile);
-                
-                if (fileData && currentContent !== fileData.originalContent) {
-                    AppState.modifiedFiles.add(AppState.currentFile);
-                    markTabAsModified(AppState.currentFile, true);
-                } else {
-                    AppState.modifiedFiles.delete(AppState.currentFile);
-                    markTabAsModified(AppState.currentFile, false);
-                }
-                
-                // Update file content in memory
-                if (fileData) {
-                    fileData.content = currentContent;
-                }
-                
-                updateStatusBar();
-            }
-        }
-
-        // Mark tab as modified
-        function markTabAsModified(fileName, isModified) {
-            const tab = document.querySelector(`.tab[data-filename="${fileName}"]`);
-            if (tab) {
-                const tabText = tab.querySelector('.tab-text') || tab.firstChild;
-                if (isModified && !tabText.textContent.includes('●')) {
-                    tabText.textContent = '● ' + fileName;
-                } else if (!isModified && tabText.textContent.includes('●')) {
-                    tabText.textContent = fileName;
-                }
-            }
-        }
-
-        // Open folder using File System API
-        async function openFolder() {
+        async function initializeFileExplorer() {
             try {
                 if (!('showDirectoryPicker' in window)) {
-                    showError('File System API not supported in this browser');
+                    showError('This browser does not support the File System API');
                     return;
                 }
-
                 const handle = await window.showDirectoryPicker();
-                AppState.currentDirectoryHandle = handle;
-                
-                console.log('[SYSTEM] Folder opened:', handle.name);
-                
+                currentDirectoryHandle = handle;
+                currentPath = handle.name;
                 await loadFileStructure(handle);
                 
                 // Enable UI elements
-                UI.saveBtn.disabled = false;
-                UI.saveAllBtn.disabled = false;
-                UI.newFileBtn.disabled = false;
-                UI.editor.disabled = false;
-                UI.refreshBtn.style.opacity = '1';
+                saveBtn.disabled = false;
+                newFolderBtn.disabled = false;
+                newFileBtn.disabled = false;
+                editor.disabled = false;
+                editor.placeholder = '';
                 
                 updateStatusBar();
                 
+                // Test AI connection
+                testAIConnection();
             } catch (error) {
                 if (error.name !== 'AbortError') {
                     showError('Failed to open folder: ' + error.message);
@@ -842,12 +677,31 @@
             }
         }
 
-        // Load and display file structure
+        async function testAIConnection() {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                
+                const aiStatus = document.getElementById('aiStatus');
+                const indicator = aiStatus.querySelector('.status-indicator');
+                
+                if (data.features.aiCompletion) {
+                    indicator.className = 'status-indicator status-connected';
+                    aiStatus.innerHTML = '<span class="status-indicator status-connected"></span>AI: CONNECTED';
+                } else {
+                    indicator.className = 'status-indicator status-disconnected';
+                    aiStatus.innerHTML = '<span class="status-indicator status-disconnected"></span>AI: DISCONNECTED';
+                }
+            } catch (error) {
+                console.error('AI connection test failed:', error);
+            }
+        }
+
         async function loadFileStructure(directoryHandle) {
             try {
-                UI.fileExplorer.innerHTML = '<div class="welcome-message">Loading files...</div>';
+                const fileExplorer = document.getElementById('fileExplorer');
+                fileExplorer.innerHTML = '<div class="loading">LOADING...</div>';
                 const files = await listFiles(directoryHandle);
-                AppState.fileStructure = files;
                 renderFileStructure(files);
                 updateStatusBar();
             } catch (error) {
@@ -855,33 +709,40 @@
             }
         }
 
-        // Recursively list files in directory
         async function listFiles(directoryHandle) {
             const files = [];
-            for await (const entry of directoryHandle.values()) {
-                if (entry.kind === 'directory') {
-                    files.push({
-                        type: 'directory',
-                        name: entry.name,
-                        handle: entry,
-                        children: await listFiles(entry)
-                    });
-                } else if (entry.kind === 'file') {
-                    files.push({ 
-                        type: 'file', 
-                        name: entry.name,
-                        handle: entry 
-                    });
+            totalFileCount = 0;
+            
+            async function processDirectory(handle) {
+                const items = [];
+                for await (const entry of handle.values()) {
+                    if (entry.kind === 'directory') {
+                        const children = await processDirectory(entry);
+                        items.push({
+                            type: 'directory',
+                            name: entry.name,
+                            handle: entry,
+                            children: children
+                        });
+                    } else if (entry.kind === 'file') {
+                        totalFileCount++;
+                        items.push({ 
+                            type: 'file', 
+                            name: entry.name,
+                            handle: entry 
+                        });
+                    }
                 }
+                return items.sort((a, b) => {
+                    if (a.type === b.type) return a.name.localeCompare(b.name);
+                    return a.type === 'directory' ? -1 : 1;
+                });
             }
-            return files.sort((a, b) => {
-                if (a.type === b.type) return a.name.localeCompare(b.name);
-                return a.type === 'directory' ? -1 : 1;
-            });
+            
+            return await processDirectory(directoryHandle);
         }
 
-        // Render file structure in explorer
-        function renderFileStructure(files, parentElement = UI.fileExplorer, parentHandle = AppState.currentDirectoryHandle) {
+        function renderFileStructure(files, parentElement = document.getElementById('fileExplorer'), parentHandle = currentDirectoryHandle) {
             parentElement.innerHTML = '';
             
             parentElement.oncontextmenu = (e) => showContextMenu(e, parentHandle);
@@ -918,69 +779,28 @@
                 } else {
                     const fileDiv = document.createElement('div');
                     fileDiv.className = 'file';
-                    
-                    const fileIcon = getFileIcon(item.name);
-                    fileDiv.innerHTML = `<span class="file-icon">${fileIcon}</span>${item.name}`;
+                    fileDiv.textContent = item.name;
                     fileDiv.onclick = () => openFile(item.name, item.handle);
                     parentElement.appendChild(fileDiv);
                 }
             });
         }
 
-        // Get appropriate icon for file type
-        function getFileIcon(fileName) {
-            const ext = fileName.split('.').pop().toLowerCase();
-            const iconMap = {
-                'js': '📄',
-                'ts': '📘',
-                'html': '🌐',
-                'css': '🎨',
-                'json': '📋',
-                'md': '📝',
-                'txt': '📄',
-                'py': '🐍',
-                'java': '☕',
-                'cpp': '⚙️',
-                'c': '⚙️',
-                'php': '🐘',
-                'rb': '💎',
-                'go': '🐹',
-                'rs': '🦀',
-                'png': '🖼️',
-                'jpg': '🖼️',
-                'jpeg': '🖼️',
-                'gif': '🖼️',
-                'svg': '🖼️'
-            };
-            return iconMap[ext] || '📄';
-        }
-
-        // Open file in editor
         async function openFile(fileName, fileHandle) {
             try {
                 const file = await fileHandle.getFile();
                 const content = await file.text();
-                
-                AppState.openFiles.set(fileName, { 
-                    content: content, 
-                    originalContent: content,
-                    handle: fileHandle 
-                });
-                
+                openFiles.set(fileName, { content, handle: fileHandle, modified: false });
                 createOrActivateTab(fileName);
-                UI.editor.value = content;
-                AppState.currentFile = fileName;
-                
-                console.log('[FILE] Opened:', fileName);
+                document.getElementById('editor').value = content;
                 updateStatusBar();
-                
             } catch (error) {
                 showError('Error opening file: ' + error.message);
             }
         }
 
-        // Create or activate tab for file
         function createOrActivateTab(fileName) {
+            const tabs = document.getElementById('tabs');
             let tab = document.querySelector(`.tab[data-filename="${fileName}"]`);
             
             if (!tab) {
@@ -988,41 +808,30 @@
                 tab.className = 'tab';
                 tab.setAttribute('data-filename', fileName);
                 tab.innerHTML = `
-                    <span class="tab-text">${fileName}</span>
-                    <span class="tab-close" onclick="closeTab('${fileName}', event)">×</span>
+                    ${fileName}
+                    <span onclick="closeTab('${fileName}')" style="margin-left: 8px;">×</span>
                 `;
-                tab.onclick = (e) => {
-                    if (!e.target.classList.contains('tab-close')) {
-                        activateTab(fileName);
-                    }
-                };
-                UI.tabs.appendChild(tab);
+                tabs.appendChild(tab);
             }
             
             activateTab(fileName);
         }
 
-        // Activate specific tab
         function activateTab(fileName) {
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
-            
             const tab = document.querySelector(`.tab[data-filename="${fileName}"]`);
             if (tab) {
                 tab.classList.add('active');
-                const fileData = AppState.openFiles.get(fileName);
+                const fileData = openFiles.get(fileName);
                 if (fileData) {
-                    UI.editor.value = fileData.content;
-                    AppState.currentFile = fileName;
+                    document.getElementById('editor').value = fileData.content;
                 }
             }
         }
 
-        // Close tab
-        function closeTab(fileName, event) {
-            if (event) event.stopPropagation();
-            
+        function closeTab(fileName) {
             const tab = document.querySelector(`.tab[data-filename="${fileName}"]`);
             if (tab) {
                 if (tab.classList.contains('active')) {
@@ -1030,354 +839,159 @@
                     if (nextTab) {
                         activateTab(nextTab.getAttribute('data-filename'));
                     } else {
-                        UI.editor.value = '';
-                        AppState.currentFile = null;
+                        document.getElementById('editor').value = '';
                     }
                 }
                 tab.remove();
-                AppState.openFiles.delete(fileName);
-                AppState.modifiedFiles.delete(fileName);
+                openFiles.delete(fileName);
+                modifiedFiles.delete(fileName);
                 updateStatusBar();
             }
         }
 
-        // Save current file
         async function saveCurrentFile() {
-            if (!AppState.currentFile) {
-                showError('No file is currently open');
+            const activeTab = document.querySelector('.tab.active');
+            if (!activeTab) {
+                alert('No file is currently open');
                 return;
             }
             
             try {
-                const fileData = AppState.openFiles.get(AppState.currentFile);
+                const fileName = activeTab.getAttribute('data-filename');
+                const fileData = openFiles.get(fileName);
                 if (!fileData || !fileData.handle) {
                     throw new Error('File handle not found');
                 }
                 
-                const content = UI.editor.value;
+                const content = document.getElementById('editor').value;
                 const writable = await fileData.handle.createWritable();
                 await writable.write(content);
                 await writable.close();
                 
-                // Update stored content
-                fileData.originalContent = content;
-                fileData.content = content;
-                AppState.modifiedFiles.delete(AppState.currentFile);
-                markTabAsModified(AppState.currentFile, false);
+                openFiles.set(fileName, { 
+                    content: content, 
+                    handle: fileData.handle,
+                    modified: false
+                });
                 
-                console.log('[FILE] Saved:', AppState.currentFile);
+                modifiedFiles.delete(fileName);
+                activeTab.classList.remove('modified');
                 updateStatusBar();
-                showSuccess(`File ${AppState.currentFile} saved successfully`);
                 
+                showSuccess(`File ${fileName} saved successfully!`);
             } catch (error) {
                 showError('Error saving file: ' + error.message);
             }
         }
 
-        // Save all modified files
-        async function saveAllFiles() {
-            if (AppState.modifiedFiles.size === 0) {
-                showError('No modified files to save');
-                return;
-            }
-
-            let savedCount = 0;
-            const totalFiles = AppState.modifiedFiles.size;
-
-            for (const fileName of AppState.modifiedFiles) {
-                try {
-                    const fileData = AppState.openFiles.get(fileName);
-                    if (fileData && fileData.handle) {
-                        const writable = await fileData.handle.createWritable();
-                        await writable.write(fileData.content);
-                        await writable.close();
-                        
-                        fileData.originalContent = fileData.content;
-                        markTabAsModified(fileName, false);
-                        savedCount++;
+        // Track editor changes
+        document.getElementById('editor').addEventListener('input', () => {
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab) {
+                const fileName = activeTab.getAttribute('data-filename');
+                const fileData = openFiles.get(fileName);
+                if (fileData) {
+                    const currentContent = document.getElementById('editor').value;
+                    const isModified = currentContent !== fileData.content;
+                    
+                    if (isModified) {
+                        modifiedFiles.add(fileName);
+                        activeTab.classList.add('modified');
+                    } else {
+                        modifiedFiles.delete(fileName);
+                        activeTab.classList.remove('modified');
                     }
-                } catch (error) {
-                    console.error(`[FILE] Error saving ${fileName}:`, error);
+                    
+                    openFiles.set(fileName, {
+                        ...fileData,
+                        modified: isModified
+                    });
+                    
+                    updateStatusBar();
                 }
             }
+        });
 
-            AppState.modifiedFiles.clear();
-            updateStatusBar();
-            showSuccess(`Saved ${savedCount}/${totalFiles} files successfully`);
+        function updateStatusBar() {
+            document.getElementById('folderStatus').textContent = 
+                currentPath ? `FOLDER: ${currentPath.toUpperCase()}` : 'FOLDER: NO FOLDER OPENED';
+            document.getElementById('fileCount').textContent = `FILES: ${totalFileCount}`;
+            document.getElementById('openCount').textContent = `OPEN: ${openFiles.size}`;
+            document.getElementById('modifiedCount').textContent = `MODIFIED: ${modifiedFiles.size}`;
         }
 
-        // Create new file in root directory
-        async function createNewFileInRoot() {
-            if (!AppState.currentDirectoryHandle) {
-                showError('No project folder open');
-                return;
+        function showError(message) {
+            console.error('[IDE ERROR]', message);
+            alert(`[IDE ERROR] ${message}`);
+        }
+
+        function showSuccess(message) {
+            console.log('[IDE SUCCESS]', message);
+            // Could be replaced with a toast notification
+        }
+
+        function refreshFileExplorer() {
+            if (currentDirectoryHandle) {
+                loadFileStructure(currentDirectoryHandle);
             }
+        }
 
-            const fileName = prompt('Enter file name:');
-            if (!fileName) return;
+        // Image upload handling
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
 
-            try {
-                const fileHandle = await AppState.currentDirectoryHandle.getFileHandle(fileName, { create: true });
-                const writable = await fileHandle.createWritable();
-                await writable.write('');
-                await writable.close();
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = {
+                    file: file,
+                    dataUrl: e.target.result,
+                    name: file.name,
+                    size: file.size
+                };
                 
-                await refreshFileExplorer();
-                console.log('[FILE] Created:', fileName);
-                
-            } catch (error) {
-                showError('Error creating file: ' + error.message);
-            }
-        }
-
-        // Refresh file explorer
-        async function refreshFileExplorer() {
-            if (AppState.currentDirectoryHandle) {
-                await loadFileStructure(AppState.currentDirectoryHandle);
-            }
-        }
-
-        // Context menu functionality
-        let contextMenu = null;
-        let currentContextDirectory = null;
-
-        function showContextMenu(e, directoryHandle) {
-            e.preventDefault();
-            removeContextMenu();
-            
-            currentContextDirectory = directoryHandle;
-            
-            contextMenu = document.createElement('div');
-            contextMenu.className = 'context-menu';
-            contextMenu.innerHTML = `
-                <div class="context-menu-item" onclick="createNewFile()">
-                    <span>📄</span> New File
-                </div>
-                <div class="context-menu-item" onclick="createNewFolder()">
-                    <span>📁</span> New Folder
-                </div>
-            `;
-            
-            contextMenu.style.left = `${e.pageX}px`;
-            contextMenu.style.top = `${e.pageY}px`;
-            
-            document.body.appendChild(contextMenu);
-            
-            setTimeout(() => {
-                document.addEventListener('click', removeContextMenu);
-            }, 0);
-        }
-
-        function removeContextMenu() {
-            if (contextMenu) {
-                contextMenu.remove();
-                contextMenu = null;
-            }
-            document.removeEventListener('click', removeContextMenu);
-        }
-
-        async function createNewFile() {
-            removeContextMenu();
-            const fileName = prompt('Enter file name:');
-            if (!fileName) return;
-
-            try {
-                const fileHandle = await currentContextDirectory.getFileHandle(fileName, { create: true });
-                const writable = await fileHandle.createWritable();
-                await writable.write('');
-                await writable.close();
-                
-                await refreshFileExplorer();
-                
-            } catch (error) {
-                showError('Error creating file: ' + error.message);
-            }
-        }
-
-        async function createNewFolder() {
-            removeContextMenu();
-            const folderName = prompt('Enter folder name:');
-            if (!folderName) return;
-
-            try {
-                await currentContextDirectory.getDirectoryHandle(folderName, { create: true });
-                await refreshFileExplorer();
-                
-            } catch (error) {
-                showError('Error creating folder: ' + error.message);
-            }
-        }
-
-        // AI functionality
-        let currentAIMode = 'code';
-
-        function switchAIMode(mode) {
-            currentAIMode = mode;
-            AppState.aiMode = mode;
-            
-            document.querySelectorAll('.mode-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
-            
-            // Update placeholder text
-            const placeholders = {
-                code: 'Ask about code, request improvements, or generate new code...',
-                image: 'Describe an image you want to generate...',
-                chat: 'Ask any question or start a conversation...'
+                attachedImages.push(imageData);
+                displayImageAttachment(imageData);
             };
-            UI.aiPrompt.placeholder = placeholders[mode];
+            reader.readAsDataURL(file);
         }
 
-        async function sendAIRequest() {
-            const prompt = UI.aiPrompt.value.trim();
-            if (!prompt) return;
-
-            if (!AppState.aiConnected) {
-                showError('AI service is not connected');
-                return;
-            }
-
-            const sendButton = document.querySelector('.ai-input-area button');
-            const originalText = sendButton.textContent;
+        function displayImageAttachment(imageData) {
+            const attachmentsContainer = document.getElementById('imageAttachments');
             
-            try {
-                sendButton.disabled = true;
-                sendButton.innerHTML = '<span class="loading-spinner"></span> PROCESSING...';
-                UI.aiStatusDot.className = 'status-dot processing';
-                UI.aiStatus.textContent = 'AI: Processing...';
-
-                if (currentAIMode === 'image') {
-                    await generateImage(prompt);
-                } else {
-                    await sendChatRequest(prompt);
-                }
-
-                UI.aiPrompt.value = '';
-                
-            } catch (error) {
-                showError('AI request failed: ' + error.message);
-            } finally {
-                sendButton.disabled = false;
-                sendButton.textContent = originalText;
-                updateAIStatus();
-            }
-        }
-
-        async function sendChatRequest(prompt) {
-            const messages = [
-                {
-                    role: "system",
-                    content: `You are Grok, an AI assistant integrated into a code editor. Current mode: ${currentAIMode}. 
-                    When providing code examples, always wrap them in markdown code blocks with the appropriate language identifier.
-                    Be helpful, concise, and provide actionable advice.`
-                }
-            ];
-
-            // Include current file content if in code mode and a file is open
-            if (currentAIMode === 'code' && AppState.currentFile) {
-                const fileContent = UI.editor.value;
-                messages.push({
-                    role: "user",
-                    content: `Current file: ${AppState.currentFile}\n\nFile content:\n\`\`\`\n${fileContent}\n\`\`\`\n\nUser request: ${prompt}`
-                });
-            } else {
-                messages.push({
-                    role: "user",
-                    content: prompt
-                });
-            }
-
-            const response = await fetch('/api/completion', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages })
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to get AI response');
-            }
-
-            const data = await response.json();
-            displayAIResponse(prompt, data.choices[0].message.content);
-        }
-
-        async function generateImage(prompt) {
-            const response = await fetch('/api/generate-image', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    prompt: prompt,
-                    response_format: "url"
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to generate image');
-            }
-
-            const data = await response.json();
-            displayImageResponse(prompt, data.imageUrl);
-        }
-
-        function displayAIResponse(prompt, response) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'ai-message';
-            messageDiv.innerHTML = `
-                <div><strong>Q:</strong> ${escapeHtml(prompt)}</div>
-                <div><strong>A:</strong> ${formatMarkdown(response)}</div>
-                <hr style="border: none; border-top: 1px solid #333333; margin: 1rem 0;">
-            `;
-            
-            UI.aiContent.appendChild(messageDiv);
-            UI.aiContent.scrollTop = UI.aiContent.scrollHeight;
-        }
-
-        function displayImageResponse(prompt, imageUrl) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'ai-message';
-            messageDiv.innerHTML = `
-                <div><strong>Generated Image:</strong> ${escapeHtml(prompt)}</div>
-                <img src="${imageUrl}" alt="Generated image" class="image-preview" />
-                <div style="margin-top: 0.5rem;">
-                    <button class="code-action-btn" onclick="saveImageToProject('${imageUrl}', '${prompt}')">Save to Project</button>
+            const attachmentDiv = document.createElement('div');
+            attachmentDiv.className = 'image-attachment';
+            attachmentDiv.innerHTML = `
+                <img src="${imageData.dataUrl}" alt="${imageData.name}">
+                <div class="image-attachment-info">
+                    <div>${imageData.name}</div>
+                    <div>${(imageData.size / 1024).toFixed(1)} KB</div>
                 </div>
-                <hr style="border: none; border-top: 1px solid #333333; margin: 1rem 0;">
+                <button class="image-attachment-remove" onclick="removeImageAttachment(${attachedImages.length - 1})">×</button>
             `;
             
-            UI.aiContent.appendChild(messageDiv);
-            UI.aiContent.scrollTop = UI.aiContent.scrollHeight;
+            attachmentsContainer.appendChild(attachmentDiv);
         }
 
-        async function saveImageToProject(imageUrl, prompt) {
-            if (!AppState.currentDirectoryHandle) {
-                showError('No project folder open');
-                return;
-            }
-
-            try {
-                // Generate filename from prompt
-                const fileName = prompt.toLowerCase()
-                    .replace(/[^a-z0-9\s]/g, '')
-                    .replace(/\s+/g, '_')
-                    .substring(0, 30) + '_generated.png';
-
-                // Fetch the image
-                const response = await fetch(imageUrl);
-                const blob = await response.blob();
-                
-                // Save to project folder
-                const fileHandle = await AppState.currentDirectoryHandle.getFileHandle(fileName, { create: true });
-                const writable = await fileHandle.createWritable();
-                await writable.write(blob);
-                await writable.close();
-                
-                await refreshFileExplorer();
-                showSuccess(`Image saved as ${fileName}`);
-                
-            } catch (error) {
-                showError('Error saving image: ' + error.message);
-            }
+        function removeImageAttachment(index) {
+            attachedImages.splice(index, 1);
+            const attachmentsContainer = document.getElementById('imageAttachments');
+            attachmentsContainer.innerHTML = '';
+            
+            // Re-render all attachments with updated indices
+            attachedImages.forEach((imageData, i) => {
+                const attachmentDiv = document.createElement('div');
+                attachmentDiv.className = 'image-attachment';
+                attachmentDiv.innerHTML = `
+                    <img src="${imageData.dataUrl}" alt="${imageData.name}">
+                    <div class="image-attachment-info">
+                        <div>${imageData.name}</div>
+                        <div>${(imageData.size / 1024).toFixed(1)} KB</div>
+                    </div>
+                    <button class="image-attachment-remove" onclick="removeImageAttachment(${i})">×</button>
+                `;
+                attachmentsContainer.appendChild(attachmentDiv);
+            });
         }
 
         function formatMarkdown(text) {
@@ -1386,9 +1000,9 @@
             return text.replace(codeBlockRegex, (match, language, code) => {
                 const langClass = language ? ` class="language-${language}"` : '';
                 return `<pre><div class="code-actions">
-                    <button class="code-action-btn" onclick="copyCode(this)">Copy</button>
-                    <button class="code-action-btn" onclick="insertCode(this)">Insert</button>
-                    <button class="code-action-btn" onclick="createFileFromCode(this, '${language || 'txt'}')">Create File</button>
+                    <button class="code-action-btn" onclick="copyCode(this)">COPY</button>
+                    <button class="code-action-btn" onclick="insertCode(this)">INSERT</button>
+                    <button class="code-action-btn" onclick="createFileFromCode(this, '${language || 'txt'}')">CREATE FILE</button>
                 </div><code${langClass}>${escapeHtml(code.trim())}</code></pre>`;
             });
         }
@@ -1404,7 +1018,7 @@
             navigator.clipboard.writeText(codeElement.textContent)
                 .then(() => {
                     const originalText = button.textContent;
-                    button.textContent = 'Copied!';
+                    button.textContent = 'COPIED!';
                     setTimeout(() => {
                         button.textContent = originalText;
                     }, 1500);
@@ -1414,28 +1028,33 @@
 
         function insertCode(button) {
             const codeElement = button.closest('pre').querySelector('code');
-            const cursorPos = UI.editor.selectionStart;
-            const textBefore = UI.editor.value.substring(0, cursorPos);
-            const textAfter = UI.editor.value.substring(cursorPos);
+            const editor = document.getElementById('editor');
+            const cursorPos = editor.selectionStart;
+            const textBefore = editor.value.substring(0, cursorPos);
+            const textAfter = editor.value.substring(cursorPos);
             
-            UI.editor.value = textBefore + codeElement.textContent + textAfter;
-            UI.editor.focus();
+            editor.value = textBefore + codeElement.textContent + textAfter;
+            editor.focus();
             
-            // Update the stored content for the current file
-            if (AppState.currentFile) {
-                const fileData = AppState.openFiles.get(AppState.currentFile);
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab) {
+                const fileName = activeTab.getAttribute('data-filename');
+                const fileData = openFiles.get(fileName);
                 if (fileData) {
-                    fileData.content = UI.editor.value;
-                    AppState.modifiedFiles.add(AppState.currentFile);
-                    markTabAsModified(AppState.currentFile, true);
+                    modifiedFiles.add(fileName);
+                    activeTab.classList.add('modified');
+                    openFiles.set(fileName, {
+                        ...fileData,
+                        modified: true
+                    });
                     updateStatusBar();
                 }
             }
         }
 
         async function createFileFromCode(button, language) {
-            if (!AppState.currentDirectoryHandle) {
-                showError('No project folder open');
+            if (!currentDirectoryHandle) {
+                showError('No folder is open');
                 return;
             }
 
@@ -1450,39 +1069,133 @@
                 'css': 'css',
                 'json': 'json',
                 'markdown': 'md',
-                'java': 'java',
-                'cpp': 'cpp',
-                'c': 'c',
-                'php': 'php',
-                'ruby': 'rb',
-                'go': 'go',
-                'rust': 'rs'
+                'txt': 'txt'
             };
-
-            const ext = extensions[language] || 'txt';
-            const fileName = prompt(`Enter filename (will be saved as .${ext}):`, `new_file.${ext}`);
             
-            if (!fileName) return;
+            const ext = extensions[language] || 'txt';
+            const fileName = prompt(`Enter filename (without extension):`, `generated_code`);
+            
+            if (fileName) {
+                try {
+                    const fullFileName = `${fileName}.${ext}`;
+                    const fileHandle = await currentDirectoryHandle.getFileHandle(fullFileName, { create: true });
+                    const writable = await fileHandle.createWritable();
+                    await writable.write(code);
+                    await writable.close();
+                    
+                    await loadFileStructure(currentDirectoryHandle);
+                    showSuccess(`File ${fullFileName} created successfully!`);
+                } catch (error) {
+                    showError('Error creating file: ' + error.message);
+                }
+            }
+        }
+
+        async function sendPrompt() {
+            const prompt = document.getElementById('aiPrompt').value;
+            const content = document.getElementById('editor').value;
+            const aiContent = document.getElementById('aiContent');
+            const sendButton = document.getElementById('sendBtn');
+
+            if (!prompt.trim() && attachedImages.length === 0) {
+                showError('Please enter a prompt or attach an image');
+                return;
+            }
 
             try {
-                const fileHandle = await AppState.currentDirectoryHandle.getFileHandle(fileName, { create: true });
-                const writable = await fileHandle.createWritable();
-                await writable.write(code);
-                await writable.close();
+                sendButton.disabled = true;
+                sendButton.textContent = 'SENDING...';
+
+                // Prepare messages array
+                const messages = [
+                    {
+                        role: "system",
+                        content: "You are Grok, a helpful programming assistant. When providing code examples, always wrap them in markdown code blocks with the appropriate language identifier. For example: ```javascript\ncode here\n```"
+                    }
+                ];
+
+                // Handle image attachments with RAG
+                if (attachedImages.length > 0) {
+                    for (const imageData of attachedImages) {
+                        // Convert image to base64 for API
+                        const base64Data = imageData.dataUrl.split(',')[1];
+                        
+                        messages.push({
+                            role: "user",
+                            content: [
+                                {
+                                    type: "text",
+                                    text: `${prompt}\n\nContext: I'm working on a project with the following code:\n${content}`
+                                },
+                                {
+                                    type: "image_url",
+                                    image_url: {
+                                        url: imageData.dataUrl
+                                    }
+                                }
+                            ]
+                        });
+                    }
+                } else {
+                    // Text-only message
+                    messages.push({
+                        role: "user",
+                        content: `${prompt}\n\nCode Context:\n${content}`
+                    });
+                }
+
+                const response = await fetch('/api/completion', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        messages: messages,
+                        temperature: 0.7,
+                        max_tokens: 4000
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to get AI response');
+                }
+
+                const data = await response.json();
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'ai-message';
                 
-                await refreshFileExplorer();
-                showSuccess(`File ${fileName} created successfully`);
+                let promptDisplay = escapeHtml(prompt);
+                if (attachedImages.length > 0) {
+                    promptDisplay += ` [${attachedImages.length} image(s) attached]`;
+                }
+                
+                messageDiv.innerHTML = `
+                    <div><strong>Q:</strong> ${promptDisplay}</div>
+                    <div><strong>A:</strong> ${formatMarkdown(data.choices[0].message.content)}</div>
+                    <hr style="border: none; border-top: 1px solid #ffffff; margin: 1rem 0;">
+                `;
+                
+                aiContent.appendChild(messageDiv);
+                aiContent.scrollTop = aiContent.scrollHeight;
+                
+                // Clear inputs
+                document.getElementById('aiPrompt').value = '';
+                attachedImages = [];
+                document.getElementById('imageAttachments').innerHTML = '';
                 
             } catch (error) {
-                showError('Error creating file: ' + error.message);
+                showError('AI request failed: ' + error.message);
+            } finally {
+                sendButton.disabled = false;
+                sendButton.textContent = 'SEND';
             }
         }
 
         function clearAIChat() {
-            UI.aiContent.innerHTML = '';
+            document.getElementById('aiContent').innerHTML = '';
         }
 
-        // Resize handles functionality
         function initializeResizeHandles() {
             const leftHandle = document.getElementById('leftResizeHandle');
             const rightHandle = document.getElementById('rightResizeHandle');
@@ -1505,7 +1218,7 @@
                     const diff = e.clientX - startX;
                     let newWidth = isLeft ? startWidth + diff : startWidth - diff;
                     
-                    newWidth = Math.max(200, Math.min(600, newWidth));
+                    newWidth = Math.max(200, Math.min(800, newWidth));
                     element.style.width = `${newWidth}px`;
                 }
 
@@ -1523,20 +1236,141 @@
             initializeResize(rightHandle, aiColumn, false);
         }
 
-        // Utility functions
-        function showError(message) {
-            console.error('[ERROR]', message);
-            alert('ERROR: ' + message);
+        initializeResizeHandles();
+
+        openFolderBtn.addEventListener('click', initializeFileExplorer);
+
+        let contextMenu = null;
+        let currentContextDirectory = null;
+
+        function showContextMenu(e, directoryHandle) {
+            e.preventDefault();
+            
+            removeContextMenu();
+            
+            currentContextDirectory = directoryHandle;
+            
+            contextMenu = document.createElement('div');
+            contextMenu.className = 'context-menu';
+            contextMenu.innerHTML = `
+                <div class="context-menu-item" onclick="createNewFile()">
+                    <span>📄</span> NEW FILE
+                </div>
+                <div class="context-menu-item" onclick="createNewFolder()">
+                    <span>📁</span> NEW FOLDER
+                </div>
+            `;
+            
+            contextMenu.style.left = `${e.pageX}px`;
+            contextMenu.style.top = `${e.pageY}px`;
+            
+            document.body.appendChild(contextMenu);
+            
+            setTimeout(() => {
+                document.addEventListener('click', removeContextMenu);
+            }, 0);
         }
 
-        function showSuccess(message) {
-            console.log('[SUCCESS]', message);
-            // You could implement a toast notification here
-            alert('SUCCESS: ' + message);
+        function removeContextMenu() {
+            if (contextMenu) {
+                contextMenu.remove();
+                contextMenu = null;
+            }
+            document.removeEventListener('click', removeContextMenu);
         }
 
-        // Initialize the application when the page loads
-        document.addEventListener('DOMContentLoaded', initializeApp);
+        async function createNewFile() {
+            if (!currentDirectoryHandle) {
+                showError('No project folder open');
+                return;
+            }
+            
+            removeContextMenu();
+            const parentElement = document.getElementById('fileExplorer');
+            
+            const inputContainer = document.createElement('div');
+            inputContainer.className = 'new-item-input';
+            inputContainer.innerHTML = `<input type="text" placeholder="filename.ext">`;
+            parentElement.appendChild(inputContainer);
+            
+            const input = inputContainer.querySelector('input');
+            input.focus();
+            
+            input.addEventListener('keyup', async (e) => {
+                if (e.key === 'Enter') {
+                    const filename = input.value.trim();
+                    if (filename) {
+                        try {
+                            const targetDirectory = currentContextDirectory || currentDirectoryHandle;
+                            const fileHandle = await targetDirectory.getFileHandle(filename, { create: true });
+                            const writable = await fileHandle.createWritable();
+                            await writable.write('');
+                            await writable.close();
+                            
+                            await loadFileStructure(currentDirectoryHandle);
+                        } catch (error) {
+                            showError('Error creating file: ' + error.message);
+                        }
+                    }
+                    inputContainer.remove();
+                } else if (e.key === 'Escape') {
+                    inputContainer.remove();
+                }
+            });
+        }
+
+        async function createNewFolder() {
+            if (!currentDirectoryHandle) {
+                showError('No project folder open');
+                return;
+            }
+            
+            removeContextMenu();
+            const parentElement = document.getElementById('fileExplorer');
+            
+            const inputContainer = document.createElement('div');
+            inputContainer.className = 'new-item-input';
+            inputContainer.innerHTML = `<input type="text" placeholder="folder name">`;
+            parentElement.appendChild(inputContainer);
+            
+            const input = inputContainer.querySelector('input');
+            input.focus();
+            
+            input.addEventListener('keyup', async (e) => {
+                if (e.key === 'Enter') {
+                    const foldername = input.value.trim();
+                    if (foldername) {
+                        try {
+                            const targetDirectory = currentContextDirectory || currentDirectoryHandle;
+                            await targetDirectory.getDirectoryHandle(foldername, { create: true });
+                            await loadFileStructure(currentDirectoryHandle);
+                        } catch (error) {
+                            showError('Error creating folder: ' + error.message);
+                        }
+                    }
+                    inputContainer.remove();
+                } else if (e.key === 'Escape') {
+                    inputContainer.remove();
+                }
+            });
+        }
+
+        // Initialize status bar
+        updateStatusBar();
+        testAIConnection();
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                saveCurrentFile();
+            }
+            
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                sendPrompt();
+            }
+        });
     </script>
 </body>
 </html>
