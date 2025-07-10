@@ -1,4 +1,4 @@
-# GROK IDE
+# GROK IDE w Grok-4-0709
 
 
 <img width="1570" height="1721" alt="Screenshot 2025-07-10 at 1 02 20 PM" src="https://github.com/user-attachments/assets/58ae9c9e-2aa1-4170-ad3a-1971509fa452" />
