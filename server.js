@@ -91,8 +91,24 @@ const grokClient = axios.create({
         'Authorization': `Bearer ${process.env.XAI_API_KEY}`,
         'Content-Type': 'application/json'
     },
-    timeout: 60000 // 60 second timeout for AI requests
+    timeout: 120000 // 120 second timeout for AI requests (increased for stability)
 });
+
+// Add retry logic for better reliability
+try {
+    const axiosRetry = require('axios-retry');
+    axiosRetry(grokClient, { 
+        retries: 3, 
+        retryDelay: (retryCount) => retryCount * 1000,
+        retryCondition: (error) => {
+            return axiosRetry.isNetworkOrIdempotentRequestError(error) || 
+                   (error.response?.status >= 500);
+        }
+    });
+    console.log('[INIT] Axios retry configured');
+} catch (err) {
+    console.warn('[INIT] axios-retry not available, continuing without retry logic');
+}
 
 // Enhanced Grok completions endpoint with image support and streaming
 app.post('/api/completion', async (req, res) => {
@@ -104,6 +120,16 @@ app.post('/api/completion', async (req, res) => {
         const { messages, temperature = 0.7, max_tokens = 4000, stream = true } = req.body;
 
         console.log('[AI] Processing completion request...');
+        console.log(`[AI] Request details: ${messages.length} messages, temp=${temperature}, max_tokens=${max_tokens}, stream=${stream}`);
+        
+        // Log payload size for debugging
+        const payloadSize = JSON.stringify(messages).length;
+        console.log(`[AI] Payload size: ${payloadSize} characters`);
+        if (payloadSize > 50000) {
+            console.warn('[AI] Large payload detected - consider message truncation');
+        }
+        
+        console.time('ai-completion-request');
 
         // Check if any message contains images
         const hasImages = messages.some(msg => 
@@ -121,7 +147,7 @@ app.post('/api/completion', async (req, res) => {
         }
 
         const requestConfig = {
-            model: hasImages ? "grok-vision-beta" : "grok-beta",
+            model: hasImages ? "grok-vision-beta" : "grok-4-0709",
             messages: messages,
             temperature: temperature,
             max_tokens: max_tokens,
@@ -165,6 +191,7 @@ app.post('/api/completion', async (req, res) => {
                                 streamEnded = true;
                                 res.write('data: [DONE]\n\n');
                                 res.end();
+                                console.timeEnd('ai-completion-request');
                                 return;
                             }
                             try {
@@ -205,6 +232,7 @@ app.post('/api/completion', async (req, res) => {
                         
                         // Reset headers for non-streaming response
                         res.setHeader('Content-Type', 'application/json');
+                        console.timeEnd('ai-completion-request');
                         res.json(fallbackResponse.data);
                     } catch (fallbackError) {
                         console.error('[AI ERROR] Fallback also failed:', fallbackError);
@@ -226,16 +254,19 @@ app.post('/api/completion', async (req, res) => {
                 
                 // Reset headers for non-streaming response
                 res.setHeader('Content-Type', 'application/json');
+                console.timeEnd('ai-completion-request');
                 res.json(response.data);
             }
         } else {
             // Handle non-streaming response
             const response = await grokClient.post('/chat/completions', requestConfig);
             console.log('[AI] Completion successful');
+            console.timeEnd('ai-completion-request');
             res.json(response.data);
         }
 
     } catch (error) {
+        console.timeEnd('ai-completion-request');
         console.error('[AI ERROR]', error.message);
         console.error('[AI ERROR] Stack:', error.stack);
         
@@ -360,8 +391,11 @@ app.post('/api/analyze-code', async (req, res) => {
         ${code}
         \`\`\``;
 
+        console.log('[AI] Starting code analysis...');
+        console.time('code-analysis-request');
+        
         const response = await grokClient.post('/chat/completions', {
-            model: "grok-beta",
+            model: "grok-4-0709",
             messages: [
                 {
                     role: 'system',
@@ -375,6 +409,8 @@ app.post('/api/analyze-code', async (req, res) => {
             temperature: 0.3,
             max_tokens: 4000
         });
+        
+        console.timeEnd('code-analysis-request');
 
         res.json({
             analysis: response.data.choices[0].message.content,
@@ -422,8 +458,11 @@ app.post('/api/analyze-project', async (req, res) => {
             });
         }
 
+        console.log('[AI] Starting project analysis...');
+        console.time('project-analysis-request');
+        
         const response = await grokClient.post('/chat/completions', {
-            model: "grok-beta",
+            model: "grok-4-0709",
             messages: [
                 {
                     role: 'system',
@@ -437,6 +476,8 @@ app.post('/api/analyze-project', async (req, res) => {
             temperature: 0.4,
             max_tokens: 4000
         });
+        
+        console.timeEnd('project-analysis-request');
 
         res.json({
             analysis: response.data.choices[0].message.content,
@@ -580,8 +621,11 @@ ${codeToInsert}
 
 Analyze the file structure and determine the best way to insert this code. Return only a valid JSON response.`;
 
+        console.log('[AI] Starting smart insertion analysis...');
+        console.time('smart-insertion-request');
+        
         const response = await grokClient.post('/chat/completions', {
-            model: "grok-beta",
+            model: "grok-4-0709",
             messages: [
                 {
                     role: 'system',
@@ -595,6 +639,8 @@ Analyze the file structure and determine the best way to insert this code. Retur
             temperature: 0.1, // Low temperature for consistent, logical responses
             max_tokens: 4000
         });
+        
+        console.timeEnd('smart-insertion-request');
 
         console.log('[AI] Smart insertion analysis completed');
 
@@ -1691,6 +1737,56 @@ app.get('/api/debug', (req, res) => {
         apiKeyPrefix: process.env.XAI_API_KEY ? process.env.XAI_API_KEY.substring(0, 10) + '...' : 'Not set',
         timestamp: new Date().toISOString()
     });
+});
+
+// API Test endpoint for direct testing
+app.post('/api/test', async (req, res) => {
+    try {
+        if (!process.env.XAI_API_KEY) {
+            throw new Error('XAI_API_KEY environment variable not set');
+        }
+
+        console.log('[API TEST] Starting simple API test...');
+        console.time('api-test-request');
+
+        const testMessage = req.body.message || "Hello, this is a test message.";
+        
+        const response = await grokClient.post('/chat/completions', {
+            model: "grok-4-0709",
+            messages: [
+                {
+                    role: "user",
+                    content: testMessage
+                }
+            ],
+            temperature: 0.7,
+            max_tokens: 100,
+            stream: false
+        });
+
+        console.timeEnd('api-test-request');
+        console.log('[API TEST] Test successful');
+
+        res.json({
+            success: true,
+            model: "grok-4-0709",
+            testMessage: testMessage,
+            response: response.data.choices[0].message.content,
+            usage: response.data.usage,
+            timestamp: new Date().toISOString()
+        });
+
+    } catch (error) {
+        console.timeEnd('api-test-request');
+        console.error('[API TEST ERROR]', error.message);
+        
+        res.status(500).json({
+            success: false,
+            error: error.message,
+            hasApiKey: !!process.env.XAI_API_KEY,
+            timestamp: new Date().toISOString()
+        });
+    }
 });
 
 // Error handling middleware
