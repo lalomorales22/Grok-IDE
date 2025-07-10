@@ -1,6 +1,7 @@
 # GROK IDE
 
-<img width="1280" alt="Screenshot 2025-06-29 at 2 27 29 AM" src="https://github.com/user-attachments/assets/ffa97216-f305-440a-af05-4ad99d63ff9f" />
+
+<img width="1570" height="1721" alt="Screenshot 2025-07-10 at 1 02 20 PM" src="https://github.com/user-attachments/assets/58ae9c9e-2aa1-4170-ad3a-1971509fa452" />
 
 
 *A sleek, dark-themed development environment with advanced AI capabilities*
