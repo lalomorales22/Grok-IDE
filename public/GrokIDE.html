@@ -16,7 +16,7 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            background-color: #0a0a0a;
+            background-color: #000000;
             color: #ffffff;
             overflow: hidden; /* Prevent body scrolling */
         }
@@ -26,8 +26,9 @@
             justify-content: space-between;
             align-items: center;
             padding: 0.5rem 1rem;
-            background-color: #111111;
+            background-color: #000000;
             border-bottom: 1px solid #ffffff;
+            border-radius: 6px;
         }
 
         .navbar-left {
@@ -45,16 +46,22 @@
         .main-container {
             display: flex;
             flex: 1;
-            background-color: #0a0a0a;
+            background-color: #000000;
             color: #ffffff;
             height: calc(100vh - 80px); /* Account for navbar and status bar */
             overflow: hidden;
+            transition: height 0.3s ease;
+        }
+
+        .main-container.terminal-open {
+            height: calc(100vh - 80px - 300px); /* Account for navbar, status bar, and terminal */
         }
 
         .sidebar {
             width: 250px;
-            background-color: #111111;
+            background-color: #000000;
             border-right: 1px solid #ffffff;
+            border-radius: 6px;
             display: flex;
             flex-direction: column;
             min-width: 200px;
@@ -67,7 +74,8 @@
             padding: 0.5rem 1rem;
             font-size: 0.9rem;
             border-bottom: 1px solid #ffffff;
-            background-color: #1a1a1a;
+            background-color: #000000;
+            border-radius: 6px;
             font-weight: bold;
         }
 
@@ -87,8 +95,9 @@
         .control-button {
             flex: 1;
             padding: 0.4rem 0.6rem;
-            background-color: #0a0a0a;
+            background-color: #000000;
             border: 1px solid #ffffff;
+            border-radius: 4px;
             color: #ffffff;
             cursor: pointer;
             font-size: 0.8rem;
@@ -98,19 +107,20 @@
 
         .control-button:hover {
             background-color: #ffffff;
-            color: #0a0a0a;
+            color: #000000;
         }
 
         .control-button:disabled {
-            background-color: #333333;
-            border-color: #666666;
-            color: #666666;
+            background-color: #000000;
+            border-color: #ffffff;
+            color: #ffffff;
             cursor: not-allowed;
+            opacity: 0.5;
         }
 
         .control-button:disabled:hover {
-            background-color: #333333;
-            color: #666666;
+            background-color: #000000;
+            color: #ffffff;
         }
 
         .file-explorer {
@@ -118,7 +128,8 @@
             padding: 0.5rem;
             overflow-y: auto;
             scrollbar-width: thin;
-            scrollbar-color: #ffffff #1a1a1a;
+            scrollbar-color: #ffffff #000000;
+            border-radius: 6px;
         }
 
         .file-explorer::-webkit-scrollbar {
@@ -126,7 +137,8 @@
         }
 
         .file-explorer::-webkit-scrollbar-track {
-            background: #1a1a1a;
+            background: #000000;
+            border-radius: 4px;
         }
 
         .file-explorer::-webkit-scrollbar-thumb {
@@ -135,7 +147,7 @@
         }
 
         .file-explorer::-webkit-scrollbar-thumb:hover {
-            background-color: #cccccc;
+            background-color: #ffffff;
         }
 
         .folder {
@@ -151,7 +163,9 @@
         }
 
         .folder-name:hover {
-            background-color: #1a1a1a;
+            background-color: #000000;
+            border: 1px solid #ffffff;
+            border-radius: 4px;
         }
 
         .folder-icon {
@@ -170,7 +184,9 @@
         }
 
         .file:hover {
-            background-color: #1a1a1a;
+            background-color: #000000;
+            border: 1px solid #ffffff;
+            border-radius: 4px;
         }
 
         .editor {
@@ -183,15 +199,17 @@
 
         .tabs {
             display: flex;
-            background-color: #1a1a1a;
+            background-color: #000000;
             border-bottom: 1px solid #ffffff;
+            border-radius: 6px 6px 0 0;
             overflow-x: auto;
         }
 
         .tab {
             padding: 0.5rem 1rem;
-            background-color: #1a1a1a;
+            background-color: #000000;
             border: none;
+            border-radius: 6px 6px 0 0;
             color: #ffffff;
             cursor: pointer;
             display: flex;
@@ -202,11 +220,13 @@
         }
 
         .tab.active {
-            background-color: #0a0a0a;
+            background-color: #000000;
+            border: 1px solid #ffffff;
         }
 
         .tab:hover {
-            background-color: #333333;
+            background-color: #000000;
+            border: 1px solid #ffffff;
         }
 
         .tab.modified::after {
@@ -224,9 +244,10 @@
         #editor {
             width: 100%;
             height: 100%;
-            background-color: #0a0a0a;
+            background-color: #000000;
             color: #ffffff;
             border: 1px solid #ffffff;
+            border-radius: 6px;
             resize: none;
             font-family: 'Consolas', 'Courier New', monospace;
             font-size: 14px;
@@ -234,7 +255,7 @@
             padding: 0.5rem;
             overflow-y: auto;
             scrollbar-width: thin;
-            scrollbar-color: #ffffff #1a1a1a;
+            scrollbar-color: #ffffff #000000;
         }
 
         #editor::-webkit-scrollbar {
@@ -242,7 +263,8 @@
         }
 
         #editor::-webkit-scrollbar-track {
-            background: #1a1a1a;
+            background: #000000;
+            border-radius: 4px;
         }
 
         #editor::-webkit-scrollbar-thumb {
@@ -251,7 +273,7 @@
         }
 
         #editor::-webkit-scrollbar-thumb:hover {
-            background-color: #cccccc;
+            background-color: #ffffff;
         }
 
         #editor:focus {
@@ -260,12 +282,13 @@
         }
 
         #editor:disabled {
-            background-color: #111111;
+            background-color: #000000;
             color: #40e0d0;
             text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: 6px;
         }
 
         .loading {
@@ -282,8 +305,9 @@
 
         .ai-column {
             width: 350px;
-            background-color: #111111;
+            background-color: #000000;
             border-left: 1px solid #ffffff;
+            border-radius: 6px;
             display: flex;
             flex-direction: column;
             height: 100%;
@@ -294,8 +318,9 @@
 
         .ai-header {
             padding: 0.5rem 1rem;
-            background-color: #1a1a1a;
+            background-color: #000000;
             border-bottom: 1px solid #ffffff;
+            border-radius: 6px 6px 0 0;
             font-size: 0.9rem;
             display: flex;
             justify-content: space-between;
@@ -306,8 +331,9 @@
 
         .ai-actions-bar {
             padding: 0.5rem;
-            background-color: #0a0a0a;
+            background-color: #000000;
             border-bottom: 1px solid #ffffff;
+            border-radius: 6px;
             display: flex;
             gap: 0.5rem;
             justify-content: flex-end;
@@ -317,8 +343,9 @@
 
         .ai-action-btn {
             padding: 0.3rem 0.6rem;
-            background-color: #111111;
+            background-color: #000000;
             border: 1px solid #ffffff;
+            border-radius: 4px;
             color: #ffffff;
             cursor: pointer;
             font-size: 0.7rem;
@@ -329,12 +356,12 @@
 
         .ai-action-btn:hover {
             background-color: #ffffff;
-            color: #0a0a0a;
+            color: #000000;
         }
 
         .ai-action-btn.history {
             background-color: #40e0d0;
-            color: #0a0a0a;
+            color: #000000;
         }
 
         .ai-action-btn.history:hover {
@@ -361,14 +388,16 @@
             line-height: 1.5;
             white-space: pre-wrap;
             scrollbar-width: thin;
-            scrollbar-color: #ffffff #1a1a1a;
+            scrollbar-color: #ffffff #000000;
+            border-radius: 6px;
             height: 0; /* Force flex item to respect parent height */
         }
 
         .ai-input-area {
             padding: 0.5rem;
-            background-color: #1a1a1a;
+            background-color: #000000;
             border-top: 1px solid #ffffff;
+            border-radius: 0 0 6px 6px;
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
@@ -383,8 +412,9 @@
 
         .image-upload-btn {
             padding: 0.5rem;
-            background-color: #0a0a0a;
+            background-color: #000000;
             border: 1px solid #ffffff;
+            border-radius: 4px;
             color: #ffffff;
             cursor: pointer;
             font-size: 1rem;
@@ -396,21 +426,23 @@
 
         .image-upload-btn:hover {
             background-color: #ffffff;
-            color: #0a0a0a;
+            color: #000000;
         }
 
         .image-preview {
             max-width: 100%;
             max-height: 100px;
             border: 1px solid #ffffff;
+            border-radius: 4px;
             margin: 0.5rem 0;
         }
 
         .ai-input-area textarea {
             flex: 1;
-            background-color: #0a0a0a;
+            background-color: #000000;
             color: #ffffff;
             border: 1px solid #ffffff;
+            border-radius: 4px;
             padding: 0.5rem;
             resize: none;
             font-family: 'Consolas', 'Courier New', monospace;
@@ -418,7 +450,7 @@
             max-height: 120px;
             overflow-y: auto;
             scrollbar-width: thin;
-            scrollbar-color: #ffffff #1a1a1a;
+            scrollbar-color: #ffffff #000000;
         }
 
         .ai-input-area textarea::-webkit-scrollbar {
@@ -426,7 +458,8 @@
         }
 
         .ai-input-area textarea::-webkit-scrollbar-track {
-            background: #1a1a1a;
+            background: #000000;
+            border-radius: 4px;
         }
 
         .ai-input-area textarea::-webkit-scrollbar-thumb {
@@ -435,7 +468,7 @@
         }
 
         .ai-input-area textarea::-webkit-scrollbar-thumb:hover {
-            background-color: #cccccc;
+            background-color: #ffffff;
         }
 
         .ai-input-area textarea:focus {
@@ -445,8 +478,9 @@
 
         .ai-send-btn {
             padding: 0.5rem 1rem;
-            background-color: #0a0a0a;
+            background-color: #000000;
             border: 1px solid #ffffff;
+            border-radius: 4px;
             color: #ffffff;
             cursor: pointer;
             font-weight: bold;
@@ -455,14 +489,15 @@
 
         .ai-send-btn:hover {
             background-color: #ffffff;
-            color: #0a0a0a;
+            color: #000000;
         }
 
         .ai-send-btn:disabled {
-            background-color: #333333;
-            border-color: #666666;
-            color: #666666;
+            background-color: #000000;
+            border-color: #ffffff;
+            color: #ffffff;
             cursor: not-allowed;
+            opacity: 0.5;
         }
 
         .ai-message {
@@ -471,13 +506,18 @@
             border-radius: 4px;
         }
 
+        .code-block-container {
+            margin: 0.5rem 0;
+        }
+
         .ai-message pre {
             position: relative;
-            background: #0a0a0a;
+            background: #000000;
             padding: 1rem;
-            border-radius: 4px;
-            margin: 0.5rem 0;
+            border-radius: 6px 6px 0 0;
+            margin: 0.5rem 0 0 0;
             border: 1px solid #ffffff;
+            border-bottom: none;
         }
 
         .ai-message code {
@@ -486,19 +526,22 @@
         }
 
         .code-actions {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
+            background: #000000;
+            border: 1px solid #ffffff;
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            padding: 0.5rem;
             display: flex;
             gap: 0.5rem;
+            justify-content: flex-end;
         }
 
         .code-action-btn {
             padding: 0.25rem 0.5rem;
-            background: #1a1a1a;
+            background: #000000;
             border: 1px solid #ffffff;
             color: #ffffff;
-            border-radius: 3px;
+            border-radius: 4px;
             cursor: pointer;
             font-size: 12px;
             opacity: 0.8;
@@ -507,12 +550,12 @@
         .code-action-btn:hover {
             opacity: 1;
             background: #ffffff;
-            color: #0a0a0a;
+            color: #000000;
         }
 
         .smart-insert-btn {
             background: #40e0d0 !important;
-            color: #0a0a0a !important;
+            color: #000000 !important;
             font-weight: bold;
         }
 
@@ -522,8 +565,9 @@
         }
 
         .smart-insert-btn:disabled {
-            background: #666666 !important;
-            color: #999999 !important;
+            background: #000000 !important;
+            color: #ffffff !important;
+            opacity: 0.5 !important;
         }
 
         /* Code insertion preview overlay */
@@ -532,7 +576,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: #1a1a1a;
+            background: #000000;
             border: 2px solid #40e0d0;
             border-radius: 8px;
             padding: 1.5rem;
@@ -551,10 +595,10 @@
         }
 
         .insertion-preview-content {
-            background: #0a0a0a;
+            background: #000000;
             border: 1px solid #ffffff;
             padding: 1rem;
-            border-radius: 4px;
+            border-radius: 6px;
             white-space: pre-wrap;
             font-size: 13px;
             line-height: 1.4;
@@ -570,6 +614,7 @@
         .preview-btn {
             padding: 0.5rem 1rem;
             border: 1px solid #ffffff;
+            border-radius: 4px;
             color: #ffffff;
             cursor: pointer;
             font-family: 'Consolas', 'Courier New', monospace;
@@ -579,7 +624,7 @@
 
         .preview-btn.confirm {
             background: #40e0d0;
-            color: #0a0a0a;
+            color: #000000;
         }
 
         .preview-btn.confirm:hover {
@@ -588,12 +633,12 @@
         }
 
         .preview-btn.cancel {
-            background: #0a0a0a;
+            background: #000000;
         }
 
         .preview-btn.cancel:hover {
             background: #ffffff;
-            color: #0a0a0a;
+            color: #000000;
         }
 
         /* Typing indicator animation */
@@ -607,36 +652,56 @@
             50% { opacity: 0.3; }
         }
 
-        /* Terminal Footer Styles */
+        /* Terminal Footer Styles - Vertical Sidebar Themed */
         .terminal-footer {
-            position: fixed;
-            bottom: -300px;
-            left: 0;
-            right: 0;
-            height: 300px;
+            height: 0;
             background-color: #000000;
-            border-top: 2px solid #40e0d0;
-            z-index: 1000;
-            transition: bottom 0.3s ease;
+            border-top: 1px solid #ffffff;
+            border-radius: 6px;
+            overflow: hidden;
+            transition: height 0.3s ease;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .terminal-footer.open {
-            bottom: 0;
+            height: 300px;
+            min-height: 150px;
+            max-height: 70vh;
+        }
+
+        .terminal-resize-handle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: #ffffff;
+            cursor: row-resize;
+            transition: background-color 0.2s;
+            z-index: 10;
+        }
+
+        .terminal-resize-handle:hover,
+        .terminal-resize-handle.active {
+            background-color: #ffffff;
+            opacity: 0.8;
         }
 
         .terminal-header {
             padding: 0.5rem 1rem;
-            background-color: #1a1a1a;
-            border-bottom: 1px solid #40e0d0;
+            background-color: #000000;
+            border-bottom: 1px solid #ffffff;
+            border-radius: 6px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-family: 'Consolas', 'Courier New', monospace;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             font-size: 0.9rem;
-            color: #40e0d0;
+            color: #ffffff;
             font-weight: bold;
+            margin-top: 4px;
         }
 
         .terminal-content {
@@ -648,6 +713,26 @@
             line-height: 1.4;
             color: #00ff00;
             background-color: #000000;
+            scrollbar-width: thin;
+            scrollbar-color: #ffffff #000000;
+        }
+
+        .terminal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .terminal-content::-webkit-scrollbar-track {
+            background: #000000;
+            border-radius: 4px;
+        }
+
+        .terminal-content::-webkit-scrollbar-thumb {
+            background-color: #ffffff;
+            border-radius: 4px;
+        }
+
+        .terminal-content::-webkit-scrollbar-thumb:hover {
+            background-color: #ffffff;
         }
 
         .terminal-input-line {
@@ -657,7 +742,7 @@
         }
 
         .terminal-prompt {
-            color: #40e0d0;
+            color: #ffffff;
             margin-right: 0.5rem;
             flex-shrink: 0;
         }
@@ -675,24 +760,25 @@
         .terminal-status-btn {
             padding: 0.2rem 0.6rem;
             background-color: #000000;
-            border: 1px solid #40e0d0;
-            color: #40e0d0;
+            border: 1px solid #ffffff;
+            color: #ffffff;
             cursor: pointer;
-            font-family: 'Consolas', 'Courier New', monospace;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             font-weight: bold;
             font-size: 0.7rem;
             text-transform: uppercase;
             transition: all 0.2s ease;
             margin-left: 1rem;
+            border-radius: 4px;
         }
 
         .terminal-status-btn:hover {
-            background-color: #40e0d0;
+            background-color: #ffffff;
             color: #000000;
         }
 
         .terminal-status-btn.active {
-            background-color: #40e0d0;
+            background-color: #ffffff;
             color: #000000;
         }
 
@@ -710,7 +796,7 @@
         }
 
         .terminal-info {
-            color: #40e0d0;
+            color: #ffffff;
         }
 
         .resize-handle {
@@ -721,14 +807,14 @@
         }
 
         .resize-handle:hover, .resize-handle.active {
-            background-color: #cccccc;
+            background-color: #ffffff;
         }
 
         .context-menu {
             position: fixed;
-            background: #1a1a1a;
+            background: #000000;
             border: 1px solid #ffffff;
-            border-radius: 3px;
+            border-radius: 6px;
             padding: 4px 0;
             min-width: 150px;
             z-index: 1000;
@@ -745,7 +831,9 @@
         }
 
         .context-menu-item:hover {
-            background: #333333;
+            background: #000000;
+            border: 1px solid #ffffff;
+            border-radius: 4px;
         }
 
         .context-menu-separator {
@@ -757,8 +845,9 @@
         .new-item-input {
             position: relative;
             padding: 2px 4px;
-            background: #0a0a0a;
+            background: #000000;
             border: 1px solid #ffffff;
+            border-radius: 4px;
         }
 
         .new-item-input input {
@@ -772,8 +861,9 @@
         }
 
         .status-bar {
-            background-color: #111111;
+            background-color: #000000;
             border-top: 1px solid #ffffff;
+            border-radius: 6px;
             padding: 0.25rem 1rem;
             display: flex;
             justify-content: space-between;
@@ -819,8 +909,9 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.5rem;
-            background-color: #0a0a0a;
+            background-color: #000000;
             border: 1px solid #ffffff;
+            border-radius: 6px;
             margin: 0.5rem 0;
         }
 
@@ -861,11 +952,11 @@
         }
 
         .notification {
-            background: #111111;
+            background: #000000;
             border: 1px solid #ffffff;
             color: #ffffff;
             padding: 1rem 1.5rem;
-            border-radius: 4px;
+            border-radius: 6px;
             font-family: 'Consolas', 'Courier New', monospace;
             font-size: 14px;
             min-width: 300px;
@@ -882,17 +973,17 @@
 
         .notification.success {
             border-color: #00ff00;
-            background: linear-gradient(90deg, #111111 0%, #002200 100%);
+            background: linear-gradient(90deg, #000000 0%, #002200 100%);
         }
 
         .notification.error {
             border-color: #ff0000;
-            background: linear-gradient(90deg, #111111 0%, #220000 100%);
+            background: linear-gradient(90deg, #000000 0%, #220000 100%);
         }
 
         .notification.info {
             border-color: #40e0d0;
-            background: linear-gradient(90deg, #111111 0%, #002222 100%);
+            background: linear-gradient(90deg, #000000 0%, #002222 100%);
         }
 
         /* Chat History Styles */
@@ -902,8 +993,9 @@
             right: -400px;
             width: 400px;
             height: 100vh;
-            background: #111111;
+            background: #000000;
             border-left: 1px solid #ffffff;
+            border-radius: 6px 0 0 6px;
             z-index: 9999;
             transition: right 0.3s ease;
             display: flex;
@@ -916,8 +1008,9 @@
 
         .chat-history-header {
             padding: 1rem;
-            background: #1a1a1a;
+            background: #000000;
             border-bottom: 1px solid #ffffff;
+            border-radius: 6px 0 0 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -931,15 +1024,17 @@
         }
 
         .chat-history-item {
-            background: #0a0a0a;
+            background: #000000;
             border: 1px solid #ffffff;
+            border-radius: 6px;
             margin-bottom: 0.5rem;
             cursor: pointer;
             transition: background-color 0.2s;
         }
 
         .chat-history-item:hover {
-            background: #1a1a1a;
+            background: #000000;
+            border: 2px solid #ffffff;
         }
 
         .chat-history-item-header {
@@ -960,8 +1055,9 @@
 
         .history-toggle-btn {
             padding: 0.2rem 0.4rem;
-            background-color: #0a0a0a;
+            background-color: #000000;
             border: 1px solid #ffffff;
+            border-radius: 4px;
             color: #ffffff;
             cursor: pointer;
             font-size: 0.7rem;
@@ -970,7 +1066,7 @@
 
         .history-toggle-btn:hover {
             background-color: #ffffff;
-            color: #0a0a0a;
+            color: #000000;
         }
     </style>
 </head>
@@ -1055,9 +1151,10 @@
 
     <!-- Terminal Footer -->
     <div class="terminal-footer" id="terminalFooter">
+        <div class="terminal-resize-handle" id="terminalResizeHandle"></div>
         <div class="terminal-header">
             INTEGRATED TERMINAL
-            <button onclick="toggleTerminal()" style="background: none; border: none; color: #40e0d0; cursor: pointer; font-size: 16px;">✕</button>
+            <button onclick="toggleTerminal()" style="background: none; border: none; color: #ffffff; cursor: pointer; font-size: 16px;">✕</button>
         </div>
         <div class="terminal-content" id="terminalContent">
             <div class="terminal-output terminal-info">Grok IDE Terminal v1.0</div>
@@ -1304,7 +1401,7 @@
         async function saveCurrentFile() {
             const activeTab = document.querySelector('.tab.active');
             if (!activeTab) {
-                alert('No file is currently open');
+                showError('No file is currently open');
                 return;
             }
             
@@ -1496,12 +1593,15 @@
             
             return text.replace(codeBlockRegex, (match, language, code) => {
                 const langClass = language ? ` class="language-${language}"` : '';
-                return `<pre><div class="code-actions">
-                    <button class="code-action-btn" onclick="copyCode(this)">COPY</button>
-                    <button class="code-action-btn smart-insert-btn" onclick="insertCode(this)">SMART INSERT</button>
-                    <button class="code-action-btn" onclick="simpleInsertCode(this)">INSERT</button>
-                    <button class="code-action-btn" onclick="createFileFromCode(this, '${language || 'txt'}')">CREATE FILE</button>
-                </div><code${langClass}>${escapeHtml(code.trim())}</code></pre>`;
+                return `<div class="code-block-container">
+                    <pre><code${langClass}>${escapeHtml(code.trim())}</code></pre>
+                    <div class="code-actions">
+                        <button class="code-action-btn" onclick="copyCode(this)">COPY</button>
+                        <button class="code-action-btn smart-insert-btn" onclick="insertCode(this)">SMART INSERT</button>
+                        <button class="code-action-btn" onclick="simpleInsertCode(this)">INSERT</button>
+                        <button class="code-action-btn" onclick="createFileFromCode(this, '${language || 'txt'}')">CREATE FILE</button>
+                    </div>
+                </div>`;
             });
         }
 
@@ -1512,7 +1612,7 @@
         }
 
         function copyCode(button) {
-            const codeElement = button.closest('pre').querySelector('code');
+            const codeElement = button.closest('.code-block-container').querySelector('code');
             navigator.clipboard.writeText(codeElement.textContent)
                 .then(() => {
                     const originalText = button.textContent;
@@ -1525,7 +1625,7 @@
         }
 
         async function insertCode(button) {
-            const codeElement = button.closest('pre').querySelector('code');
+            const codeElement = button.closest('.code-block-container').querySelector('code');
             const codeToInsert = codeElement.textContent;
             const language = codeElement.className.replace('language-', '') || 'text';
             
@@ -1614,7 +1714,7 @@
         }
 
         function simpleInsertCode(button) {
-            const codeElement = button.closest('pre').querySelector('code');
+            const codeElement = button.closest('.code-block-container').querySelector('code');
             const editor = document.getElementById('editor');
             const activeTab = document.querySelector('.tab.active');
             
@@ -1777,7 +1877,7 @@
                 return;
             }
 
-            const codeElement = button.closest('pre').querySelector('code');
+            const codeElement = button.closest('.code-block-container').querySelector('code');
             const code = codeElement.textContent;
             
             const extensions = {
@@ -1833,10 +1933,10 @@
                 
                 modal.innerHTML = `
                     <div style="
-                        background: #111111;
+                        background: #000000;
                         border: 1px solid #ffffff;
                         padding: 2rem;
-                        border-radius: 4px;
+                        border-radius: 6px;
                         color: #ffffff;
                         font-family: 'Consolas', 'Courier New', monospace;
                     ">
@@ -1844,8 +1944,9 @@
                         <input type="text" value="${defaultName}" style="
                             width: 300px;
                             padding: 0.5rem;
-                            background: #0a0a0a;
+                            background: #000000;
                             border: 1px solid #ffffff;
+                            border-radius: 4px;
                             color: #ffffff;
                             font-family: 'Consolas', 'Courier New', monospace;
                             margin-bottom: 1rem;
@@ -1853,15 +1954,18 @@
                         <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
                             <button style="
                                 padding: 0.5rem 1rem;
-                                background: #333333;
+                                background: #000000;
                                 border: 1px solid #ffffff;
+                                border-radius: 4px;
                                 color: #ffffff;
                                 cursor: pointer;
+                                opacity: 0.7;
                             " onclick="closeModal(null)">Cancel</button>
                             <button style="
                                 padding: 0.5rem 1rem;
-                                background: #0a0a0a;
+                                background: #000000;
                                 border: 1px solid #ffffff;
+                                border-radius: 4px;
                                 color: #ffffff;
                                 cursor: pointer;
                             " onclick="closeModal(this.parentElement.parentElement.querySelector('input').value)">Create</button>
@@ -1983,7 +2087,7 @@
                     body: JSON.stringify({
                         messages: messages,
                         temperature: 0.7,
-                        max_tokens: 4000,
+                        max_tokens: 8000,
                         stream: false
                     })
                 });
@@ -2086,7 +2190,61 @@
             initializeResize(rightHandle, aiColumn, false);
         }
 
+        function initializeTerminalResize() {
+            const terminalResizeHandle = document.getElementById('terminalResizeHandle');
+            const terminalFooter = document.getElementById('terminalFooter');
+            const mainContainer = document.querySelector('.main-container');
+            
+            if (!terminalResizeHandle) return;
+            
+            let startY, startHeight, isResizing = false;
+
+            function startResize(e) {
+                if (!terminalFooter.classList.contains('open')) return;
+                
+                isResizing = true;
+                startY = e.clientY;
+                startHeight = parseInt(getComputedStyle(terminalFooter).height, 10);
+                terminalResizeHandle.classList.add('active');
+                
+                document.addEventListener('mousemove', resize);
+                document.addEventListener('mouseup', stopResize);
+                document.body.style.userSelect = 'none';
+                
+                e.preventDefault();
+            }
+
+            function resize(e) {
+                if (!isResizing) return;
+                
+                const diff = startY - e.clientY; // Inverted because we're dragging up to increase height
+                let newHeight = startHeight + diff;
+                
+                // Constrain height between min and max values
+                newHeight = Math.max(150, Math.min(window.innerHeight * 0.7, newHeight));
+                
+                terminalFooter.style.height = `${newHeight}px`;
+                
+                // Update main container height to account for terminal
+                const navbarHeight = 80; // navbar + status bar
+                mainContainer.style.height = `calc(100vh - ${navbarHeight}px - ${newHeight}px)`;
+            }
+
+            function stopResize() {
+                if (!isResizing) return;
+                
+                isResizing = false;
+                terminalResizeHandle.classList.remove('active');
+                document.removeEventListener('mousemove', resize);
+                document.removeEventListener('mouseup', stopResize);
+                document.body.style.userSelect = '';
+            }
+
+            terminalResizeHandle.addEventListener('mousedown', startResize);
+        }
+
         initializeResizeHandles();
+        initializeTerminalResize();
 
         openFolderBtn.addEventListener('click', initializeFileExplorer);
 
@@ -2203,10 +2361,10 @@
                 
                 modal.innerHTML = `
                     <div style="
-                        background: #111111;
+                        background: #000000;
                         border: 1px solid #ffffff;
                         padding: 2rem;
-                        border-radius: 4px;
+                        border-radius: 6px;
                         color: #ffffff;
                         font-family: 'Consolas', 'Courier New', monospace;
                     ">
@@ -2214,8 +2372,9 @@
                         <input type="text" value="${defaultName}" style="
                             width: 300px;
                             padding: 0.5rem;
-                            background: #0a0a0a;
+                            background: #000000;
                             border: 1px solid #ffffff;
+                            border-radius: 4px;
                             color: #ffffff;
                             font-family: 'Consolas', 'Courier New', monospace;
                             margin-bottom: 1rem;
@@ -2223,15 +2382,18 @@
                         <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
                             <button style="
                                 padding: 0.5rem 1rem;
-                                background: #333333;
+                                background: #000000;
                                 border: 1px solid #ffffff;
+                                border-radius: 4px;
                                 color: #ffffff;
                                 cursor: pointer;
+                                opacity: 0.7;
                             " onclick="closeFolderModal(null)">Cancel</button>
                             <button style="
                                 padding: 0.5rem 1rem;
-                                background: #0a0a0a;
+                                background: #000000;
                                 border: 1px solid #ffffff;
+                                border-radius: 4px;
                                 color: #ffffff;
                                 cursor: pointer;
                             " onclick="closeFolderModal(this.parentElement.parentElement.querySelector('input').value)">Create</button>
@@ -2446,15 +2608,27 @@
         function toggleTerminal() {
             const terminalFooter = document.getElementById('terminalFooter');
             const terminalStatusBtn = document.getElementById('terminalStatusBtn');
+            const mainContainer = document.querySelector('.main-container');
             
             if (terminalFooter.classList.contains('open')) {
                 terminalFooter.classList.remove('open');
+                mainContainer.classList.remove('terminal-open');
                 terminalStatusBtn.textContent = 'TERMINAL';
                 terminalStatusBtn.classList.remove('active');
+                
+                // Reset to default height calculation
+                mainContainer.style.height = 'calc(100vh - 80px)';
             } else {
                 terminalFooter.classList.add('open');
+                mainContainer.classList.add('terminal-open');
                 terminalStatusBtn.textContent = 'HIDE';
                 terminalStatusBtn.classList.add('active');
+                
+                // Set initial terminal height and update main container
+                const currentTerminalHeight = terminalFooter.style.height || '300px';
+                const height = parseInt(currentTerminalHeight, 10);
+                mainContainer.style.height = `calc(100vh - 80px - ${height}px)`;
+                
                 // Focus on terminal input when opened
                 setTimeout(() => {
                     document.getElementById('terminalInput').focus();
@@ -2475,7 +2649,7 @@
             // Display the command
             const commandOutput = document.createElement('div');
             commandOutput.className = 'terminal-output';
-            commandOutput.innerHTML = `<span style="color: #40e0d0;">${terminalPrompt.textContent}</span>${escapeHtml(command)}`;
+            commandOutput.innerHTML = `<span style="color: #ffffff;">${terminalPrompt.textContent}</span>${escapeHtml(command)}`;
             terminalContent.appendChild(commandOutput);
             
             if (!command.trim()) {

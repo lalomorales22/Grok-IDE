@@ -74,14 +74,14 @@ app.use(express.static('public'));
 // Serve files from current working directory for terminal browser access
 app.use('/serve', express.static('.'));
 
-// Basic route to serve the new IDE
+// Main route to serve the Grok IDE
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'tactical-ide.html'));
+    res.sendFile(path.join(__dirname, 'public', 'GrokIDE.html'));
 });
 
-// Legacy route for the old IDE
-app.get('/legacy', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'dynamic-ide.html'));
+// Alternative route for the Grok IDE
+app.get('/ide', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'GrokIDE.html'));
 });
 
 // Grok API client configuration
@@ -117,17 +117,24 @@ app.post('/api/completion', async (req, res) => {
             throw new Error('XAI_API_KEY environment variable not set');
         }
 
-        const { messages, temperature = 0.7, max_tokens = 4000, stream = true } = req.body;
+        let { messages, temperature = 0.7, max_tokens = 8000, stream = true } = req.body;
 
         console.log('[AI] Processing completion request...');
-        console.log(`[AI] Request details: ${messages.length} messages, temp=${temperature}, max_tokens=${max_tokens}, stream=${stream}`);
         
-        // Log payload size for debugging
+        // Log payload size for debugging and auto-adjust tokens
         const payloadSize = JSON.stringify(messages).length;
         console.log(`[AI] Payload size: ${payloadSize} characters`);
-        if (payloadSize > 50000) {
-            console.warn('[AI] Large payload detected - consider message truncation');
+        
+        // Dynamic token adjustment based on payload size
+        if (payloadSize > 100000) {
+            max_tokens = Math.min(max_tokens * 2, 16000); // Double tokens for very large payloads, cap at 16k
+            console.warn('[AI] Very large payload detected - increased max_tokens to', max_tokens);
+        } else if (payloadSize > 50000) {
+            max_tokens = Math.min(max_tokens * 1.5, 12000); // 1.5x tokens for large payloads, cap at 12k
+            console.log('[AI] Large payload detected - increased max_tokens to', max_tokens);
         }
+        
+        console.log(`[AI] Request details: ${messages.length} messages, temp=${temperature}, max_tokens=${max_tokens}, stream=${stream}`);
         
         console.time('ai-completion-request');
 
@@ -407,7 +414,7 @@ app.post('/api/analyze-code', async (req, res) => {
                 }
             ],
             temperature: 0.3,
-            max_tokens: 4000
+            max_tokens: 8000
         });
         
         console.timeEnd('code-analysis-request');
@@ -474,7 +481,7 @@ app.post('/api/analyze-project', async (req, res) => {
                 }
             ],
             temperature: 0.4,
-            max_tokens: 4000
+            max_tokens: 8000
         });
         
         console.timeEnd('project-analysis-request');
@@ -637,7 +644,7 @@ Analyze the file structure and determine the best way to insert this code. Retur
                 }
             ],
             temperature: 0.1, // Low temperature for consistent, logical responses
-            max_tokens: 4000
+            max_tokens: 8000
         });
         
         console.timeEnd('smart-insertion-request');

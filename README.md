@@ -104,7 +104,7 @@ Open your browser and navigate to `http://localhost:3000`
 ```
 grok-ide/
 ├── public/
-│   └── tactical-ide.html      # Main interface
+│   └── GrokIDE.html           # Main interface
 ├── server.js                  # Server with AI endpoints
 ├── package.json              # Dependencies
 ├── .env                      # Configuration
