@@ -1,9 +1,10 @@
 /**
  * Grok IDE Server - Refactored Architecture
- * Version 3.0.0 - Phase 1 Complete
+ * Version 3.0.0 - Phase 3 Complete
  *
  * This is a modernized, modular version of the Grok IDE server
  * with improved security, error handling, logging, and architecture
+ * Phase 3 adds: Monaco Editor, AI Streaming, Git Integration, Global Search
  */
 
 const express = require('express');
@@ -84,9 +85,14 @@ app.use('/serve', express.static('.'));
 // ROUTES
 // ============================================================================
 
-// Main route - serve Grok IDE interface (Phase 2)
+// Main route - serve Grok IDE interface (Phase 3)
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'GrokIDE-v2.html'));
+    res.sendFile(path.join(__dirname, 'public', 'GrokIDE-v3.html'));
+});
+
+// Phase 3 route
+app.get('/v3', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'GrokIDE-v3.html'));
 });
 
 // Phase 2 route
@@ -99,9 +105,9 @@ app.get('/v1', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'GrokIDE.html'));
 });
 
-// Alternative IDE route (Phase 2)
+// Alternative IDE route (Phase 3)
 app.get('/ide', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'GrokIDE-v2.html'));
+    res.sendFile(path.join(__dirname, 'public', 'GrokIDE-v3.html'));
 });
 
 // API routes
