@@ -1,7 +1,7 @@
 {
   "name": "grok-ide",
-  "version": "3.0.0",
-  "description": "A Metal Gear Solid-inspired IDE with xAI Grok integration - Phase 3 Complete: Monaco Editor, AI Streaming, Git Integration",
+  "version": "5.0.0",
+  "description": "A Metal Gear Solid-inspired IDE with xAI Grok integration - Phase 5 Complete: Production-Ready with PWA, Docker, CI/CD",
   "main": "server-new.js",
   "scripts": {
     "start": "node server-new.js",
@@ -11,8 +11,19 @@
     "test:watch": "jest --watch",
     "test:unit": "jest tests/unit",
     "test:integration": "jest tests/integration",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:all": "npm run test && npm run test:e2e",
     "lint": "eslint src/**/*.js",
-    "lint:fix": "eslint src/**/*.js --fix"
+    "lint:fix": "eslint src/**/*.js --fix",
+    "docker:build": "docker build -t grok-ide:latest .",
+    "docker:run": "docker run -p 3000:3000 --env-file .env grok-ide:latest",
+    "docker:compose": "docker-compose up -d",
+    "docker:compose:down": "docker-compose down",
+    "lighthouse": "lighthouse http://localhost:3000 --view",
+    "security:audit": "npm audit --audit-level=moderate",
+    "prepare": "husky install || true"
   },
   "keywords": [
     "ide",
@@ -41,9 +52,12 @@
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
+    "@playwright/test": "^1.40.1",
     "@types/jest": "^29.5.11",
     "eslint": "^8.56.0",
+    "husky": "^8.0.3",
     "jest": "^29.7.0",
+    "lighthouse": "^11.4.0",
     "nodemon": "^3.0.1",
     "supertest": "^6.3.3"
   },
