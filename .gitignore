@@ -7,3 +7,18 @@ test.js
 test.php
 test.py
 .DS_Store
+
+# Logs
+logs/
+*.log
+
+# Testing
+coverage/
+.nyc_output/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
