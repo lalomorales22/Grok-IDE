@@ -1,0 +1,36 @@
+/**
+ * Nord Theme
+ * Cool arctic-inspired color palette
+ */
+
+[data-theme="nord"] {
+    --color-bg-primary: #2e3440;
+    --color-bg-secondary: #3b4252;
+    --color-bg-tertiary: #434c5e;
+    --color-bg-quaternary: #4c566a;
+
+    --color-text-primary: #eceff4;
+    --color-text-secondary: #e5e9f0;
+    --color-text-tertiary: #d8dee9;
+    --color-text-accent: #88c0d0;
+
+    --color-border-primary: #88c0d0;
+    --color-border-secondary: #5e81ac;
+    --color-border-tertiary: #4c566a;
+
+    --color-success: #a3be8c;
+    --color-error: #bf616a;
+    --color-warning: #ebcb8b;
+    --color-info: #81a1c1;
+
+    --color-hover-bg: #88c0d0;
+    --color-hover-text: #2e3440;
+    --color-active-bg: #5e81ac;
+    --color-active-text: #eceff4;
+    --color-focus-outline: #88c0d0;
+
+    --shadow-glow: 0 0 15px rgba(136, 192, 208, 0.4);
+    --shadow-glow-strong: 0 0 30px rgba(136, 192, 208, 0.6);
+
+    --theme-name: "Nord";
+}

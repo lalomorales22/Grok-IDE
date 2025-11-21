@@ -1,0 +1,36 @@
+/**
+ * Dracula Theme
+ * Popular dark theme with purple accents
+ */
+
+[data-theme="dracula"] {
+    --color-bg-primary: #282a36;
+    --color-bg-secondary: #21222c;
+    --color-bg-tertiary: #1a1b24;
+    --color-bg-quaternary: #13141c;
+
+    --color-text-primary: #f8f8f2;
+    --color-text-secondary: #e6e6e6;
+    --color-text-tertiary: #d4d4d4;
+    --color-text-accent: #bd93f9;
+
+    --color-border-primary: #6272a4;
+    --color-border-secondary: #44475a;
+    --color-border-tertiary: #383a59;
+
+    --color-success: #50fa7b;
+    --color-error: #ff5555;
+    --color-warning: #f1fa8c;
+    --color-info: #8be9fd;
+
+    --color-hover-bg: #44475a;
+    --color-hover-text: #f8f8f2;
+    --color-active-bg: #bd93f9;
+    --color-active-text: #282a36;
+    --color-focus-outline: #bd93f9;
+
+    --shadow-glow: 0 0 15px rgba(189, 147, 249, 0.4);
+    --shadow-glow-strong: 0 0 30px rgba(189, 147, 249, 0.6);
+
+    --theme-name: "Dracula";
+}

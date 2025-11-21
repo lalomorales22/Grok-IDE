@@ -1,0 +1,36 @@
+/**
+ * Matrix Theme
+ * Classic green-on-black matrix aesthetic
+ */
+
+[data-theme="matrix"] {
+    --color-bg-primary: #000000;
+    --color-bg-secondary: #0a0f0a;
+    --color-bg-tertiary: #0f1a0f;
+    --color-bg-quaternary: #142814;
+
+    --color-text-primary: #00ff00;
+    --color-text-secondary: #00cc00;
+    --color-text-tertiary: #009900;
+    --color-text-accent: #00ff41;
+
+    --color-border-primary: #00ff00;
+    --color-border-secondary: #00cc00;
+    --color-border-tertiary: #009900;
+
+    --color-success: #00ff00;
+    --color-error: #ff0000;
+    --color-warning: #ffff00;
+    --color-info: #00ff41;
+
+    --color-hover-bg: #00ff00;
+    --color-hover-text: #000000;
+    --color-active-bg: #00ff41;
+    --color-active-text: #000000;
+    --color-focus-outline: #00ff00;
+
+    --shadow-glow: 0 0 15px rgba(0, 255, 0, 0.5);
+    --shadow-glow-strong: 0 0 30px rgba(0, 255, 0, 0.7);
+
+    --theme-name: "Matrix";
+}

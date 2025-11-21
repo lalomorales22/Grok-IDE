@@ -84,14 +84,24 @@ app.use('/serve', express.static('.'));
 // ROUTES
 // ============================================================================
 
-// Main route - serve Grok IDE interface
+// Main route - serve Grok IDE interface (Phase 2)
 app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'GrokIDE-v2.html'));
+});
+
+// Phase 2 route
+app.get('/v2', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'GrokIDE-v2.html'));
+});
+
+// Legacy Phase 1 route
+app.get('/v1', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'GrokIDE.html'));
 });
 
-// Alternative IDE route
+// Alternative IDE route (Phase 2)
 app.get('/ide', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'GrokIDE.html'));
+    res.sendFile(path.join(__dirname, 'public', 'GrokIDE-v2.html'));
 });
 
 // API routes

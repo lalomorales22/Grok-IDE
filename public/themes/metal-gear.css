@@ -1,0 +1,27 @@
+/**
+ * Metal Gear Solid Theme (Default)
+ * Classic black and white with turquoise accents
+ */
+
+[data-theme="metal-gear"], :root {
+    --color-bg-primary: #0a0a0a;
+    --color-bg-secondary: #111111;
+    --color-bg-tertiary: #1a1a1a;
+    --color-bg-quaternary: #222222;
+
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #cccccc;
+    --color-text-tertiary: #999999;
+    --color-text-accent: #40e0d0;
+
+    --color-border-primary: #ffffff;
+    --color-border-secondary: #666666;
+    --color-border-tertiary: #444444;
+
+    --color-success: #00ff00;
+    --color-error: #ff4444;
+    --color-warning: #ffaa00;
+    --color-info: #40e0d0;
+
+    --theme-name: "Metal Gear Solid";
+}
