@@ -74,13 +74,35 @@ app.use(express.static('public'));
 // Serve files from current working directory for terminal browser access
 app.use('/serve', express.static('.'));
 
-// Main route to serve the Grok IDE
+// Main route to serve the Grok IDE (v4 by default)
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'GrokIDE.html'));
+    res.sendFile(path.join(__dirname, 'public', 'GrokIDE-v4.html'));
 });
 
 // Alternative route for the Grok IDE
 app.get('/ide', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'GrokIDE-v4.html'));
+});
+
+// Version-specific routes
+app.get('/v4', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'GrokIDE-v4.html'));
+});
+
+app.get('/v3', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'GrokIDE-v3.html'));
+});
+
+app.get('/v2', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'GrokIDE-v2.html'));
+});
+
+app.get('/v1', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'GrokIDE.html'));
+});
+
+// Legacy route
+app.get('/legacy', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'GrokIDE.html'));
 });
 
