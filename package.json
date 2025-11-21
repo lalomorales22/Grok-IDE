@@ -1,7 +1,7 @@
 {
   "name": "grok-ide",
   "version": "3.0.0",
-  "description": "A Metal Gear Solid-inspired IDE with xAI Grok integration - Phase 1 Complete",
+  "description": "A Metal Gear Solid-inspired IDE with xAI Grok integration - Phase 3 Complete: Monaco Editor, AI Streaming, Git Integration",
   "main": "server-new.js",
   "scripts": {
     "start": "node server-new.js",

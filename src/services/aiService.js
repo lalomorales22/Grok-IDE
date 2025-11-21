@@ -126,6 +126,70 @@ class AIService {
     }
 
     /**
+     * Stream completion with callback for Phase 3
+     */
+    static async streamCompletion(messages, model, onChunk) {
+        if (!grokClient) {
+            throw new APIError('AI service not configured', 503);
+        }
+
+        try {
+            logger.info('Starting streaming completion', { messageCount: messages.length });
+
+            const response = await grokClient.post('/chat/completions', {
+                model: model || config.xai.models.chat,
+                messages: messages,
+                temperature: config.ai.defaultTemperature,
+                max_tokens: config.ai.defaultMaxTokens,
+                stream: true
+            }, {
+                responseType: 'stream'
+            });
+
+            return new Promise((resolve, reject) => {
+                let fullResponse = '';
+
+                response.data.on('data', (chunk) => {
+                    const lines = chunk.toString().split('\n').filter(Boolean);
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            const data = line.slice(6);
+                            if (data === '[DONE]') continue;
+
+                            try {
+                                const parsed = JSON.parse(data);
+                                const content = parsed.choices?.[0]?.delta?.content;
+
+                                if (content) {
+                                    fullResponse += content;
+                                    onChunk(content);
+                                }
+                            } catch (e) {
+                                // Ignore parse errors for streaming chunks
+                            }
+                        }
+                    }
+                });
+
+                response.data.on('end', () => {
+                    logger.info('Streaming completed', { responseLength: fullResponse.length });
+                    resolve(fullResponse);
+                });
+
+                response.data.on('error', (error) => {
+                    logger.error('Streaming error', { error: error.message });
+                    reject(error);
+                });
+            });
+
+        } catch (error) {
+            logger.error('Stream completion failed', { message: error.message });
+            throw this._handleAIError(error);
+        }
+    }
+
+    /**
      * Generate image using xAI
      */
     static async generateImage({ prompt, n = 1, responseFormat = 'url' }) {

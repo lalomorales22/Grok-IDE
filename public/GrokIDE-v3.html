@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Grok IDE - Advanced AI-powered development environment with Monaco Editor">
+    <title>Grok IDE v3.0 - Phase 3</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+
+    <!-- Monaco Editor -->
+    <link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/editor/editor.main.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/design-tokens.css">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/utilities.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/advanced-components.css">
+    <link rel="stylesheet" href="/css/phase3-components.css">
+
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="/themes/metal-gear.css">
+    <link rel="stylesheet" href="/themes/cyberpunk.css">
+    <link rel="stylesheet" href="/themes/matrix.css">
+    <link rel="stylesheet" href="/themes/light.css">
+    <link rel="stylesheet" href="/themes/nord.css">
+    <link rel="stylesheet" href="/themes/dracula.css">
+</head>
+<body class="main-layout">
+    <!-- Skip Link for Accessibility -->
+    <a href="#monaco-editor" class="skip-link">Skip to main content</a>
+
+    <!-- Navbar -->
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="navbar-left">
+            <h1 class="navbar-title">GROK IDE</h1>
+            <span class="navbar-subtitle text-accent">v3.0 - Phase 3</span>
+        </div>
+        <div class="navbar-center flex items-center gap-2">
+            <button class="btn btn-sm" id="git-status-btn" aria-label="Git status" title="Git Status">
+                <span id="git-branch-indicator">🔀 main</span>
+            </button>
+        </div>
+        <div class="navbar-right flex items-center gap-4">
+            <button class="btn btn-sm" id="search-files-btn" aria-label="Search files" title="Search Files (Ctrl+P)">
+                🔍 Search
+            </button>
+            <button class="btn btn-sm" id="theme-switcher" aria-label="Switch theme" title="Switch Theme (Ctrl+T)">
+                🎨 Theme
+            </button>
+            <button class="btn btn-sm" id="command-palette-btn" aria-label="Open command palette" title="Command Palette (Ctrl+K)">
+                ⌘ Commands
+            </button>
+            <button class="btn btn-sm" id="settings-btn" aria-label="Open settings" title="Settings (Ctrl+,)">
+                ⚙️ Settings
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="main-container" role="main">
+        <!-- Sidebar -->
+        <aside class="sidebar" role="complementary" aria-label="File Explorer">
+            <div class="sidebar-header">
+                <span>📁 EXPLORER</span>
+                <button class="btn btn-icon btn-sm" id="sidebar-toggle" aria-label="Toggle sidebar" style="float: right;">
+                    ◀
+                </button>
+            </div>
+
+            <div class="sidebar-controls">
+                <div class="control-row">
+                    <button class="control-button" id="open-folder-btn" title="Open Folder (Ctrl+O)">
+                        📁 OPEN
+                    </button>
+                    <button class="control-button" id="new-file-btn" title="New File (Ctrl+N)">
+                        + FILE
+                    </button>
+                    <button class="control-button" id="search-in-files-btn" title="Search in Files (Ctrl+Shift+F)">
+                        🔎 SEARCH
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recent Files -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-header">
+                    <span>🕒 RECENT FILES</span>
+                    <button class="btn btn-icon btn-xs" id="clear-recent-btn" title="Clear recent files">✕</button>
+                </div>
+                <div class="recent-files-list" id="recent-files-list">
+                    <div class="text-sm text-tertiary" style="padding: 8px;">No recent files</div>
+                </div>
+            </div>
+
+            <div class="file-explorer" id="file-explorer">
+                <div class="welcome-message text-sm">
+                    <p>No folder opened</p>
+                    <p class="text-tertiary">Click "OPEN" to get started</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Editor Area -->
+        <section class="editor" aria-label="Code Editor">
+            <!-- Breadcrumb Navigation -->
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <span class="breadcrumb-item active">
+                    <span>📄</span>
+                    <span id="breadcrumb-text">Welcome</span>
+                </span>
+            </nav>
+
+            <!-- Tabs -->
+            <div class="tabs" role="tablist" id="tabs-container">
+                <button class="tab active" role="tab" aria-selected="true" id="welcome-tab" data-file-id="welcome">
+                    <span>📄</span>
+                    <span>Welcome</span>
+                    <span class="tab-close">✕</span>
+                </button>
+            </div>
+
+            <!-- Editor Toolbar -->
+            <div class="editor-toolbar">
+                <div class="toolbar-left">
+                    <button class="btn btn-xs" id="format-btn" title="Format Document (Shift+Alt+F)">
+                        ✨ Format
+                    </button>
+                    <button class="btn btn-xs" id="find-btn" title="Find (Ctrl+F)">
+                        🔍 Find
+                    </button>
+                    <button class="btn btn-xs" id="replace-btn" title="Replace (Ctrl+H)">
+                        🔄 Replace
+                    </button>
+                </div>
+                <div class="toolbar-right">
+                    <span class="text-xs text-tertiary" id="editor-info">UTF-8 | Ln 1, Col 1</span>
+                </div>
+            </div>
+
+            <!-- Monaco Editor Container -->
+            <div id="monaco-editor" class="monaco-container"></div>
+        </section>
+
+        <!-- AI Assistant Column -->
+        <aside class="ai-column" role="complementary" aria-label="AI Assistant">
+            <div class="ai-header">
+                <span>🤖 AI ASSISTANT</span>
+                <div class="ai-header-actions">
+                    <button class="btn btn-icon btn-xs" id="ai-history-btn" title="Conversation History">
+                        📜
+                    </button>
+                    <button class="btn btn-icon btn-xs" id="ai-presets-btn" title="AI Presets">
+                        ⚙️
+                    </button>
+                    <button class="btn btn-icon btn-sm" id="ai-toggle" aria-label="Toggle AI panel">
+                        ▶
+                    </button>
+                </div>
+            </div>
+
+            <div class="ai-actions-bar">
+                <button class="ai-action-btn active" data-mode="code" title="Code Mode">💻 Code</button>
+                <button class="ai-action-btn" data-mode="image" title="Image Mode">🖼️ Image</button>
+                <button class="ai-action-btn" data-mode="chat" title="Chat Mode">💬 Chat</button>
+                <button class="ai-action-btn" data-mode="review" title="Code Review">🔍 Review</button>
+                <button class="ai-action-btn clear" id="clear-ai-btn" title="Clear Chat">🗑️</button>
+            </div>
+
+            <!-- AI Context Controls -->
+            <div class="ai-context-panel">
+                <div class="ai-context-header">
+                    <span class="text-xs">CONTEXT</span>
+                    <span class="text-xs text-tertiary" id="token-count">0 tokens</span>
+                </div>
+                <div class="ai-context-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="include-current-file" checked>
+                        <span>Current file</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="include-selection">
+                        <span>Selection only</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="ai-content" id="ai-content">
+                <div class="ai-message assistant">
+                    <div class="message-header">
+                        <strong>🤖 Grok AI</strong>
+                        <span class="text-xs text-tertiary">Phase 3</span>
+                    </div>
+                    <div class="message-content">
+                        Welcome to Phase 3!<br><br>
+                        <strong>New Features:</strong><br>
+                        ✅ Monaco Editor with IntelliSense<br>
+                        ✅ Streaming AI responses<br>
+                        ✅ Conversation history<br>
+                        ✅ AI presets & custom prompts<br>
+                        ✅ Multi-file context<br>
+                        ✅ Code review & analysis<br>
+                        ✅ Advanced search & navigation<br>
+                        ✅ Git integration<br>
+                        ✅ Drag-and-drop files<br>
+                        ✅ Recent files & favorites<br>
+                        <br>
+                        Try asking me to review your code or explain a concept!
+                    </div>
+                </div>
+            </div>
+
+            <div class="ai-input-area">
+                <div class="ai-input-controls">
+                    <textarea
+                        placeholder="Ask me anything... (Ctrl+Enter to send)"
+                        aria-label="AI chat input"
+                        id="ai-input"
+                        rows="3"
+                    ></textarea>
+                </div>
+                <div class="ai-input-footer">
+                    <select id="ai-model-select" class="select-sm">
+                        <option value="grok-beta">grok-beta</option>
+                        <option value="grok-vision-beta">grok-vision-beta</option>
+                    </select>
+                    <button class="btn btn-primary" id="ai-send-btn">
+                        Send 🚀
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Status Bar -->
+    <footer class="status-bar" role="contentinfo">
+        <div class="status-bar-left">
+            <span class="status-item" title="Current theme">
+                🎨 <span id="status-theme">metal-gear</span>
+            </span>
+            <span class="status-item" title="Cursor position" id="status-position">
+                Ln 1, Col 1
+            </span>
+            <span class="status-item" title="File encoding">
+                UTF-8
+            </span>
+            <span class="status-item" title="Git status" id="git-status-indicator">
+                <span id="git-changes">●</span> <span id="git-branch">main</span>
+            </span>
+        </div>
+        <div class="status-bar-right">
+            <span class="status-item" title="AI Status" id="ai-status">
+                💭 Ready
+            </span>
+            <span class="status-item" title="Phase 3 Active">
+                ✨ Phase 3: Core Features
+            </span>
+        </div>
+    </footer>
+
+    <!-- Search Dialog -->
+    <div id="search-dialog" class="modal" style="display: none;" role="dialog" aria-labelledby="search-dialog-title">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2 id="search-dialog-title">🔍 Search in Files</h2>
+                <button class="modal-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" id="search-query" placeholder="Search..." class="input">
+                </div>
+                <div class="flex gap-4 mb-4">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="search-regex">
+                        <span>Regex</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="search-case-sensitive">
+                        <span>Case Sensitive</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="search-whole-word">
+                        <span>Whole Word</span>
+                    </label>
+                </div>
+                <div id="search-results" class="search-results">
+                    <div class="text-sm text-tertiary">Enter a search query to begin</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Git Dialog -->
+    <div id="git-dialog" class="modal" style="display: none;" role="dialog" aria-labelledby="git-dialog-title">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2 id="git-dialog-title">🔀 Git Operations</h2>
+                <button class="modal-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="git-tabs">
+                    <button class="git-tab active" data-tab="status">Status</button>
+                    <button class="git-tab" data-tab="commit">Commit</button>
+                    <button class="git-tab" data-tab="branches">Branches</button>
+                    <button class="git-tab" data-tab="history">History</button>
+                </div>
+                <div id="git-content" class="git-content">
+                    <div class="text-sm text-tertiary">Loading git status...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI History Dialog -->
+    <div id="ai-history-dialog" class="modal" style="display: none;" role="dialog" aria-labelledby="ai-history-dialog-title">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2 id="ai-history-dialog-title">📜 Conversation History</h2>
+                <button class="modal-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" id="history-search" placeholder="Search conversations..." class="input">
+                </div>
+                <div id="history-list" class="history-list">
+                    <div class="text-sm text-tertiary">No conversation history yet</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monaco Editor Loader -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+
+    <!-- JavaScript Modules (Phase 2) -->
+    <script src="/js/theme-manager.js"></script>
+    <script src="/js/notification-system.js"></script>
+    <script src="/js/command-palette.js"></script>
+    <script src="/js/settings-manager.js"></script>
+    <script src="/js/keyboard-handler.js"></script>
+
+    <!-- JavaScript Modules (Phase 3) -->
+    <script src="/js/monaco-integration.js"></script>
+    <script src="/js/ai-streaming.js"></script>
+    <script src="/js/conversation-manager.js"></script>
+    <script src="/js/search-engine.js"></script>
+    <script src="/js/git-integration.js"></script>
+    <script src="/js/file-manager-advanced.js"></script>
+    <script src="/js/app-v3.js"></script>
+</body>
+</html>
