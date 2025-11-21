@@ -1,0 +1,226 @@
+/**
+ * Grok IDE - Base Styles
+ * Reset and foundational styles
+ */
+
+/* ===== Reset & Normalize ===== */
+
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+body {
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-primary);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== Typography ===== */
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-tight);
+    margin: 0;
+}
+
+h1 { font-size: var(--font-size-4xl); }
+h2 { font-size: var(--font-size-3xl); }
+h3 { font-size: var(--font-size-2xl); }
+h4 { font-size: var(--font-size-xl); }
+h5 { font-size: var(--font-size-lg); }
+h6 { font-size: var(--font-size-base); }
+
+p {
+    margin: 0;
+}
+
+a {
+    color: var(--color-text-accent);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--color-hover-text);
+}
+
+a:focus {
+    outline: 2px solid var(--color-focus-outline);
+    outline-offset: 2px;
+}
+
+code, pre, kbd, samp {
+    font-family: var(--font-family-code);
+}
+
+/* ===== Forms ===== */
+
+button, input, textarea, select {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+    margin: 0;
+}
+
+button {
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+input, textarea, select {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-base);
+    padding: var(--space-2);
+    transition: border-color var(--transition-fast);
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--color-focus-outline);
+    box-shadow: 0 0 0 2px var(--color-focus-outline);
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* ===== Scrollbar Styling ===== */
+
+::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+    height: var(--scrollbar-width);
+}
+
+::-webkit-scrollbar-track {
+    background: var(--scrollbar-track-bg);
+    border-radius: var(--radius-base);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb-bg);
+    border-radius: var(--radius-base);
+    transition: background-color var(--transition-fast);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover-bg);
+}
+
+/* Firefox scrollbar */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb-bg) var(--scrollbar-track-bg);
+}
+
+/* ===== Selection ===== */
+
+::selection {
+    background-color: var(--color-text-accent);
+    color: var(--color-bg-primary);
+}
+
+::-moz-selection {
+    background-color: var(--color-text-accent);
+    color: var(--color-bg-primary);
+}
+
+/* ===== Focus Visible (Accessibility) ===== */
+
+:focus-visible {
+    outline: 2px solid var(--color-focus-outline);
+    outline-offset: 2px;
+}
+
+/* ===== Hidden but Accessible (Screen Readers) ===== */
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* ===== Skip Links (Accessibility) ===== */
+
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    padding: var(--space-2) var(--space-4);
+    text-decoration: none;
+    z-index: var(--z-notification);
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* ===== Loading States ===== */
+
+.loading {
+    padding: var(--space-4);
+    color: var(--color-text-accent);
+    text-align: center;
+}
+
+/* ===== Disabled States ===== */
+
+[disabled], .disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ===== Hidden States ===== */
+
+.hidden {
+    display: none !important;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+/* ===== High Contrast Mode Adjustments ===== */
+
+@media (prefers-contrast: high) {
+    * {
+        border-width: 2px !important;
+    }
+
+    button, a {
+        text-decoration: underline;
+    }
+}

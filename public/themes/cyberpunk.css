@@ -1,0 +1,36 @@
+/**
+ * Cyberpunk Theme
+ * Neon pinks, purples, and electric blues
+ */
+
+[data-theme="cyberpunk"] {
+    --color-bg-primary: #0d0221;
+    --color-bg-secondary: #1a0b2e;
+    --color-bg-tertiary: #231542;
+    --color-bg-quaternary: #2d1b5a;
+
+    --color-text-primary: #ff006e;
+    --color-text-secondary: #fb5607;
+    --color-text-tertiary: #ffbe0b;
+    --color-text-accent: #8338ec;
+
+    --color-border-primary: #ff006e;
+    --color-border-secondary: #8338ec;
+    --color-border-tertiary: #3a0ca3;
+
+    --color-success: #00ff41;
+    --color-error: #ff006e;
+    --color-warning: #ffbe0b;
+    --color-info: #8338ec;
+
+    --color-hover-bg: #ff006e;
+    --color-hover-text: #0d0221;
+    --color-active-bg: #8338ec;
+    --color-active-text: #ffffff;
+    --color-focus-outline: #ff006e;
+
+    --shadow-glow: 0 0 15px rgba(255, 0, 110, 0.5);
+    --shadow-glow-strong: 0 0 30px rgba(255, 0, 110, 0.7);
+
+    --theme-name: "Cyberpunk";
+}

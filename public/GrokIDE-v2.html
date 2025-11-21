@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Grok IDE - Advanced AI-powered development environment">
+    <title>Grok IDE v2.0 - Phase 2</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/design-tokens.css">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/utilities.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/advanced-components.css">
+
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="/themes/metal-gear.css">
+    <link rel="stylesheet" href="/themes/cyberpunk.css">
+    <link rel="stylesheet" href="/themes/matrix.css">
+    <link rel="stylesheet" href="/themes/light.css">
+    <link rel="stylesheet" href="/themes/nord.css">
+    <link rel="stylesheet" href="/themes/dracula.css">
+</head>
+<body class="main-layout">
+    <!-- Skip Link for Accessibility -->
+    <a href="#editor" class="skip-link">Skip to main content</a>
+
+    <!-- Navbar -->
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="navbar-left">
+            <h1 class="navbar-title">GROK IDE</h1>
+            <span class="navbar-subtitle text-accent">v2.0 - Phase 2</span>
+        </div>
+        <div class="navbar-right flex items-center gap-4">
+            <button class="btn btn-sm" id="theme-switcher" aria-label="Switch theme" title="Switch Theme (Ctrl+T)">
+                🎨 Theme
+            </button>
+            <button class="btn btn-sm" id="command-palette-btn" aria-label="Open command palette" title="Command Palette (Ctrl+K)">
+                ⌘ Commands
+            </button>
+            <button class="btn btn-sm" id="settings-btn" aria-label="Open settings" title="Settings (Ctrl+,)">
+                ⚙️ Settings
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="main-container" role="main">
+        <!-- Sidebar -->
+        <aside class="sidebar" role="complementary" aria-label="File Explorer">
+            <div class="sidebar-header">
+                <span>📁 EXPLORER</span>
+                <button class="btn btn-icon btn-sm" id="sidebar-toggle" aria-label="Toggle sidebar" style="float: right;">
+                    ◀
+                </button>
+            </div>
+
+            <div class="sidebar-controls">
+                <div class="control-row">
+                    <button class="control-button" id="open-folder-btn" title="Open Folder (Ctrl+O)">
+                        📁 OPEN
+                    </button>
+                    <button class="control-button" id="new-file-btn" title="New File (Ctrl+N)">
+                        + FILE
+                    </button>
+                </div>
+            </div>
+
+            <div class="file-explorer" id="file-explorer">
+                <div class="welcome-message text-sm">
+                    <p>No folder opened</p>
+                    <p class="text-tertiary">Click "OPEN" to get started</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Editor Area -->
+        <section class="editor" aria-label="Code Editor">
+            <!-- Breadcrumb Navigation -->
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <span class="breadcrumb-item active">
+                    <span>📄</span>
+                    <span>Welcome</span>
+                </span>
+            </nav>
+
+            <!-- Tabs -->
+            <div class="tabs" role="tablist">
+                <button class="tab active" role="tab" aria-selected="true" id="welcome-tab">
+                    <span>📄</span>
+                    <span>Welcome</span>
+                    <span class="tab-close">✕</span>
+                </button>
+            </div>
+
+            <!-- Editor Content -->
+            <div class="editor-content">
+                <textarea
+                    id="editor"
+                    aria-label="Code editor"
+                    placeholder="Start typing or open a file..."
+                    spellcheck="false"
+                >╔══════════════════════════════════════════════════════════════╗
+║              WELCOME TO GROK IDE v2.0 - PHASE 2             ║
+║                   UI/UX Enhancement Edition                  ║
+╚══════════════════════════════════════════════════════════════╝
+
+🎨 NEW FEATURES - Phase 2:
+
+✨ DESIGN SYSTEM
+   • Comprehensive design tokens
+   • 6 beautiful themes: Metal Gear, Cyberpunk, Matrix, Light, Nord, Dracula
+   • Smooth animations and transitions
+   • Loading skeletons instead of spinners
+
+⌨️  COMMAND PALETTE
+   • Press Ctrl+K or Cmd+K to open
+   • Quick access to all commands
+   • Fuzzy search support
+   • Keyboard navigation
+
+🔔 NOTIFICATION SYSTEM
+   • Beautiful toast notifications
+   • Success, error, warning, info types
+   • Auto-dismiss with progress bar
+   • Stackable notifications
+
+⚙️  SETTINGS PANEL
+   • Comprehensive settings management
+   • Theme customization
+   • Keyboard shortcut customization
+   • User preference persistence
+
+🧘 ZEN MODE
+   • Press F11 for distraction-free coding
+   • Focus on what matters
+   • Toggle with keyboard shortcut
+
+♿ ACCESSIBILITY
+   • WCAG 2.1 AA compliance
+   • Keyboard navigation support
+   • Screen reader friendly
+   • High contrast mode
+   • Reduced motion support
+   • Skip links
+
+🎹 KEYBOARD SHORTCUTS
+   • Ctrl+K - Command Palette
+   • Ctrl+T - Switch Theme
+   • Ctrl+B - Toggle Sidebar
+   • Ctrl+I - Toggle AI Panel
+   • Ctrl+, - Settings
+   • Ctrl+/ - Show All Shortcuts
+   • F11 - Zen Mode
+   • Escape - Close/Cancel
+
+Try the features above and explore the enhanced UI!
+
+═══════════════════════════════════════════════════════════════
+
+PHASE 2 COMPLETED ✓
+- Design System Implementation
+- Theme System (6 themes)
+- Component Library
+- Advanced UI Components
+- Animation System
+- Accessibility Features
+- Settings Management
+- Keyboard Shortcuts
+
+═══════════════════════════════════════════════════════════════</textarea>
+            </div>
+        </section>
+
+        <!-- AI Assistant Column -->
+        <aside class="ai-column" role="complementary" aria-label="AI Assistant">
+            <div class="ai-header">
+                <span>🤖 AI ASSISTANT</span>
+                <button class="btn btn-icon btn-sm" id="ai-toggle" aria-label="Toggle AI panel">
+                    ▶
+                </button>
+            </div>
+
+            <div class="ai-actions-bar">
+                <button class="ai-action-btn" title="Code Mode">💻 Code</button>
+                <button class="ai-action-btn" title="Image Mode">🖼️ Image</button>
+                <button class="ai-action-btn" title="Chat Mode">💬 Chat</button>
+                <button class="ai-action-btn clear" id="clear-ai-btn" title="Clear Chat">🗑️</button>
+            </div>
+
+            <div class="ai-content" id="ai-content">
+                <div class="ai-message assistant">
+                    <strong>Grok AI</strong><br><br>
+                    Hello! I'm Grok, your AI assistant.
+                    <br><br>
+                    <strong>Phase 2 UI Enhancements:</strong><br>
+                    • New theme system with 6 themes<br>
+                    • Command palette (Ctrl+K)<br>
+                    • Notification system<br>
+                    • Settings panel<br>
+                    • Keyboard shortcuts<br>
+                    • Accessibility features<br>
+                    <br>
+                    Try switching themes or pressing Ctrl+K!
+                </div>
+            </div>
+
+            <div class="ai-input-area">
+                <div class="ai-input-controls">
+                    <textarea
+                        placeholder="Ask me anything..."
+                        aria-label="AI chat input"
+                        id="ai-input"
+                    ></textarea>
+                </div>
+                <button class="btn btn-primary w-full" id="ai-send-btn">
+                    Send (Ctrl+Enter)
+                </button>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Status Bar -->
+    <footer class="status-bar" role="contentinfo">
+        <div class="status-bar-left">
+            <span class="status-item" title="Current theme">
+                🎨 <span id="status-theme">metal-gear</span>
+            </span>
+            <span class="status-item" title="Cursor position">
+                Ln 1, Col 1
+            </span>
+            <span class="status-item" title="File encoding">
+                UTF-8
+            </span>
+        </div>
+        <div class="status-bar-right">
+            <span class="status-item" title="Phase 2 Active">
+                ✨ Phase 2: UI/UX Enhanced
+            </span>
+            <span class="status-item" title="Keyboard shortcuts">
+                Press Ctrl+/ for shortcuts
+            </span>
+        </div>
+    </footer>
+
+    <!-- JavaScript Modules -->
+    <script src="/js/theme-manager.js"></script>
+    <script src="/js/notification-system.js"></script>
+    <script src="/js/command-palette.js"></script>
+    <script src="/js/settings-manager.js"></script>
+    <script src="/js/keyboard-handler.js"></script>
+    <script src="/js/app.js"></script>
+
+    <!-- Additional Event Listeners -->
+    <script>
+        // Setup button click handlers
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = window.app || window.grokIDE;
+
+            // Command palette button
+            document.getElementById('command-palette-btn')?.addEventListener('click', () => {
+                app.commandPalette?.toggle();
+            });
+
+            // Settings button
+            document.getElementById('settings-btn')?.addEventListener('click', () => {
+                app.openSettings();
+            });
+
+            // Clear AI button
+            document.getElementById('clear-ai-btn')?.addEventListener('click', () => {
+                document.getElementById('ai-content').innerHTML = '<div class="ai-message assistant">Chat cleared.</div>';
+                app.notify.success('AI Chat', 'Conversation cleared');
+            });
+
+            // AI send button
+            document.getElementById('ai-send-btn')?.addEventListener('click', () => {
+                const input = document.getElementById('ai-input');
+                if (input.value.trim()) {
+                    app.notify.info('AI', 'This is a Phase 2 UI demo. Full AI integration in Phase 3!', 3000);
+                    input.value = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

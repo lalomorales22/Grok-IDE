@@ -1,0 +1,45 @@
+/**
+ * Light Theme
+ * Clean light mode for daytime use
+ */
+
+[data-theme="light"] {
+    --color-bg-primary: #ffffff;
+    --color-bg-secondary: #f5f5f5;
+    --color-bg-tertiary: #e5e5e5;
+    --color-bg-quaternary: #d4d4d4;
+
+    --color-text-primary: #000000;
+    --color-text-secondary: #333333;
+    --color-text-tertiary: #666666;
+    --color-text-accent: #0066cc;
+
+    --color-border-primary: #000000;
+    --color-border-secondary: #999999;
+    --color-border-tertiary: #cccccc;
+
+    --color-success: #008000;
+    --color-error: #cc0000;
+    --color-warning: #cc6600;
+    --color-info: #0066cc;
+
+    --color-hover-bg: #000000;
+    --color-hover-text: #ffffff;
+    --color-active-bg: #0066cc;
+    --color-active-text: #ffffff;
+    --color-focus-outline: #0066cc;
+
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    --shadow-glow: 0 0 15px rgba(0, 102, 204, 0.3);
+    --shadow-glow-strong: 0 0 30px rgba(0, 102, 204, 0.5);
+
+    --scrollbar-track-bg: var(--color-bg-secondary);
+    --scrollbar-thumb-bg: var(--color-border-secondary);
+
+    --theme-name: "Light";
+}
