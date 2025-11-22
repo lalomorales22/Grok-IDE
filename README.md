@@ -50,6 +50,21 @@ The Grok IDE is a cutting-edge development environment inspired by the interface
 
 ### Installation
 
+#### Quick Setup (Recommended)
+
+Use our automated setup script that handles common installation issues:
+
+```bash
+# macOS/Linux
+chmod +x setup.sh
+./setup.sh
+
+# Windows
+setup.bat
+```
+
+#### Manual Installation
+
 1. **Clone the repository:**
 ```bash
 git clone <repository-url>
@@ -58,6 +73,14 @@ cd grok-ide
 
 2. **Install dependencies:**
 ```bash
+npm install
+```
+
+**Having installation issues?** See [INSTALL.md](./INSTALL.md) for comprehensive troubleshooting.
+
+**Common fix for npm cache errors:**
+```bash
+npm cache clean --force
 npm install
 ```
 
@@ -144,6 +167,38 @@ The interface uses a carefully crafted color scheme:
 ## 🚨 TROUBLESHOOTING
 
 ### Common Issues
+
+**npm Install Errors (EEXIST, EACCES, cache issues):**
+
+If you encounter errors like:
+```
+npm error code EEXIST
+npm error errno EACCES
+npm error Invalid response body while trying to fetch...
+```
+
+**Quick Fix:**
+```bash
+# Clear npm cache
+npm cache clean --force
+
+# Remove old files
+rm -rf node_modules package-lock.json
+
+# Fresh install
+npm install
+```
+
+**Or use the automated setup script:**
+```bash
+# macOS/Linux
+./setup.sh
+
+# Windows
+setup.bat
+```
+
+**For comprehensive troubleshooting:** See [INSTALL.md](./INSTALL.md) for detailed solutions to all installation issues.
 
 **AI Features Not Working:**
 - Verify XAI_API_KEY is set in .env file
