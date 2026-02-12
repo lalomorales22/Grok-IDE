@@ -191,3 +191,9 @@
         /* Already dark - no changes needed */
     }
 }
+:root[data-contrast="high"] {
+  /* Keep minimal; just strengthen readability */
+  --text-color: #ffffff;
+  --muted-text-color: #ffffff;
+  --border-color: #ffffff;
+}
