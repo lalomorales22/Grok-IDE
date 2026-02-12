@@ -197,3 +197,17 @@
   --muted-text-color: #ffffff;
   --border-color: #ffffff;
 }
+/* Accessibility: High contrast mode */
+:root[data-contrast="high"] {
+  --color-bg-primary: #000000;
+  --color-text-primary: #ffffff;
+  --color-text-accent: #ffffff;
+
+  /* Make focus rings/borders unmissable */
+  --color-focus-outline: #ffffff;
+
+  /* Scrollbars: clearer contrast */
+  --scrollbar-track-bg: #000000;
+  --scrollbar-thumb-bg: #ffffff;
+  --scrollbar-thumb-hover-bg: #ffffff;
+}

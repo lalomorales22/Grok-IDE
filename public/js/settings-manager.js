@@ -3,6 +3,46 @@
  * Manages user preferences and settings persistence
  */
 
+
+// Accessibility prefs
+const A11Y_KEY = "grokide:a11y";
+
+function loadA11yPrefs() {
+  try { return JSON.parse(localStorage.getItem(A11Y_KEY) || "{}"); }
+  catch { return {}; }
+}
+
+function applyA11yPrefs(prefs) {
+  const fontScale = Number(prefs.fontScale ?? 1.0);
+  const contrast = (prefs.contrast ?? "normal"); // "normal" | "high"
+
+  document.documentElement.style.fontSize = `${Math.round(fontScale * 100)}%`;
+  document.documentElement.dataset.contrast = contrast;
+}
+
+// Apply once on load
+applyA11yPrefs(loadA11yPrefs());
+// Accessibility prefs (font scale + contrast)
+const A11Y_STORAGE_KEY = "grokide:a11y";
+
+function loadA11yPrefs() {
+  try {
+    return JSON.parse(localStorage.getItem(A11Y_STORAGE_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function applyA11yPrefs(prefs) {
+  const fontScale = Number(prefs.fontScale ?? 1.0);
+  const contrast = (prefs.contrast ?? "normal"); // "normal" | "high"
+
+  document.documentElement.style.fontSize = `${Math.round(fontScale * 100)}%`;
+  document.documentElement.dataset.contrast = contrast;
+}
+
+// Call on startup (once)
+applyA11yPrefs(loadA11yPrefs());
 class SettingsManager {
     constructor() {
         this.settings = {};
