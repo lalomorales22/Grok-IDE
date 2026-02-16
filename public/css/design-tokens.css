@@ -5,7 +5,8 @@
 
 :root {
     /* ===== Color Palette ===== */
-
+    --a11y-font-scale: 1;
+    --a11y-contrast: normal;	
     /* Primary Colors - Metal Gear Solid Theme (Default) */
     --color-bg-primary: #0a0a0a;
     --color-bg-secondary: #111111;
@@ -49,7 +50,8 @@
     /* Font Sizes */
     --font-size-xs: 0.75rem;    /* 12px */
     --font-size-sm: 0.875rem;   /* 14px */
-    --font-size-base: 1rem;     /* 16px */
+    --font-size-base: 1rem;
+
     --font-size-lg: 1.125rem;   /* 18px */
     --font-size-xl: 1.25rem;    /* 20px */
     --font-size-2xl: 1.5rem;    /* 24px */
